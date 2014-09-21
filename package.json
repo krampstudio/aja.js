@@ -1,0 +1,25 @@
+{
+  "name": "aja.js",
+  "description": "Ajax without XML",
+  "version": "0.1.0",
+  "homepage": "https://github.com/krampstudio/aja.js",
+  "author": {
+    "name": "Bertrand Chevrier",
+    "email": "chevrier.bertrand@gmail.com",
+    "url": "https://github.com/krampstudio/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krampstudio/aja.js.git"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "grunt": "^0.4.4",
+    "grunt-mocha": "^0.4.11",
+    "load-grunt-tasks": "^0.4.0",
+    "mocha": "^1.20.1"
+  }
+}
