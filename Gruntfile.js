@@ -7,15 +7,25 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
 
-        pkg: grunt.file.readJSON('package.json'),
+        pkg : grunt.file.readJSON('package.json'),
 
         mocha: {
-            browser: {
-                src: ['test/index.html'],
+            browser : {
+                src : ['test/index.html'],
+                options : {
+                    reporter : 'Spec',
+                    run : true,
+                    timeout : 10000
+                }
+            }
+        },
+
+        watch : {
+            test : {
+                files: '**/*.js',
+                tasks: ['test'],
                 options: {
-                    reporter: 'Spec',
-                    run: true,
-                    timeout: 10000
+                    debounceDelay: 250,
                 }
             }
         }
