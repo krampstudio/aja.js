@@ -1,9 +1,9 @@
 (function(window){
     'use strict';
 
-    var supportedtypes = ['html', 'json', 'jsonp', 'script', 'style'];
+    var types = ['html', 'json', 'jsonp', 'script', 'style']; 
+    var methods = ['get', 'post', 'delete', 'head', 'put', 'options'];
 
-    
     var validator = {
 
         bool : function(value){
@@ -17,22 +17,26 @@
             return string; 
         },
 
-        url  : function(url){
-            url = this.string(url);
-            return url; 
-        },
-
         type : function(type){
-            type = this.type(type);
-            if(!~supportedtypes.indexOf(type)){
-                throw new TypeError("a type in [" + supportedtypes.join(', ') + "] is expected ");
+            type = this.string(type);
+            if(types.indexOf(type.toLowerCase()) > -1){
+                throw new TypeError("a type in [" + types.join(', ') + "] is expected ");
             }
             return type;
-        }
+        },
+
+        method : function(method){
+            method = this.string(method);
+            if(methods.indexOf(method.toLowerCase()) > -1){
+                throw new TypeError("a method in [" + methods.join(', ') + "] is expected ");
+            }
+            return method;
+        }        
     };
 
     var aja = function aja(){
         var data = {};
+        var events = {};
 
         var _chain = function _chain(name, value, validator){
             if(typeof value !== 'undefined'){
@@ -46,50 +50,91 @@
                 data[name] = value;
                 return this;
             }
-            return data[name] || null;
+            return data[name] === 'undefined' ? null : data[name];
         };
 
         return {
+
             url : function(url){
                return _chain.call(this, 'url', url, validator.string);
             },
+
             sync : function(sync){
                return _chain.call(this, 'sync', sync, validator.bool);
             },
+
             cache : function(cache){
                return _chain.call(this, 'cache', cache, validator.bool);
             },
+
             type : function(type){
                return _chain.call(this, 'type', type);
+            },
+
+            method : function(method){
+               return _chain.call(this, 'method', method);
             },
 
             into : function(selector){
                 //trigger send
             },
             
-
             on : function(name, cb){
-
+                events[name] = cb;
             },
 
             off : function(name, cb){
-
+                events[name] = null;
             },
 
             trigger : function(name, data){
-
-            },
-
-            done : function(cb){
-                
-            },
-
-            err : function(cb){
-
+                if(typeof events[name] === 'function'){
+                    events[name].call(this, data);
+                }
             },
 
             go : function(){
+                var self    = this;
+                
+                var url     = data.url;
+                var type    = data.type || (data.into ? 'html' : 'json');
+                var method  = data.method || 'get';
+                var async   = data.sync !== true;
+                var request = new XMLHttpRequest();
 
+                if(!url){
+                    throw new Error('Please set an url, at least.');
+                }
+
+                request.open(method, url, async);
+        
+                request.onprogress = function(e){
+                    if (e.lengthComputable) {
+                        self.trigger('progress', e.loaded / e.total);
+                    }
+                };
+        
+                request.onload = function(){
+                    var data = request.responseText;
+                    if(type === 'json'){
+                        try {
+                            data = JSON.parse(data);
+                        } catch(e){
+                            return self.trigger('error', e);
+                        }
+                    }
+
+                    self.trigger(this.status, data);
+
+                    if(this.status >= 200 && this.status < 300){
+                        self.trigger('success', data);
+                    }
+                    self.trigger('end', data);
+                };
+                request.onerror = function(err){
+                    self.trigger('error', err);
+                };
+                request.send();
             }
         };
     };
