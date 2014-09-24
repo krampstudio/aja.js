@@ -18,6 +18,7 @@
   "devDependencies": {
     "chai": "^1.9.1",
     "grunt": "^0.4.4",
+    "grunt-contrib-connect": "^0.8.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha": "^0.4.11",
     "load-grunt-tasks": "^0.4.0",

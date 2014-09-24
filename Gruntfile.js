@@ -9,14 +9,23 @@ module.exports = function(grunt) {
 
         pkg : grunt.file.readJSON('package.json'),
 
-        mocha: {
+        mocha : {
             browser : {
-                src : ['test/index.html'],
+                src : ['test/**/index.html'],
                 options : {
                     reporter : 'Spec',
                     run : true,
                     timeout : 10000
                 }
+            }
+        },
+
+        connect : {
+            test : {
+              options : {
+                port : 9000,
+                base : 'test/samples'
+              }
             }
         },
 
@@ -32,5 +41,7 @@ module.exports = function(grunt) {
     });
 
     //tasks related unit tests
-    grunt.registerTask('test', ['mocha:browser']);
+    grunt.registerTask('test', ['connect:test', 'mocha:browser']);
+
+    grunt.registerTask('devtest', ['connect:test', 'watch:test']);
 };

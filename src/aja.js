@@ -4,45 +4,17 @@
     var types = ['html', 'json', 'jsonp', 'script', 'style']; 
     var methods = ['get', 'post', 'delete', 'head', 'put', 'options'];
 
-    var validator = {
-
-        bool : function(value){
-            return !!value;    
-        },
-
-        string : function(string){
-            if(typeof string !== 'string'){
-                throw new TypeError("a string is expected");
-            }
-            return string; 
-        },
-
-        type : function(type){
-            type = this.string(type);
-            if(types.indexOf(type.toLowerCase()) > -1){
-                throw new TypeError("a type in [" + types.join(', ') + "] is expected ");
-            }
-            return type;
-        },
-
-        method : function(method){
-            method = this.string(method);
-            if(methods.indexOf(method.toLowerCase()) > -1){
-                throw new TypeError("a method in [" + methods.join(', ') + "] is expected ");
-            }
-            return method;
-        }        
-    };
-
     var aja = function aja(){
+
         var data = {};
+
         var events = {};
 
         var _chain = function _chain(name, value, validator){
             if(typeof value !== 'undefined'){
                 if(typeof validator === 'function'){
                     try{
-                        value = validator(value);
+                        value = validator.call(validators, value);
                     } catch(e){
                         throw new TypeError(name + " " + e.message);
                     }
@@ -56,23 +28,23 @@
         return {
 
             url : function(url){
-               return _chain.call(this, 'url', url, validator.string);
+               return _chain.call(this, 'url', url, validators.string);
             },
 
             sync : function(sync){
-               return _chain.call(this, 'sync', sync, validator.bool);
+               return _chain.call(this, 'sync', sync, validators.bool);
             },
 
             cache : function(cache){
-               return _chain.call(this, 'cache', cache, validator.bool);
+               return _chain.call(this, 'cache', cache, validators.bool);
             },
 
             type : function(type){
-               return _chain.call(this, 'type', type);
+               return _chain.call(this, 'type', type, validators.type);
             },
 
             method : function(method){
-               return _chain.call(this, 'method', method);
+               return _chain.call(this, 'method', method, validators.method);
             },
 
             into : function(selector){
@@ -137,6 +109,36 @@
                 request.send();
             }
         };
+    };
+
+    var validators = {
+
+        bool : function(value){
+            return !!value;    
+        },
+
+        string : function(string){
+            if(typeof string !== 'string'){
+                throw new TypeError("a string is expected");
+            }
+            return string; 
+        },
+
+        type : function(type){
+            type = this.string(type);
+            if(types.indexOf(type.toLowerCase()) < 0){
+                throw new TypeError("a type in [" + types.join(', ') + "] is expected ");
+            }
+            return type;
+        },
+
+        method : function(method){
+            method = this.string(method);
+            if(methods.indexOf(method.toLowerCase()) < 0){
+                throw new TypeError("a method in [" + methods.join(', ') + "] is expected ");
+            }
+            return method;
+        }        
     };
 
     //TODO UMD ?
