@@ -1,4 +1,3 @@
-/* jshint expr:true */
 /* global describe, it, expect */
 
 var aja = window.aja;
@@ -7,12 +6,11 @@ describe('aja()', function(){
 
     //test basic module behavior
     it('should be a function', function(){
-        expect(aja).to.be.a.function;
+        expect(aja).to.be.a('function');
     });
     
     it('should return an object', function(){
-        expect(aja()).to.be.an.object;
-        aja().url();
+        expect(aja()).to.be.an('object');
     });
    
     describe('setter/getter', function(){
@@ -20,11 +18,11 @@ describe('aja()', function(){
         describe('url()', function(){
 
             it('should be a function', function(){
-                expect(aja().url).to.be.a.function;
+                expect(aja().url).to.be.a('function');
             });
             it('should chain', function(){
                 var a = aja();
-                expect(a.url('http://www.example.com')).to.be.an.object;
+                expect(a.url('http://www.example.com')).to.be.an('object');
                 expect(a.url('http://www.example.com')).to.equals(a);
             });
             it('should accept only strings', function(){
@@ -39,11 +37,11 @@ describe('aja()', function(){
         describe('sync()', function(){
 
             it('should be a function', function(){
-                expect(aja().sync).to.be.a.function;
+                expect(aja().sync).to.be.a('function');
             });
             it('should chain', function(){
                 var a = aja();
-                expect(a.sync(true)).to.be.an.object;
+                expect(a.sync(true)).to.be.an('object');
                 expect(a.sync(true)).to.equals(a);
             });
             it('should get the set value', function(){
@@ -57,11 +55,11 @@ describe('aja()', function(){
         describe('cache()', function(){
 
             it('should be a function', function(){
-                expect(aja().cache).to.be.a.function;
+                expect(aja().cache).to.be.a('function');
             });
             it('should chain', function(){
                 var a = aja();
-                expect(a.cache(true)).to.be.an.object;
+                expect(a.cache(true)).to.be.an('object');
                 expect(a.cache(true)).to.equals(a);
             });
             it('should get / set value', function(){
@@ -75,11 +73,11 @@ describe('aja()', function(){
         describe('type()', function(){
 
             it('should be a function', function(){
-                expect(aja().type).to.be.a.function;
+                expect(aja().type).to.be.a('function');
             });
             it('should chain', function(){
                 var a = aja();
-                expect(a.type('json')).to.be.an.object;
+                expect(a.type('json')).to.be.an('object');
                 expect(a.type('json')).to.equals(a);
             });
             
@@ -106,11 +104,11 @@ describe('aja()', function(){
         describe('method()', function(){
 
             it('should be a function', function(){
-                expect(aja().method).to.be.a.function;
+                expect(aja().method).to.be.a('function');
             });
             it('should chain', function(){
                 var a = aja();
-                expect(a.method('get')).to.be.an.object;
+                expect(a.method('get')).to.be.an('object');
                 expect(a.method('get')).to.equals(a);
             });
             

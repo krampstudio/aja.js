@@ -53,16 +53,19 @@
             
             on : function(name, cb){
                 events[name] = cb;
+                return this;
             },
 
             off : function(name, cb){
                 events[name] = null;
+                return this;
             },
 
             trigger : function(name, data){
                 if(typeof events[name] === 'function'){
                     events[name].call(this, data);
                 }
+                return this;
             },
 
             go : function(){

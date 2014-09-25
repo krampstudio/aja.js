@@ -11,8 +11,13 @@ module.exports = function(grunt) {
 
         mocha : {
             browser : {
-                src : ['test/**/index.html'],
+                //src : ['test/**/index.html'],
                 options : {
+                    urls : [
+                        'http://localhost:9901/test/properties/index.html', 
+                        'http://localhost:9901/test/methods/index.html', 
+                        'http://localhost:9901/test/integration/index.html'
+                    ],
                     reporter : 'Spec',
                     run : true,
                     timeout : 10000
@@ -23,8 +28,9 @@ module.exports = function(grunt) {
         connect : {
             test : {
               options : {
-                port : 9000,
-                base : 'test/samples'
+                hostname : 'localhost',
+                port : 9901,
+                base : '.'
               }
             }
         },
@@ -32,7 +38,7 @@ module.exports = function(grunt) {
         watch : {
             test : {
                 files: '**/*.js',
-                tasks: ['test'],
+                tasks: ['mocha:browser'],
                 options: {
                     debounceDelay: 250,
                 }
