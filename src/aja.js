@@ -1,16 +1,20 @@
+
 (function(window){
     'use strict';
 
     var types = ['html', 'json', 'jsonp', 'script', 'style']; 
     var methods = ['get', 'post', 'delete', 'head', 'put', 'options'];
 
+    /**
+     * 
+     */
     var aja = function aja(){
 
         var data = {};
 
         var events = {};
 
-        var _chain = function _chain(name, value, validator){
+        var _chain = function _chain(name, value, validator, update){
             if(typeof value !== 'undefined'){
                 if(typeof validator === 'function'){
                     try{
@@ -20,6 +24,9 @@
                     }
                 }
                 data[name] = value;
+                if(typeof update === 'function'){
+                    update.call(this, value);
+                }
                 return this;
             }
             return data[name] === 'undefined' ? null : data[name];
@@ -43,10 +50,55 @@
                return _chain.call(this, 'type', type, validators.type);
             },
 
-            method : function(method){
-               return _chain.call(this, 'method', method, validators.method);
+            header : function(name, value){
+                data.headers = data.headers || {};
+
+                validators.string(name);
+                if(typeof value !== 'undefined'){
+                    validators.string(value);
+
+                    data.headers[name] = value;
+
+                    return this;
+                }
+
+                return data.headers[name];
             },
 
+            
+            auth : function(user, passwd){
+                //setter only
+    
+                validators.string(user);
+                validators.string(passwd);
+                data.auth = {
+                   user : user,
+                   passwd : passwd 
+                };
+
+                return this;
+            },
+
+            method : function(method){
+               return _chain.call(this, 'method', method, validators.method, function(value){
+                    if(value.toLowerCase() === 'post'){
+                        this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+                    }
+               });
+            },
+
+            params : function(params){
+               //return _chain.call(this, 'method', method, validators.method);
+            },
+        
+            data : function(data){
+
+            },
+            
+            body : function(content){
+
+            },
+            
             into : function(selector){
                 //trigger send
             },
@@ -82,7 +134,11 @@
                 }
 
                 request.open(method, url, async);
-        
+                if(data.headers){
+                    for(var header in data.headers){
+                        request.setRequestHeader(header, data.headers[header]);
+                    }
+                }
                 request.onprogress = function(e){
                     if (e.lengthComputable) {
                         self.trigger('progress', e.loaded / e.total);
