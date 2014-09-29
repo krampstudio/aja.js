@@ -43,6 +43,15 @@ module.exports = function(grunt) {
                     debounceDelay: 250,
                 }
             }
+        },
+
+        jsdoc : {
+            dist : {
+                src: ['src/*.js'], 
+                options: {
+                    destination: 'doc'
+                }
+            }
         }
     });
 

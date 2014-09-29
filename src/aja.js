@@ -1,19 +1,49 @@
-
+/**
+ * Aja.js
+ * Ajax without XML : Asynchronous Javascript and JavaScript/JSON(P)
+ * 
+ * @author Bertrand Chevrier <chevrier.bertrand@gmail.com>
+ * @license MIT
+ */
 (function(window){
     'use strict';
 
-    var types = ['html', 'json', 'jsonp', 'script', 'style']; 
+    /**
+     * supported request types.
+     */
+    var types = ['html', 'json', 'jsonp', 'script', 'style'];
+
+    /**
+     * supported http methods
+     */ 
     var methods = ['get', 'post', 'delete', 'head', 'put', 'options'];
 
     /**
+     * API entry point.
+     * It creates an new {@link Aja} object.
      * 
+     * @exports aja
+     * @returns {Aja} the {@link Aja} object ready to create your request.
      */
     var aja = function aja(){
 
+        //contains all the values from the setter for this context.
         var data = {};
 
+        //contains the bound events.
         var events = {};
 
+        /**
+         * Helps you to chain getter/setters.
+         * @private
+         * @this {Aja} bound to the current context
+         * @param {String} name - the property name
+         * @param {*} [value] - the property value if we are in a setter
+         * @param {Function} [validator] - to validate/transform the value if needed
+         * @param {Function} [update] - when there is more to do with the setter
+         * @returns {Aja|*} either the current context (setter) or the requested value (getter)
+         * @throws TypeError
+         */
         var _chain = function _chain(name, value, validator, update){
             if(typeof value !== 'undefined'){
                 if(typeof validator === 'function'){
@@ -32,24 +62,70 @@
             return data[name] === 'undefined' ? null : data[name];
         };
 
-        return {
+        /**
+         * The Aja object is your context, it provides your getter/setter 
+         * as well as methods the fluent way.
+         * @typedef {Object} Aja
+         */
 
+        /**
+         * @type {Aja}
+         */
+        var Aja = {
+
+            /**
+             * URL getter/setter: where your request goes. 
+             * All URL formats are supported: <pre>[protocol:][//][user[:passwd]@][host.tld]/path[?query][#hash]</pre>
+             * @throws TypeError
+             * @param {String} [url] - the url to set
+             * @returns {Aja|String} chains or get the URL
+             */
             url : function(url){
                return _chain.call(this, 'url', url, validators.string);
             },
 
+            /**
+             * Is the request synchronous (async by default) ?
+             * @param {Boolean|*} [sync] - true means sync (other types than booleans are casted)
+             * @returns {Aja|Boolean} chains or get the sync value
+             */
             sync : function(sync){
                return _chain.call(this, 'sync', sync, validators.bool);
             },
 
+            /**
+             * Should we force to disable browser caching (true by default) ?
+             * By setting this to false, then a buster will be added to the requests.
+             *
+             * @param {Boolean|*} [sync] - false means no cache  (other types than booleans are casted)
+             * @returns {Aja|Boolean} chains or get cache value
+             */
             cache : function(cache){
                return _chain.call(this, 'cache', cache, validators.bool);
             },
 
+            /**
+             * Type getter/setter: one of the predefined request type. 
+             * The supported types are : <pre><'html', 'json', 'jsonp', 'script', 'style'</pre>.
+             * If not set, the default type is deduced regarding the context, but goes to json otherwise.
+             * @throws TypeError
+             * @param {String} [type] - the type to set
+             * @returns {Aja|String} chains or get the type
+             */
             type : function(type){
                return _chain.call(this, 'type', type, validators.type);
             },
 
+            /**
+             * HTTP Request Header getter/setter.
+             *
+             * @example aja().header('Content-Type', 'application/json');
+             * 
+             * @throws TypeError
+             * @param {String} name - the name of the header to get/set
+             * @param {String} [value] - the value of the header to set
+             * @returns {Aja|String} chains or get the header from the given name
+             */
             header : function(name, value){
                 data.headers = data.headers || {};
 
@@ -65,7 +141,14 @@
                 return data.headers[name];
             },
 
-            
+            /**
+             * <strong>Setter only</strong> to add authentication credentials to the request.
+             * 
+             * @throws TypeError
+             * @param {String} user - the user name
+             * @param {String} passwd - the password value
+             * @returns {Aja} chains
+             */
             auth : function(user, passwd){
                 //setter only
     
@@ -168,6 +251,7 @@
                 request.send();
             }
         };
+        return Aja;
     };
 
     var validators = {
