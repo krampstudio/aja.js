@@ -23,6 +23,7 @@
      * It creates an new {@link Aja} object.
      * 
      * @exports aja
+     * @namespace aja
      * @returns {Aja} the {@link Aja} object ready to create your request.
      */
     var aja = function aja(){
@@ -36,6 +37,7 @@
         /**
          * Helps you to chain getter/setters.
          * @private
+         * @memberof aja
          * @this {Aja} bound to the current context
          * @param {String} name - the property name
          * @param {*} [value] - the property value if we are in a setter
@@ -70,13 +72,14 @@
 
         /**
          * @type {Aja}
+         * @lends aja
          */
         var Aja = {
 
             /**
              * URL getter/setter: where your request goes. 
-             * All URL formats are supported: <pre>[protocol:][//][user[:passwd]@][host.tld]/path[?query][#hash]</pre>
-             * @throws TypeError
+             * All URL formats are supported: <pre>[protocol:][//][user[:passwd]@][host.tld]/path[?query][#hash]</pre>.
+             * @throws TypeError  
              * @param {String} [url] - the url to set
              * @returns {Aja|String} chains or get the URL
              */
@@ -108,7 +111,7 @@
              * Type getter/setter: one of the predefined request type. 
              * The supported types are : <pre><'html', 'json', 'jsonp', 'script', 'style'</pre>.
              * If not set, the default type is deduced regarding the context, but goes to json otherwise.
-             * @throws TypeError
+             * @throws TypeError if an unkown type is set
              * @param {String} [type] - the type to set
              * @returns {Aja|String} chains or get the type
              */
@@ -162,6 +165,13 @@
                 return this;
             },
 
+            /**
+             * HTTP method getter/setter.
+             *
+             * @throws TypeError if an unkown method is set
+             * @param {String} [method] - the method to set
+             * @returns {Aja|String} chains or get the method
+             */
             method : function(method){
                return _chain.call(this, 'method', method, validators.method, function(value){
                     if(value.toLowerCase() === 'post'){
@@ -170,8 +180,9 @@
                });
             },
 
+            
             params : function(params){
-               //return _chain.call(this, 'method', method, validators.method);
+               return _chain.call(this, 'params', params, validators.object);
             },
         
             data : function(data){
@@ -267,6 +278,13 @@
             return string; 
         },
 
+        plainObject : function(object){
+            if(typeof object !== 'object' || object.constructor !== Object){
+                throw new TypeError("an object is expected");
+            }
+            return object; 
+        },
+
         type : function(type){
             type = this.string(type);
             if(types.indexOf(type.toLowerCase()) < 0){
@@ -281,7 +299,8 @@
                 throw new TypeError("a method in [" + methods.join(', ') + "] is expected ");
             }
             return method;
-        }        
+        },
+
     };
 
     //TODO UMD ?
