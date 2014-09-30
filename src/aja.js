@@ -182,7 +182,7 @@
 
             
             params : function(params){
-               return _chain.call(this, 'params', params, validators.object);
+               return _chain.call(this, 'params', params, validators.plainObject);
             },
         
             data : function(data){
@@ -216,23 +216,54 @@
 
             go : function(){
                 var self    = this;
-                
+
+                //iterators
+                var key, header; 
+
+                var openParams = [];
+
                 var url     = data.url;
                 var type    = data.type || (data.into ? 'html' : 'json');
                 var method  = data.method || 'get';
                 var async   = data.sync !== true;
                 var request = new XMLHttpRequest();
+                var body    = data.body;
 
                 if(!url){
                     throw new Error('Please set an url, at least.');
                 }
+                if(data.params){
+                    if(method === 'get'){
+                        if(url.indexOf('?') === -1){
+                            url += '?';    
+                        }
+                        for(key in data.parms){
+                            url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data.params[key]); 
+                        }
+                    } else if (method === 'post'){
+                        body = body || '';
+                        for(key in data.parms){
+                            body += key + '=' + data.params[key] + '\n\r';
+                        }
+                    }
+                }
+               
+                //open the XHR request
+                openParams = [method, url, async];
+                if(data.auth){
+                    openParams.push(data.auth.user);
+                    openParams.push(data.auth.passwd);
+                }
+                request.open.apply(request, openParams);
 
-                request.open(method, url, async);
+                //set the headers
                 if(data.headers){
-                    for(var header in data.headers){
+                    for(header in data.headers){
                         request.setRequestHeader(header, data.headers[header]);
                     }
                 }
+
+                //bind events
                 request.onprogress = function(e){
                     if (e.lengthComputable) {
                         self.trigger('progress', e.loaded / e.total);
@@ -259,7 +290,9 @@
                 request.onerror = function(err){
                     self.trigger('error', err);
                 };
-                request.send();
+    
+                //send the request
+                request.send(body);
             }
         };
         return Aja;
@@ -279,6 +312,7 @@
         },
 
         plainObject : function(object){
+            console.log(object, typeof object !== 'object', object.constructor !== Object);
             if(typeof object !== 'object' || object.constructor !== Object){
                 throw new TypeError("an object is expected");
             }
@@ -290,7 +324,7 @@
             if(types.indexOf(type.toLowerCase()) < 0){
                 throw new TypeError("a type in [" + types.join(', ') + "] is expected ");
             }
-            return type;
+            return type.toLowerCase();
         },
 
         method : function(method){
@@ -298,7 +332,7 @@
             if(methods.indexOf(method.toLowerCase()) < 0){
                 throw new TypeError("a method in [" + methods.join(', ') + "] is expected ");
             }
-            return method;
+            return method.toLowerCase();
         },
 
     };

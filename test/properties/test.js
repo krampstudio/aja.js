@@ -203,6 +203,32 @@ describe('aja()', function(){
             });
         });
 
+        describe('params()', function(){
+            var data = {foo : 'bar'};
+
+            it('should be a function', function(){
+                expect(aja().params).to.be.a('function');
+            });
+            
+            it('should accept plain object', function(){
+
+                expect(function(){ aja().params(false); }).to.throw(TypeError);
+                expect(function(){ aja().params("foo=bar"); }).to.throw(TypeError);
+                expect(function(){ aja().params([]); }).to.throw(TypeError);
+
+                expect(function(){ aja().params(data); }).to.not.throw();
+            });
+
+            it('should get / set value', function(){
+                expect(aja().params(data).params()).to.equal(data);
+            });
+
+            it('should chain', function(){
+                var a = aja();
+                expect(a.params(data)).to.be.an('object');
+                expect(a.params(data)).to.equals(a);
+            });
+        });
 
     });
 });
