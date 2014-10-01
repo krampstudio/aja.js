@@ -180,13 +180,27 @@
                });
             },
 
-            
-            params : function(params){
-               return _chain.call(this, 'params', params, validators.plainObject);
+            /**
+             * URL's queryString getter/setter. The parameters are ALWAYS appended to the URL.
+             *
+             * @throws TypeError
+             * @param {Object} [params] - key/values POJO to set
+             * @returns {Aja|String} chains or get the params
+             */
+            queryString : function(params){
+               return _chain.call(this, 'queryString', params, validators.plainObject);
             },
         
-            data : function(data){
-
+            /**
+             * URL's queryString getter/setter.
+             * Regarding the HTTP method the data goes to the queryString or the body.
+             *
+             * @throws TypeError
+             * @param {Object} [params] - key/values POJO to set
+             * @returns {Aja|String} chains or get the params
+             */
+            data : function(params){
+               return _chain.call(this, 'data', params, validators.plainObject);
             },
             
             body : function(content){
@@ -222,29 +236,26 @@
 
                 var openParams = [];
 
-                var url     = data.url;
-                var type    = data.type || (data.into ? 'html' : 'json');
-                var method  = data.method || 'get';
-                var async   = data.sync !== true;
-                var request = new XMLHttpRequest();
-                var body    = data.body;
+                var url         = data.url;
+                var type        = data.type || (data.into ? 'html' : 'json');
+                var method      = data.method || 'get';
+                var async       = data.sync !== true;
+                var request     = new XMLHttpRequest();
+                var queryString = data.queryString;
+                var _data       = data.data;
+                var body        = data.body;
 
-                if(!url){
-                    throw new Error('Please set an url, at least.');
-                }
-                if(data.params){
-                    if(method === 'get'){
-                        if(url.indexOf('?') === -1){
-                            url += '?';    
-                        }
-                        for(key in data.parms){
-                            url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data.params[key]); 
-                        }
-                    } else if (method === 'post'){
+                url = appendQueryString(url,queryString);
+
+                if(_data){
+                    //TODO check which methods may use body parameters
+                    if(['post', 'put'].indexOf(method) > -1){
                         body = body || '';
-                        for(key in data.parms){
-                            body += key + '=' + data.params[key] + '\n\r';
+                        for(key in _data){
+                            body += key + '=' + _data[key] + '\n\r';
                         }
+                    } else {
+                       url =  appendQueryString(url, _data);
                     }
                 }
                
@@ -335,6 +346,20 @@
             return method.toLowerCase();
         },
 
+    };
+
+    var appendQueryString = function appendQueryString(url, params){
+        var key;
+        url = url || '';
+        if(params){ 
+            if(url.indexOf('?') === -1){
+                url += '?';    
+            }
+            for(key in params){
+                url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]); 
+            }
+        }
+        return url;
     };
 
     //TODO UMD ?
