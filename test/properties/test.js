@@ -205,22 +205,24 @@ describe('aja()', function(){
 
         describe('queryString()', function(){
             var data = {foo : 'bar'};
+            var qs  = '?foo=bar&';
 
             it('should be a function', function(){
                 expect(aja().queryString).to.be.a('function');
             });
             
-            it('should accept plain object', function(){
+            it('should accept plain object or strings', function(){
 
                 expect(function(){ aja().queryString(false); }).to.throw(TypeError);
-                expect(function(){ aja().queryString("foo=bar"); }).to.throw(TypeError);
                 expect(function(){ aja().queryString([]); }).to.throw(TypeError);
 
+                expect(function(){ aja().queryString("foo=bar"); }).to.not.throw();
                 expect(function(){ aja().queryString(data); }).to.not.throw();
             });
 
             it('should get / set value', function(){
                 expect(aja().queryString(data).queryString()).to.equal(data);
+                expect(aja().queryString(qs).queryString()).to.deep.equal(data);
             });
 
             it('should chain', function(){
@@ -230,5 +232,30 @@ describe('aja()', function(){
             });
         });
 
+        describe('data()', function(){
+            var data = {foo : 'bar'};
+            it('should be a function', function(){
+                expect(aja().data).to.be.a('function');
+            });
+            
+            it('should accept plain objects', function(){
+
+                expect(function(){ aja().data(false); }).to.throw(TypeError);
+                expect(function(){ aja().data("foo=bar"); }).to.throw(TypeError);
+                expect(function(){ aja().data([]); }).to.throw(TypeError);
+
+                expect(function(){ aja().data(data); }).to.not.throw();
+            });
+
+            it('should get / set value', function(){
+                expect(aja().data(data).data()).to.equal(data);
+            });
+
+            it('should chain', function(){
+                var a = aja();
+                expect(a.data(data)).to.be.an('object');
+                expect(a.data(data)).to.equals(a);
+            });
+        });
     });
 });

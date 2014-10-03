@@ -184,11 +184,11 @@
              * URL's queryString getter/setter. The parameters are ALWAYS appended to the URL.
              *
              * @throws TypeError
-             * @param {Object} [params] - key/values POJO to set
+             * @param {Object|String} [params] - key/values POJO or URL queryString directly to set 
              * @returns {Aja|String} chains or get the params
              */
             queryString : function(params){
-               return _chain.call(this, 'queryString', params, validators.plainObject);
+               return _chain.call(this, 'queryString', params, validators.queryString);
             },
         
             /**
@@ -203,8 +203,29 @@
                return _chain.call(this, 'data', params, validators.plainObject);
             },
             
+            /**
+             * Request Body getter/setter.
+             *
+             * @throws TypeError
+             * @param {String|Object|Array|Boolean|Number|FormData} [content] - the content value to set
+             * @returns {Aja|String|FormData} chains or get the body content
+             */
             body : function(content){
-
+               if(typeof content === 'object'){
+                    //support FormData to be sent direclty
+                    if( ! content instanceof FormData){ 
+                        //otherwise encode the object/array to a string
+                        try {
+                            content = JSON.stringify(content);
+                        } catch(e){
+                            throw new TypeError('Unable to stringify body\'s content : ' + e.name);
+                        }
+                        this.header('Content-Type', 'application/json');
+                    }
+               } else {
+                    content = content + ''; //cast
+               }
+               return _chain.call(this, 'body', content);
             },
             
             into : function(selector){
@@ -323,7 +344,6 @@
         },
 
         plainObject : function(object){
-            console.log(object, typeof object !== 'object', object.constructor !== Object);
             if(typeof object !== 'object' || object.constructor !== Object){
                 throw new TypeError("an object is expected");
             }
@@ -346,6 +366,24 @@
             return method.toLowerCase();
         },
 
+        queryString : function(params){
+            var object = {};
+            if(typeof params === 'string'){
+
+               params.replace('?', '').split('&').forEach(function(kv){
+                    var pair = kv.split('=');
+                    if(pair.length === 2){
+                        object[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);         
+                    }
+               });
+            } else {
+                object = params;
+            }
+            if(typeof object !== 'object' || object.constructor !== Object){
+                throw new TypeError("an object is expected");
+            }
+            return object; 
+        },
     };
 
     var appendQueryString = function appendQueryString(url, params){
