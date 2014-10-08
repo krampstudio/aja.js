@@ -211,21 +211,24 @@
              * @returns {Aja|String|FormData} chains or get the body content
              */
             body : function(content){
-               if(typeof content === 'object'){
-                    //support FormData to be sent direclty
-                    if( ! content instanceof FormData){ 
-                        //otherwise encode the object/array to a string
-                        try {
-                            content = JSON.stringify(content);
-                        } catch(e){
-                            throw new TypeError('Unable to stringify body\'s content : ' + e.name);
+
+               if(typeof content !== 'undefined'){
+                   if(typeof content === 'object'){
+                        //support FormData to be sent direclty
+                        if( !(content instanceof FormData)){ 
+                            //otherwise encode the object/array to a string
+                            try {
+                                content = JSON.stringify(content);
+                            } catch(e){
+                                throw new TypeError('Unable to stringify body\'s content : ' + e.name);
+                            }
+                            this.header('Content-Type', 'application/json');
                         }
-                        this.header('Content-Type', 'application/json');
-                    }
-               } else {
-                    content = content + ''; //cast
-               }
-               return _chain.call(this, 'body', content);
+                   } else {
+                        content = content + ''; //cast
+                   }
+                }
+                return _chain.call(this, 'body', content);
             },
             
             into : function(selector){

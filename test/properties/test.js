@@ -257,5 +257,42 @@ describe('aja()', function(){
                 expect(a.data(data)).to.equals(a);
             });
         });
+
+        describe('body()', function(){
+            
+            it('should be a function', function(){
+                expect(aja().body).to.be.a('function');
+            });
+            
+            it('should accept any value', function(){
+
+                expect(function(){ aja().body(false); }).to.not.throw();
+                expect(function(){ aja().body("foo=bar"); }).to.not.throw();
+                expect(function(){ aja().body(['foo', 'bar']); }).to.not.throw();
+                expect(function(){ aja().body({foo : 'bar'}); }).to.not.throw();
+                expect(function(){ aja().body(new FormData()); }).to.not.throw();
+            });
+
+            it('should get / set value', function(){
+                    
+                expect(aja().body(false).body()).to.equal('false');
+                expect(aja().body('foo=bar').body()).to.equal('foo=bar');
+                
+                var arr = ['foo', 'bar'];
+                expect(aja().body(arr).body()).to.equal(JSON.stringify(arr));
+
+                var obj = {foo: 'bar'}; 
+                expect(aja().body(obj).body()).to.equal(JSON.stringify(obj));
+
+                var fdata = new FormData();
+                expect(aja().body(fdata).body()).to.equal(fdata);
+            });
+
+            it('should chain', function(){
+                var a = aja();
+                expect(a.body('a')).to.be.an('object');
+                expect(a.body('b')).to.equals(a);
+            });
+        });
     });
 });
