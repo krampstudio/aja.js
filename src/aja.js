@@ -55,9 +55,10 @@
                         throw new TypeError(name + " " + e.message);
                     }
                 }
-                data[name] = value;
                 if(typeof update === 'function'){
-                    update.call(this, value);
+                    data[name] = update.call(this, value);
+                } else {
+                    data[name] = value;
                 }
                 return this;
             }
@@ -177,6 +178,7 @@
                     if(value.toLowerCase() === 'post'){
                         this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
                     }
+                    return value;
                });
             },
 
@@ -211,8 +213,7 @@
              * @returns {Aja|String|FormData} chains or get the body content
              */
             body : function(content){
-
-               if(typeof content !== 'undefined'){
+                return _chain.call(this, 'body', content, null, function(content){
                    if(typeof content === 'object'){
                         //support FormData to be sent direclty
                         if( !(content instanceof FormData)){ 
@@ -227,12 +228,26 @@
                    } else {
                         content = content + ''; //cast
                    }
-                }
-                return _chain.call(this, 'body', content);
+                   return content;
+                });
             },
             
+            /**
+             * Into selector getter/setter. When you want an Element to contain the response.
+             *
+             * @throws TypeError
+             * @param {String|HTMLElement} [selector] - the dom query selector or directly the Element
+             * @returns {Aja|Array} chains or get the list of found elements
+             */
             into : function(selector){
-                //trigger send
+                return _chain.call(this, 'into', selector, validators.selector, function(selector){
+                    if(typeof selector === 'string'){
+                        return document.querySelectorAll(selector);
+                    }
+                    if(selector instanceof HTMLElement){
+                        return [selector];
+                    }
+                });
             },
             
             on : function(name, cb){
@@ -386,6 +401,12 @@
                 throw new TypeError("an object is expected");
             }
             return object; 
+        },
+        selector : function(selector){
+            if(typeof selector !== 'string' && typeof selector !== HTMLElement){
+                throw new TypeError("a selector or an HTMLElement is expected");
+            }
+            return selector; 
         },
     };
 
