@@ -16,7 +16,6 @@ Request JSON data
     .go();
 ```
 
-
 Load html into an element
 
 ```javascript
@@ -25,7 +24,6 @@ Load html into an element
     .into('.container')
     .go();
 ```
-
 
 More options using the fluent api, terrific REST client.
 
@@ -52,3 +50,42 @@ More options using the fluent api, terrific REST client.
     .go();
 ```
 
+## Development
+
+### Setup 
+
+You need [grunt >= 0.4][grunt] as well as [node] and [npm] installed and running on your system.
+
+```
+git clone https://github.com/krampstudio/aja.js.git
+cd aja.js
+npm install
+```
+
+### Tests
+
+Run the tests: 
+
+```
+grunt test
+```
+
+### Development
+
+The dev of this library is based on TDD principle. So, dev means *write tests*. Run the developent server :
+
+```
+grunt devtest
+```
+
+So tests run once something is modified and you can access it also at http://localhost:9901/test
+
+## License
+
+Copyright (c) 2014 Bertrand Chevrier `<"chevrier_bertrand gmail_com".replace(/\s/, '@').replace(/_/g, '.')>`
+Licensed under the MIT license.
+
+
+[grunt]: https://gruntjs.com
+[node]: http://nodejs.org
+[npm]: http://npmjs.org
