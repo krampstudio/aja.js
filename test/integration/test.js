@@ -24,4 +24,19 @@ describe('aja()', function(){
             })
             .go();
     }); 
+    
+    it('should load an html sample into an element', function(done){
+        var element = document.getElementById('into1');
+        expect(element).to.not.equal(null);
+        aja()
+            .url('/test/samples/data.html')
+            .into(element)
+            .on('success', function(){
+                expect(element.children.length).to.equal(2);
+                expect(element.children[0].tagName).to.equal('H1');
+                expect(element.children[1].tagName).to.equal('P');
+                done();
+            })
+            .go();
+    }); 
 });

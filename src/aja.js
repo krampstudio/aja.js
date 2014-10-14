@@ -52,7 +52,7 @@
                     try{
                         value = validator.call(validators, value);
                     } catch(e){
-                        throw new TypeError(name + " " + e.message);
+                        throw new TypeError('Failed to set ' + name + ' : ' + e.message);
                     }
                 }
                 if(typeof update === 'function'){
@@ -321,19 +321,24 @@
                 };
         
                 request.onload = function(){
-                    var data = request.responseText;
+                    var response = request.responseText;
                     if(type === 'json'){
                         try {
-                            data = JSON.parse(data);
+                            response= JSON.parse(response);
                         } catch(e){
                             return self.trigger('error', e);
                         }
                     }
+                    if(data.into && data.into.length){
+                        data.into.forEach(function(elt){
+                            elt.innerHTML = response; 
+                        });
+                    }
 
-                    self.trigger(this.status, data);
+                    self.trigger(this.status, response);
 
                     if(this.status >= 200 && this.status < 300){
-                        self.trigger('success', data);
+                        self.trigger('success', response);
                     }
                     self.trigger('end', data);
                 };
@@ -356,14 +361,15 @@
 
         string : function(string){
             if(typeof string !== 'string'){
-                throw new TypeError("a string is expected");
+                throw new TypeError('a string is expected, but ' + string + ' [' + (typeof string) + '] given');
             }
             return string; 
         },
 
         plainObject : function(object){
             if(typeof object !== 'object' || object.constructor !== Object){
-                throw new TypeError("an object is expected");
+                throw new TypeError('an object is expected, but ' + object + '  [' + (typeof object) + '] given');
+
             }
             return object; 
         },
@@ -371,7 +377,7 @@
         type : function(type){
             type = this.string(type);
             if(types.indexOf(type.toLowerCase()) < 0){
-                throw new TypeError("a type in [" + types.join(', ') + "] is expected ");
+                throw new TypeError('a type in [' + types.join(', ') + '] is expected, but ' + type + ' given');
             }
             return type.toLowerCase();
         },
@@ -379,7 +385,7 @@
         method : function(method){
             method = this.string(method);
             if(methods.indexOf(method.toLowerCase()) < 0){
-                throw new TypeError("a method in [" + methods.join(', ') + "] is expected ");
+                throw new TypeError('a method in [' + methods.join(', ') + '] is expected, but ' + method + ' given');
             }
             return method.toLowerCase();
         },
@@ -397,14 +403,11 @@
             } else {
                 object = params;
             }
-            if(typeof object !== 'object' || object.constructor !== Object){
-                throw new TypeError("an object is expected");
-            }
-            return object; 
+            return this.plainObject(object);
         },
         selector : function(selector){
-            if(typeof selector !== 'string' && typeof selector !== HTMLElement){
-                throw new TypeError("a selector or an HTMLElement is expected");
+            if(typeof selector !== 'string' && !(selector instanceof HTMLElement)){
+                throw new TypeError('a selector or an HTMLElement is expected, ' + selector + ' [' + (typeof selector) + '] given');
             }
             return selector; 
         },
