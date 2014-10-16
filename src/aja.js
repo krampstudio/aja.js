@@ -261,8 +261,29 @@
             },
 
             trigger : function(name, data){
-                if(typeof events[name] === 'function'){
-                    events[name].call(this, data);
+                var self = this;
+                if(typeof name !== 'undefined'){
+                    name = name + '';
+                    var statusPattern = /^([0-9])([0-9x])([0-9x])$/i;
+                    var triggerStatus = name.match(statusPattern);
+                     
+                    //HTTP status pattern
+                    if(triggerStatus && triggerStatus.length > 3){
+                        Object.keys(events).forEach(function(eventName){
+                            var listenerStatus = eventName.match(statusPattern);
+                            if(listenerStatus && listenerStatus.length > 3 &&       //an listener on status
+                                triggerStatus[1] === listenerStatus[1] &&           //hundreds match exactly
+                                (listenerStatus[2] === 'x' ||  triggerStatus[2] === listenerStatus[2]) && //tens matches 
+                                (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //tens matches 
+
+                                events[eventName].call(self, data);             
+                            } 
+                        });
+                    //or exact matching
+                    } else if(typeof events[name] === 'function'){
+                                console.log('trigger ' + name);
+                       events[name].call(this, data);
+                    }
                 }
                 return this;
             },

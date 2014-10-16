@@ -3,6 +3,7 @@
 var aja = window.aja;
 
 describe('aja()', function(){
+    this.timeout(1000);
 
     //test basic module behavior
     it('should be a function', function(){
@@ -35,6 +36,26 @@ describe('aja()', function(){
                 expect(element.children.length).to.equal(2);
                 expect(element.children[0].tagName).to.equal('H1');
                 expect(element.children[1].tagName).to.equal('P');
+                done();
+            })
+            .go();
+    }); 
+
+    it('should load the json sample and trigger a 200', function(done){
+        aja()
+            .url('/test/samples/data.json')
+            .on('200', function(data){
+                expect(data).to.be.an('object');
+                done();
+            })
+            .go();
+    }); 
+    
+    it('should load the json sample and trigger a 20x like', function(done){
+        aja()
+            .url('/test/samples/data.json')
+            .on('20x', function(data){
+                expect(data).to.be.an('object');
                 done();
             })
             .go();
