@@ -59,5 +59,15 @@ describe('aja()', function(){
                 done();
             })
             .go();
+    });
+ 
+    it('should trigger a 404 on wrong URL', function(done){
+        aja()
+            .url('/test/zamples/zaza.json')
+            .on('404', function(data){
+                expect(data).to.be.an('string');
+                done();
+            })
+            .go();
     }); 
 });

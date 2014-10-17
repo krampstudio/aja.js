@@ -281,7 +281,7 @@
                         });
                     //or exact matching
                     } else if(typeof events[name] === 'function'){
-                                console.log('trigger ' + name);
+
                        events[name].call(this, data);
                     }
                 }
@@ -343,28 +343,31 @@
         
                 request.onload = function(){
                     var response = request.responseText;
-                    if(type === 'json'){
-                        try {
-                            response= JSON.parse(response);
-                        } catch(e){
-                            return self.trigger('error', e);
-                        }
-                    }
-                    if(data.into && data.into.length){
-                        data.into.forEach(function(elt){
-                            elt.innerHTML = response; 
-                        });
-                    }
-
-                    self.trigger(this.status, response);
 
                     if(this.status >= 200 && this.status < 300){
+
+                        if(type === 'json'){
+                            try {
+                                response= JSON.parse(response);
+                            } catch(e){
+                                return self.trigger('error', e);
+                            }
+                        }
+                        if(data.into && data.into.length){
+                            data.into.forEach(function(elt){
+                                elt.innerHTML = response; 
+                            });
+                        }
                         self.trigger('success', response);
                     }
-                    self.trigger('end', data);
+                    
+                    self.trigger(this.status, response);
+                    
+
+                    self.trigger('end', response);
                 };
                 request.onerror = function(err){
-                    self.trigger('error', err);
+                    self.trigger('error', err, arguments);
                 };
     
                 //send the request
