@@ -4,7 +4,6 @@ var aja = window.aja;
 
 describe('aja()', function(){
 
-    //test basic module behavior
     it('should be a function', function(){
         expect(aja).to.be.a('function');
     });
@@ -56,7 +55,7 @@ describe('aja()', function(){
                 expect(a.sync(true)).to.equals(a);
             });
         });
-            
+        
         describe('cache()', function(){
 
             it('should be a function', function(){
@@ -292,6 +291,40 @@ describe('aja()', function(){
                 var a = aja();
                 expect(a.body('a')).to.be.an('object');
                 expect(a.body('b')).to.equals(a);
+            });
+        });
+        
+        describe('into()', function(){
+            
+            it('should be a function', function(){
+                expect(aja().into).to.be.a('function');
+            });
+            
+            it('should accept only selectors and HTMLElement', function(){
+
+                expect(function(){ aja().into('#foo-container'); }).to.not.throw();
+                expect(function(){ aja().into('#fixtures > .bar'); }).to.not.throw();
+                expect(function(){ aja().into(document.getElementById('foo-container')); }).to.not.throw();
+                expect(function(){ aja().into(false); }).to.throw(TypeError);
+                expect(function(){ aja().into(new Date()); }).to.throw(TypeError);
+                expect(function(){ aja().into([]); }).to.throw(TypeError);
+    
+            });
+
+            it('should get / set value', function(){
+                var elt = document.getElementById('foo-container');
+                expect(aja().into(elt).into()).to.be.an('array');
+                expect(aja().into(elt).into()[0]).to.be.an.instanceOf(HTMLElement);
+                expect(aja().into('#foo-container').into()[0]).to.be.an.instanceof(HTMLElement);
+                expect(aja().into(elt).into()[0].id).to.equal(elt.id);
+                expect(aja().into('#foo-container').into()[0].id).to.equal(elt.id);
+                
+            });
+
+            it('should chain', function(){
+                var a = aja();
+                expect(a.into('#foo-container')).to.be.an('object');
+                expect(a.into('#foo-container')).to.equals(a);
             });
         });
     });
