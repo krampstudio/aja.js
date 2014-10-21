@@ -27,11 +27,23 @@ module.exports = function(grunt) {
 
         connect : {
             test : {
-              options : {
-                hostname : 'localhost',
-                port : 9901,
-                base : '.'
-              }
+                options : {
+                    hostname : 'localhost',
+                    port : 9901,
+                    base : '.',
+                    middleware: function(connect, options, middlewares) {
+                       var url = require('url');
+                       return [function(req, res, next) {
+                            if(/(jsonp)|(callback)/.test(req.url)){
+                                var parsed = url.parse(req.url, true);
+                                var path = parsed.pathname.replace(/^\//, '');
+                                var jsonp = parsed.query.jsonp || parsed.query.callback;
+                                return res.end(jsonp + '(' + grunt.file.read(path) + ');');
+                            }
+                            return next();
+                        }].concat(middlewares);
+                    },
+                }
             }
         },
 

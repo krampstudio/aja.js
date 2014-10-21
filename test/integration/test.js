@@ -46,6 +46,8 @@ describe('aja()', function(){
             .url('/test/samples/data.json')
             .on('200', function(data){
                 expect(data).to.be.an('object');
+                expect(data).to.contain.keys(['kill']);
+                expect(data.kill).to.equal('bill');
                 done();
             })
             .go();
@@ -56,6 +58,8 @@ describe('aja()', function(){
             .url('/test/samples/data.json')
             .on('20x', function(data){
                 expect(data).to.be.an('object');
+                expect(data).to.contain.keys(['kill']);
+                expect(data.kill).to.equal('bill');
                 done();
             })
             .go();
@@ -66,6 +70,19 @@ describe('aja()', function(){
             .url('/test/zamples/zaza.json')
             .on('404', function(data){
                 expect(data).to.be.an('string');
+                done();
+            })
+            .go();
+    }); 
+    
+    it('should handle jsonp', function(done){
+        aja()
+            .url('/test/samples/data.json')
+            .type('jsonp')
+            .on('success', function(data){
+                expect(data).to.be.an('object');
+                expect(data).to.contain.keys(['kill']);
+                expect(data.kill).to.equal('bill');
                 done();
             })
             .go();

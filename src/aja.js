@@ -249,6 +249,14 @@
                     }
                 });
             },
+
+            jsonPaddingName : function(paramName){
+                return _chain.call(this, 'jsonPaddingName', paramName, validators.string);
+            },
+
+            jsonPadding : function(padding){
+                return _chain.call(this, 'jsonPadding', padding, validators.function);
+            },
             
             on : function(name, cb){
                 events[name] = cb;
@@ -288,6 +296,7 @@
                 return this;
             },
 
+            //TODO split the method. (By type ?)
             go : function(){
                 var self    = this;
 
@@ -300,12 +309,55 @@
                 var type        = data.type || (data.into ? 'html' : 'json');
                 var method      = data.method || 'get';
                 var async       = data.sync !== true;
+                var cache       = typeof data.cache !== 'undefined' ? !!data.cache : true;
                 var request     = new XMLHttpRequest();
                 var queryString = data.queryString;
                 var _data       = data.data;
                 var body        = data.body;
+                var jsonPadding, jsonPaddingName, script, head;
 
-                url = appendQueryString(url,queryString);
+                //add a cache buster
+                if(cache === false){
+                   queryString += 'ajabuster=' + new Date().getTime(); 
+                }
+
+                url = appendQueryString(url, queryString);
+
+                //TODO move that in a separated function
+                if(type === 'jsonp'){
+                    _data = _data || {};
+                    head = document.querySelector('head');
+
+                    jsonPaddingName = data.jsonPaddingName || 'callback';
+                    jsonPadding = data.jsonPadding || ('_padd' + new Date().getTime() + Math.floor(Math.random() * 10000));
+                    if(aja[jsonPadding]){
+                        throw new Error('Padding ' + jsonPadding + '  already exists. It must be unique.');
+                    }
+                    if(!/^ajajsonp_/.test(jsonPadding)){
+                        jsonPadding = 'ajajsonp_' + jsonPadding;
+                    }
+
+                    //window.ajajsonp = window.ajajsonp || {};
+                    window[jsonPadding] = function padding (response){
+                        self.trigger('success', response);
+                        head.removeChild(script);
+                        window[jsonPadding] = undefined;
+                    };
+ 
+                    _data[jsonPaddingName] = jsonPadding;
+                    url =  appendQueryString(url, _data);
+                    
+                    script = document.createElement('script');
+                    script.async = async;
+                    script.src = url;
+                    script.onerror = function(){
+                        self.trigger('error', arguments);
+                        head.removeChild(script);
+                        window[jsonPadding] = undefined;
+                    };
+                    head.appendChild(script);
+                    return;
+                }
 
                 if(_data){
                     //TODO check which methods may use body parameters
@@ -341,7 +393,7 @@
                     }
                 };
         
-                request.onload = function(){
+                request.onload = function onRequestLoad(){
                     var response = request.responseText;
 
                     if(this.status >= 200 && this.status < 300){
@@ -362,11 +414,11 @@
                     }
                     
                     self.trigger(this.status, response);
-                    
 
                     self.trigger('end', response);
                 };
-                request.onerror = function(err){
+
+                request.onerror = function onRequestError (err){
                     self.trigger('error', err, arguments);
                 };
     
@@ -435,6 +487,13 @@
             }
             return selector; 
         },
+
+        'function' : function(functionName){
+            functionName = this.string(functionName);
+            if(!/^[a-z_]{1}[a-z0-9_\-]+$/i.test(functionName)){
+                throw new TypeError('a valid function name is expected, ' + functionName + ' [' + (typeof functionName) + '] given');
+            }
+         }
     };
 
     var appendQueryString = function appendQueryString(url, params){
