@@ -52,7 +52,7 @@ module.exports = function(grunt) {
                 files: '**/*.js',
                 tasks: ['mocha:browser'],
                 options: {
-                    debounceDelay: 250,
+                    debounceDelay: 2000,
                 }
             }
         },
