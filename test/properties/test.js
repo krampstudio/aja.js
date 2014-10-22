@@ -327,5 +327,32 @@ describe('aja()', function(){
                 expect(a.into('#foo-container')).to.equals(a);
             });
         });
+        
+        describe('jsonPaddingName()', function(){
+            
+            it('should be a function', function(){
+                expect(aja().jsonPaddingName).to.be.a('function');
+            });
+            
+            it('should accept only strings', function(){
+
+                expect(function(){ aja().jsonPaddingName(false); }).to.throw(TypeError);
+                expect(function(){ aja().jsonPaddingName([]); }).to.throw(TypeError);
+
+                expect(function(){ aja().jsonPaddingName("cb"); }).to.not.throw();
+            });
+
+            it('should get / set value', function(){
+                expect(aja().jsonPaddingName('cb').jsonPaddingName()).to.equal('cb');
+                expect(aja().jsonPaddingName('callback').jsonPaddingName()).to.equal('callback');
+                
+            });
+
+            it('should chain', function(){
+                var a = aja();
+                expect(a.jsonPaddingName('cb')).to.be.an('object');
+                expect(a.jsonPaddingName('cb')).to.equals(a);
+            });
+        });
     });
 });
