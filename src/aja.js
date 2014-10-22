@@ -250,10 +250,24 @@
                 });
             },
 
+            /**
+             * Padding name  getter/setter, ie. the callback's PARAMETER name in your JSONP query.
+             *
+             * @throws TypeError
+             * @param {String} [paramName] - a valid parameter name
+             * @returns {Aja|String} chains or get the parameter name
+             */
             jsonPaddingName : function(paramName){
                 return _chain.call(this, 'jsonPaddingName', paramName, validators.string);
             },
 
+            /**
+             * Padding value  getter/setter, ie. the callback's name in your JSONP query.
+             *
+             * @throws TypeError
+             * @param {String} [padding] - a valid function name
+             * @returns {Aja|String} chains or get the padding name
+             */
             jsonPadding : function(padding){
                 return _chain.call(this, 'jsonPadding', padding, validators.function);
             },
