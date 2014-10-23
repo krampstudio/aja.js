@@ -40,12 +40,29 @@ More options using the fluent api, terrific REST client.
   aja()
     .method('PUT')
     .url('/api/customer')
+    .cache(false)
     .body({id : 12, firstname: 'John Romuald', job : 'linguist'})
     .on('200', function(response){
         //well done
     })
+     .on('40*', function(response){
+        //something is definitely wrong
+    })
     .on('500', function(response){
         //oh crap
+    })
+    .go();
+```
+
+JSONP
+
+```javascript
+  aja()
+    .url('http://otherdomain.com/api/remoteScript')
+    .type('jsonp')
+    .padding('someGlobalFunction')
+    .on('success', function(data){
+        //Fuk cross origin policy 
     })
     .go();
 ```
