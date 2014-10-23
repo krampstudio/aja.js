@@ -97,6 +97,11 @@ grunt devtest
 
 So tests run once something is modified and you can access it also at http://localhost:9901/test
 
+## Contributing
+
+Contributions (issue reporting, bug fixes, feedback, typos, gimie a tip, etc.) are really welcomed! 
+This library is developed using the TDD principles, so I accept pull request only if they come with the according unit/integration test.
+
 ## License
 
 Copyright (c) 2014 Bertrand Chevrier `<"chevrier_bertrand gmail_com".replace(/\s/, '@').replace(/_/g, '.')>`
