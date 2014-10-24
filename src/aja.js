@@ -269,7 +269,7 @@
              * @returns {Aja|String} chains or get the padding name
              */
             jsonPadding : function(padding){
-                return _chain.call(this, 'jsonPadding', padding, validators.function);
+                return _chain.call(this, 'jsonPadding', padding, validators.func);
             },
             
             on : function(name, cb){
@@ -502,11 +502,12 @@
             return selector; 
         },
 
-        'function' : function(functionName){
+        func : function(functionName){
             functionName = this.string(functionName);
-            if(!/^[a-z_]{1}[a-z0-9_\-]+$/i.test(functionName)){
+            if(!/^([a-zA-Z_]{1})([a-zA-Z0-9_\-])+$/.test(functionName)){
                 throw new TypeError('a valid function name is expected, ' + functionName + ' [' + (typeof functionName) + '] given');
             }
+            return functionName;
          }
     };
 

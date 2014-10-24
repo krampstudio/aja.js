@@ -354,5 +354,35 @@ describe('aja()', function(){
                 expect(a.jsonPaddingName('cb')).to.equals(a);
             });
         });
+        
+        describe('jsonPadding()', function(){
+            
+            it('should be a function', function(){
+                expect(aja().jsonPadding).to.be.a('function');
+            });
+            
+            it('should accept only valid function names', function(){
+
+                expect(function(){ aja().jsonPadding(false); }).to.throw(TypeError);
+                expect(function(){ aja().jsonPadding([]); }).to.throw(TypeError);
+                expect(function(){ aja().jsonPadding("1globalfn"); }).to.throw(TypeError);
+                expect(function(){ aja().jsonPadding("[globalfn"); }).to.throw(TypeError);
+                expect(function(){ aja().jsonPadding("églobalfn"); }).to.throw(TypeError);
+
+                expect(function(){ aja().jsonPadding("globalfn"); }).to.not.throw();
+            });
+
+            it('should get / set value', function(){
+                expect(aja().jsonPadding('cb').jsonPadding()).to.equal('cb');
+                expect(aja().jsonPadding('callback').jsonPadding()).to.equal('callback');
+                
+            });
+
+            it('should chain', function(){
+                var a = aja();
+                expect(a.jsonPadding('cb')).to.be.an('object');
+                expect(a.jsonPadding('cb')).to.equals(a);
+            });
+        });
     });
 });
