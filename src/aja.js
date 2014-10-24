@@ -271,19 +271,53 @@
             jsonPadding : function(padding){
                 return _chain.call(this, 'jsonPadding', padding, validators.func);
             },
-            
+           
+            /**
+             * Attach an handler to an event.
+             * Calling `on` with the same eventName multiple times add callbacks: they
+             * will all be executed. 
+             * 
+             * @param {String} name - the name of the event to listen 
+             * @param {Function} cb - the callback to run once the event is triggered
+             * @returns {Aja} chains
+             */ 
             on : function(name, cb){
-                events[name] = cb;
+                if(typeof cb === 'function'){
+                    events[name] = events[name] || [];
+                    events[name].push(cb);
+                }
                 return this;
             },
 
-            off : function(name, cb){
-                events[name] = null;
+            /**
+             * Remove ALL handlers for an event.
+             * 
+             * @param {String} name - the name of the event 
+             * @returns {Aja} chains
+             */
+            off : function(name){
+                events[name] = [];
                 return this;
             },
 
+            /**
+             * Trigger an event.
+             * This method will be called hardly ever outside Aja itself,
+             * but there is edge cases where it can be usefull.
+             *
+             * @param {String} name - the name of the event to trigger
+             * @param {*} data - arguments given to the handlers
+             * @returns {Aja} chains
+             */
             trigger : function(name, data){
                 var self = this;
+                var eventCalls  = function eventCalls(name, data){
+                    if(events[name] instanceof Array){
+                        events[name].forEach(function(event){
+                            event.call(self, data);             
+                        });
+                    }
+                };
                 if(typeof name !== 'undefined'){
                     name = name + '';
                     var statusPattern = /^([0-9])([0-9x])([0-9x])$/i;
@@ -298,13 +332,12 @@
                                 (listenerStatus[2] === 'x' ||  triggerStatus[2] === listenerStatus[2]) && //tens matches 
                                 (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //tens matches 
 
-                                events[eventName].call(self, data);             
+                                eventCalls(eventName, data);
                             } 
                         });
                     //or exact matching
-                    } else if(typeof events[name] === 'function'){
-
-                       events[name].call(this, data);
+                    } else if(events[name]){
+                       eventCalls(name, data);
                     }
                 }
                 return this;
