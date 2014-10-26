@@ -18,6 +18,11 @@
     
     <script src="../../node_modules/mocha/mocha.js"></script>
     <script src="../../node_modules/chai/chai.js"></script>
+<script src="../../node_modules/blanket/dist/mocha/blanket_mocha.js"
+        data-cover-flags="branchTracking"
+        data-cover-adapter="../../node_modules/blanket/src/adapters/mocha-blanket.js"></script>
+    </script>
+
 
     <!-- set up mocha and chai-->
     <script>
@@ -25,15 +30,20 @@
         mocha.setup('bdd');
     </script>
     
-    <script src="../../src/aja.js"></script>
+    <script data-cover src="../../src/aja.js"></script>
     <script src="test.js"></script>
-    <!-- run mocha -->
+    <script src="../../node_modules/grunt-blanket-mocha/support/mocha-blanket.js"></script>
     <script>
-        // If tests run in a real browser
-        // Can alternatively do a check on window.PHANTOMJS
-        if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+         if (window.PHANTOMJS) {
+            //to report coverage to grunt
+            blanket.options("reporter", "../../node_modules/grunt-blanket-mocha/support/grunt-reporter.js");
+         } else {
+            // If tests run in a real browser
             mocha.run();
-        }
+         }
     </script>
+
+
+
 </body>
 </html>

@@ -25,6 +25,22 @@ module.exports = function(grunt) {
             }
         },
 
+        'blanket_mocha' : {
+            browser : {
+                //src : ['test/**/index.html'],
+                options : {
+                    threshold : 1,
+                    urls : [
+                        'http://localhost:9901/test/properties/index.html', 
+                        'http://localhost:9901/test/methods/index.html', 
+                        'http://localhost:9901/test/integration/index.html'
+                    ],
+                    reporter : 'Spec',
+                    run : true,
+                    timeout : 10000
+                }
+            }
+        },
         connect : {
             test : {
                 options : {
@@ -70,7 +86,8 @@ module.exports = function(grunt) {
     });
 
     //tasks related unit tests
-    grunt.registerTask('test', ['connect:test', 'mocha:browser']);
+    //grunt.registerTask('test', ['connect:test', 'mocha:browser']);
+    grunt.registerTask('test', ['connect:test', 'blanket_mocha:browser']);
 
     grunt.registerTask('devtest', ['connect:test', 'watch:test']);
 };

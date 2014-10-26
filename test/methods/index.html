@@ -15,6 +15,11 @@
     
     <script src="../../node_modules/mocha/mocha.js"></script>
     <script src="../../node_modules/chai/chai.js"></script>
+    <script src="../../node_modules/grunt-blanket-mocha/node_modules/blanket/dist/mocha/blanket_mocha.min.js"
+        data-cover-flags="branchTracking"
+        data-cover-only="//src/">
+    </script>
+    <script src="../../node_modules/grunt-blanket-mocha/support/mocha-blanket.js"></script>
 
     <!-- set up mocha and chai-->
     <script>
@@ -25,13 +30,14 @@
     <script src="../../src/aja.js"></script>
     <script src="test.js"></script>
     
-    <!-- run mocha -->
     <script>
-        // If tests run in a real browser
-        // Can alternatively do a check on window.PHANTOMJS
-        if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+         if (window.PHANTOMJS) {
+            //to report coverage to grunt
+            blanket.options("reporter", "../../node_modules/grunt-blanket-mocha/support/grunt-reporter.js");
+         } else {
+            // If tests run in a real browser
             mocha.run();
-        }
+         }
     </script>
 </body>
 </html>
