@@ -66,6 +66,41 @@
         };
 
         /**
+         * @private
+         * @memberof aja
+         */
+        var _dataInBody = function _dataInBody(){
+            var method = data.method || 'get';
+            
+            //TODO check which methods may use body parameters
+            return ['post', 'put'].indexOf(method) > -1;
+        };
+
+        /**
+         * @private
+         * @memberof aja
+         */
+        var _buildQuery = function _buildQuery(){
+
+            var url         = data.url;
+            var cache       = typeof data.cache !== 'undefined' ? !!data.cache : true;
+            var queryString = data.queryString;
+            var _data       = data.data;
+
+            //add a cache buster
+            if(cache === false){
+               queryString += 'ajabuster=' + new Date().getTime(); 
+            }
+
+            url = appendQueryString(url, queryString);
+
+            if(_data && !_dataInBody()){
+               url =  appendQueryString(url, _data);
+            }
+            return url;
+        };
+
+        /**
          * The Aja object is your context, it provides your getter/setter 
          * as well as methods the fluent way.
          * @typedef {Object} Aja
@@ -352,69 +387,25 @@
 
                 var openParams = [];
 
-                var url         = data.url;
                 var type        = data.type || (data.into ? 'html' : 'json');
                 var method      = data.method || 'get';
                 var async       = data.sync !== true;
-                var cache       = typeof data.cache !== 'undefined' ? !!data.cache : true;
                 var request     = new XMLHttpRequest();
                 var queryString = data.queryString;
                 var _data       = data.data;
                 var body        = data.body;
-                var jsonPadding, jsonPaddingName, script, head;
 
-                //add a cache buster
-                if(cache === false){
-                   queryString += 'ajabuster=' + new Date().getTime(); 
+
+                var url = _buildQuery();
+
+                if(typeof ajaGo[type] === 'function'){
+                    ajaGo[type].call(this, url);
                 }
 
-                url = appendQueryString(url, queryString);
-
-                //TODO move that in a separated function
-                if(type === 'jsonp'){
-                    _data = _data || {};
-                    head = document.querySelector('head');
-
-                    jsonPaddingName = data.jsonPaddingName || 'callback';
-                    jsonPadding = data.jsonPadding || ('_padd' + new Date().getTime() + Math.floor(Math.random() * 10000));
-                    if(aja[jsonPadding]){
-                        throw new Error('Padding ' + jsonPadding + '  already exists. It must be unique.');
-                    }
-                    if(!/^ajajsonp_/.test(jsonPadding)){
-                        jsonPadding = 'ajajsonp_' + jsonPadding;
-                    }
-
-                    //window.ajajsonp = window.ajajsonp || {};
-                    window[jsonPadding] = function padding (response){
-                        self.trigger('success', response);
-                        head.removeChild(script);
-                        window[jsonPadding] = undefined;
-                    };
- 
-                    _data[jsonPaddingName] = jsonPadding;
-                    url =  appendQueryString(url, _data);
-                    
-                    script = document.createElement('script');
-                    script.async = async;
-                    script.src = url;
-                    script.onerror = function(){
-                        self.trigger('error', arguments);
-                        head.removeChild(script);
-                        window[jsonPadding] = undefined;
-                    };
-                    head.appendChild(script);
-                    return;
-                }
-
-                if(_data){
-                    //TODO check which methods may use body parameters
-                    if(['post', 'put'].indexOf(method) > -1){
-                        body = body || '';
-                        for(key in _data){
-                            body += key + '=' + _data[key] + '\n\r';
-                        }
-                    } else {
-                       url =  appendQueryString(url, _data);
+                if(_data && _dataInBody(method)){
+                    body = body || '';
+                    for(key in _data){
+                        body += key + '=' + _data[key] + '\n\r';
                     }
                 }
                
@@ -473,8 +464,56 @@
                 request.send(body);
             }
         };
+
+        var ajaGo = {
+
+            /**
+             * @this {Aja}
+             */
+            jsonp : function(url){
+                var script;
+                var self            = this;
+                var head            = document.querySelector('head');
+                var async           = data.sync !== true;
+                var jsonPaddingName = data.jsonPaddingName || 'callback';
+                var jsonPadding     = data.jsonPadding || ('_padd' + new Date().getTime() + Math.floor(Math.random() * 10000));
+
+                if(aja[jsonPadding]){
+                    throw new Error('Padding ' + jsonPadding + '  already exists. It must be unique.');
+                }
+                if(!/^ajajsonp_/.test(jsonPadding)){
+                    jsonPadding = 'ajajsonp_' + jsonPadding;
+                }
+
+                //window.ajajsonp = window.ajajsonp || {};
+                window[jsonPadding] = function padding (response){
+                    self.trigger('success', response);
+                    head.removeChild(script);
+                    window[jsonPadding] = undefined;
+                };
+
+                url =  appendQueryString(url, {
+                    jsonPaddingName : jsonPadding
+                });
+                
+                script = document.createElement('script');
+                script.async = async;
+                script.src = url;
+                script.onerror = function(){
+                    self.trigger('error', arguments);
+                    head.removeChild(script);
+                    window[jsonPadding] = undefined;
+                };
+                head.appendChild(script);
+                return;
+            }
+        };
+
         return Aja;
     };
+
+
+    
 
     var validators = {
 
