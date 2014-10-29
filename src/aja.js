@@ -21,6 +21,8 @@
     /**
      * API entry point.
      * It creates an new {@link Aja} object.
+     *        
+     * @example aja().url('page.html').into('#selector').go();
      * 
      * @exports aja
      * @namespace aja
@@ -33,6 +35,483 @@
 
         //contains the bound events.
         var events = {};
+
+        /**
+         * The Aja object is your context, it provides your getter/setter 
+         * as well as methods the fluent way.
+         * @typedef {Object} Aja
+         */
+
+        /**
+         * @type {Aja}
+         * @lends aja
+         */
+        var Aja = {
+
+            /**
+             * URL getter/setter: where your request goes. 
+             * All URL formats are supported: <pre>[protocol:][//][user[:passwd]@][host.tld]/path[?query][#hash]</pre>.
+             *
+             * @example aja().url('bestlib?pattern=aja');
+             *
+             * @throws TypeError  
+             * @param {String} [url] - the url to set
+             * @returns {Aja|String} chains or get the URL
+             */
+            url : function(url){
+               return _chain.call(this, 'url', url, validators.string);
+            },
+
+            /**
+             * Is the request synchronous (async by default) ?
+             *
+             * @example aja().sync(true);
+             *
+             * @param {Boolean|*} [sync] - true means sync (other types than booleans are casted)
+             * @returns {Aja|Boolean} chains or get the sync value
+             */
+            sync : function(sync){
+               return _chain.call(this, 'sync', sync, validators.bool);
+            },
+
+            /**
+             * Should we force to disable browser caching (true by default) ?
+             * By setting this to false, then a buster will be added to the requests.
+             *
+             * @example aja().cache(false);
+             *
+             * @param {Boolean|*} [sync] - false means no cache  (other types than booleans are casted)
+             * @returns {Aja|Boolean} chains or get cache value
+             */
+            cache : function(cache){
+               return _chain.call(this, 'cache', cache, validators.bool);
+            },
+
+            /**
+             * Type getter/setter: one of the predefined request type. 
+             * The supported types are : <pre>['html', 'json', 'jsonp', 'script', 'style']</pre>.
+             * If not set, the default type is deduced regarding the context, but goes to json otherwise.
+             *
+             * @example aja().type('json');
+             *
+             * @throws TypeError if an unkown type is set
+             * @param {String} [type] - the type to set
+             * @returns {Aja|String} chains or get the type
+             */
+            type : function(type){
+               return _chain.call(this, 'type', type, validators.type);
+            },
+
+            /**
+             * HTTP Request Header getter/setter.
+             *
+             * @example aja().header('Content-Type', 'application/json');
+             * 
+             * @throws TypeError
+             * @param {String} name - the name of the header to get/set
+             * @param {String} [value] - the value of the header to set
+             * @returns {Aja|String} chains or get the header from the given name
+             */
+            header : function(name, value){
+                data.headers = data.headers || {};
+
+                validators.string(name);
+                if(typeof value !== 'undefined'){
+                    validators.string(value);
+
+                    data.headers[name] = value;
+
+                    return this;
+                }
+
+                return data.headers[name];
+            },
+
+            /**
+             * <strong>Setter only</strong> to add authentication credentials to the request.
+             * 
+             * @throws TypeError
+             * @param {String} user - the user name
+             * @param {String} passwd - the password value
+             * @returns {Aja} chains
+             */
+            auth : function(user, passwd){
+                //setter only
+    
+                validators.string(user);
+                validators.string(passwd);
+                data.auth = {
+                   user : user,
+                   passwd : passwd 
+                };
+
+                return this;
+            },
+
+            /**
+             * HTTP method getter/setter.
+             *
+             * @example aja().method('post');
+             *
+             * @throws TypeError if an unkown method is set
+             * @param {String} [method] - the method to set
+             * @returns {Aja|String} chains or get the method
+             */
+            method : function(method){
+               return _chain.call(this, 'method', method, validators.method, function(value){
+                    if(value.toLowerCase() === 'post'){
+                        this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+                    }
+                    return value;
+               });
+            },
+
+            /**
+             * URL's queryString getter/setter. The parameters are ALWAYS appended to the URL.
+             *
+             * @example aja().queryString({ user : '12' }); //  ?user=12
+             *
+             * @throws TypeError
+             * @param {Object|String} [params] - key/values POJO or URL queryString directly to set 
+             * @returns {Aja|String} chains or get the params
+             */
+            queryString : function(params){
+               return _chain.call(this, 'queryString', params, validators.queryString);
+            },
+        
+            /**
+             * URL's queryString getter/setter.
+             * Regarding the HTTP method the data goes to the queryString or the body.
+             *
+             * @example aja().data({ user : '12' });
+             *
+             * @throws TypeError
+             * @param {Object} [params] - key/values POJO to set
+             * @returns {Aja|String} chains or get the params
+             */
+            data : function(params){
+               return _chain.call(this, 'data', params, validators.plainObject);
+            },
+            
+            /**
+             * Request Body getter/setter.
+             * Objects and arrays are stringified (except FormData instances) 
+             *
+             * @example aja().body(new FormData());
+             *
+             * @throws TypeError
+             * @param {String|Object|Array|Boolean|Number|FormData} [content] - the content value to set
+             * @returns {Aja|String|FormData} chains or get the body content
+             */
+            body : function(content){
+                return _chain.call(this, 'body', content, null, function(content){
+                   if(typeof content === 'object'){
+                        //support FormData to be sent direclty
+                        if( !(content instanceof FormData)){ 
+                            //otherwise encode the object/array to a string
+                            try {
+                                content = JSON.stringify(content);
+                            } catch(e){
+                                throw new TypeError('Unable to stringify body\'s content : ' + e.name);
+                            }
+                            this.header('Content-Type', 'application/json');
+                        }
+                   } else {
+                        content = content + ''; //cast
+                   }
+                   return content;
+                });
+            },
+            
+            /**
+             * Into selector getter/setter. When you want an Element to contain the response.
+             *
+             * @example aja().into('div > .container');
+             *
+             * @throws TypeError
+             * @param {String|HTMLElement} [selector] - the dom query selector or directly the Element
+             * @returns {Aja|Array} chains or get the list of found elements
+             */
+            into : function(selector){
+                return _chain.call(this, 'into', selector, validators.selector, function(selector){
+                    if(typeof selector === 'string'){
+                        return document.querySelectorAll(selector);
+                    }
+                    if(selector instanceof HTMLElement){
+                        return [selector];
+                    }
+                });
+            },
+
+            /**
+             * Padding name  getter/setter, ie. the callback's PARAMETER name in your JSONP query.
+             *
+             * @example aja().jsonPaddingName('callback');
+             *
+             * @throws TypeError
+             * @param {String} [paramName] - a valid parameter name
+             * @returns {Aja|String} chains or get the parameter name
+             */
+            jsonPaddingName : function(paramName){
+                return _chain.call(this, 'jsonPaddingName', paramName, validators.string);
+            },
+
+            /**
+             * Padding value  getter/setter, ie. the callback's name in your JSONP query.
+             *
+             * @example aja().jsonPadding('someFunction');
+             *
+             * @throws TypeError
+             * @param {String} [padding] - a valid function name
+             * @returns {Aja|String} chains or get the padding name
+             */
+            jsonPadding : function(padding){
+                return _chain.call(this, 'jsonPadding', padding, validators.func);
+            },
+           
+            /**
+             * Attach an handler to an event.
+             * Calling `on` with the same eventName multiple times add callbacks: they
+             * will all be executed. 
+             *
+             * @example aja().on('success', function(res){ console.log('Cool', res);  });
+             * 
+             * @param {String} name - the name of the event to listen 
+             * @param {Function} cb - the callback to run once the event is triggered
+             * @returns {Aja} chains
+             */ 
+            on : function(name, cb){
+                if(typeof cb === 'function'){
+                    events[name] = events[name] || [];
+                    events[name].push(cb);
+                }
+                return this;
+            },
+
+            /**
+             * Remove ALL handlers for an event.
+             *
+             * @example aja().off('success');
+             * 
+             * @param {String} name - the name of the event 
+             * @returns {Aja} chains
+             */
+            off : function(name){
+                events[name] = [];
+                return this;
+            },
+
+            /**
+             * Trigger an event.
+             * This method will be called hardly ever outside Aja itself,
+             * but there is edge cases where it can be usefull.
+             *
+             * @example aja().trigger('error', new Error('Emergency alert'));
+             *
+             * @param {String} name - the name of the event to trigger
+             * @param {*} data - arguments given to the handlers
+             * @returns {Aja} chains
+             */
+            trigger : function(name, data){
+                var self = this;
+                var eventCalls  = function eventCalls(name, data){
+                    if(events[name] instanceof Array){
+                        events[name].forEach(function(event){
+                            event.call(self, data);             
+                        });
+                    }
+                };
+                if(typeof name !== 'undefined'){
+                    name = name + '';
+                    var statusPattern = /^([0-9])([0-9x])([0-9x])$/i;
+                    var triggerStatus = name.match(statusPattern);
+                     
+                    //HTTP status pattern
+                    if(triggerStatus && triggerStatus.length > 3){
+                        Object.keys(events).forEach(function(eventName){
+                            var listenerStatus = eventName.match(statusPattern);
+                            if(listenerStatus && listenerStatus.length > 3 &&       //an listener on status
+                                triggerStatus[1] === listenerStatus[1] &&           //hundreds match exactly
+                                (listenerStatus[2] === 'x' ||  triggerStatus[2] === listenerStatus[2]) && //tens matches 
+                                (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //tens matches 
+
+                                eventCalls(eventName, data);
+                            } 
+                        });
+                    //or exact matching
+                    } else if(events[name]){
+                       eventCalls(name, data);
+                    }
+                }
+                return this;
+            },
+
+            /**
+             * Trigger the call.
+             * This is the end of your chain loop. 
+             *
+             * @example aja()
+             *           .url('data.json')
+             *           .on('200', function(res){ 
+             *               //Yeah !
+             *            })
+             *           .go();
+             */
+            go : function(){
+
+                var type    = data.type || (data.into ? 'html' : 'json');
+                var url     = _buildQuery();
+
+                if(typeof ajaGo[type] === 'function'){
+                    return ajaGo[type].call(this, url);
+                }
+            }
+        };
+
+        /**
+         * Contains the different communication methods.
+         * Used as mixins by {@link Aja.go}
+         *
+         * @type {Object}
+         * @private
+         * @memberof aja
+         */
+        var ajaGo = {
+
+            json : function(url){
+                var self = this;
+                ajaGo._xhr.call(this, url, function processRes(res){
+                    try {
+                        res = JSON.parse(res);
+                    } catch(e){
+                        self.trigger('error', e);
+                        return null;
+                    }
+                    return res;
+                });
+            },
+
+            html : function(url){
+                var self = this;
+                ajaGo._xhr.call(this, url, function processRes(res){
+                    if(data.into && data.into.length){
+                        data.into.forEach(function(elt){
+                            elt.innerHTML = res; 
+                        });
+                    }
+                    return res;
+                });
+            },
+
+            _xhr : function(url, processRes){
+                var self = this;
+
+                //iterators
+                var key, header; 
+
+                var method      = data.method || 'get';
+                var async       = data.sync !== true;
+                var request     = new XMLHttpRequest();
+                var queryString = data.queryString;
+                var _data       = data.data;
+                var body        = data.body;
+                var openParams = [];
+
+                if(_data && _dataInBody(method)){
+                    body = body || '';
+                    for(key in _data){
+                        body += key + '=' + _data[key] + '\n\r';
+                    }
+                }
+               
+                //open the XHR request
+                openParams = [method, url, async];
+                if(data.auth){
+                    openParams.push(data.auth.user);
+                    openParams.push(data.auth.passwd);
+                }
+                request.open.apply(request, openParams);
+
+                //set the headers
+                if(data.headers){
+                    for(header in data.headers){
+                        request.setRequestHeader(header, data.headers[header]);
+                    }
+                }
+
+                //bind events
+                request.onprogress = function(e){
+                    if (e.lengthComputable) {
+                        self.trigger('progress', e.loaded / e.total);
+                    }
+                };
+        
+                request.onload = function onRequestLoad(){
+                    var response = request.responseText;
+
+                    if(this.status >= 200 && this.status < 300){
+                        if(typeof processRes === 'function'){
+                            response = processRes(response);
+                        }
+                        self.trigger('success', response);
+                    }
+                    
+                    self.trigger(this.status, response);
+
+                    self.trigger('end', response);
+                };
+
+                request.onerror = function onRequestError (err){
+                    self.trigger('error', err, arguments);
+                };
+    
+                //send the request
+                request.send(body);
+            },
+
+            /**
+             * @this {Aja} call bound to the Aja context
+             * @param {String} url - the url 
+             */
+            jsonp : function(url){
+                var script;
+                var self            = this;
+                var head            = document.querySelector('head');
+                var async           = data.sync !== true;
+                var jsonPaddingName = data.jsonPaddingName || 'callback';
+                var jsonPadding     = data.jsonPadding || ('_padd' + new Date().getTime() + Math.floor(Math.random() * 10000));
+                var paddingQuery    = {};
+
+                if(aja[jsonPadding]){
+                    throw new Error('Padding ' + jsonPadding + '  already exists. It must be unique.');
+                }
+                if(!/^ajajsonp_/.test(jsonPadding)){
+                    jsonPadding = 'ajajsonp_' + jsonPadding;
+                }
+
+                //window.ajajsonp = window.ajajsonp || {};
+                window[jsonPadding] = function padding (response){
+                    self.trigger('success', response);
+                    head.removeChild(script);
+                    window[jsonPadding] = undefined;
+                };
+
+                paddingQuery[jsonPaddingName] = jsonPadding;
+                
+                url =  appendQueryString(url, paddingQuery);
+                
+                script = document.createElement('script');
+                script.async = async;
+                script.src = url;
+                script.onerror = function(){
+                    self.trigger('error', arguments);
+                    head.removeChild(script);
+                    window[jsonPadding] = undefined;
+                };
+                head.appendChild(script);
+                return;
+            }
+        };
 
         /**
          * Helps you to chain getter/setters.
@@ -100,416 +579,7 @@
             return url;
         };
 
-        /**
-         * The Aja object is your context, it provides your getter/setter 
-         * as well as methods the fluent way.
-         * @typedef {Object} Aja
-         */
-
-        /**
-         * @type {Aja}
-         * @lends aja
-         */
-        var Aja = {
-
-            /**
-             * URL getter/setter: where your request goes. 
-             * All URL formats are supported: <pre>[protocol:][//][user[:passwd]@][host.tld]/path[?query][#hash]</pre>.
-             * @throws TypeError  
-             * @param {String} [url] - the url to set
-             * @returns {Aja|String} chains or get the URL
-             */
-            url : function(url){
-               return _chain.call(this, 'url', url, validators.string);
-            },
-
-            /**
-             * Is the request synchronous (async by default) ?
-             * @param {Boolean|*} [sync] - true means sync (other types than booleans are casted)
-             * @returns {Aja|Boolean} chains or get the sync value
-             */
-            sync : function(sync){
-               return _chain.call(this, 'sync', sync, validators.bool);
-            },
-
-            /**
-             * Should we force to disable browser caching (true by default) ?
-             * By setting this to false, then a buster will be added to the requests.
-             *
-             * @param {Boolean|*} [sync] - false means no cache  (other types than booleans are casted)
-             * @returns {Aja|Boolean} chains or get cache value
-             */
-            cache : function(cache){
-               return _chain.call(this, 'cache', cache, validators.bool);
-            },
-
-            /**
-             * Type getter/setter: one of the predefined request type. 
-             * The supported types are : <pre><'html', 'json', 'jsonp', 'script', 'style'</pre>.
-             * If not set, the default type is deduced regarding the context, but goes to json otherwise.
-             * @throws TypeError if an unkown type is set
-             * @param {String} [type] - the type to set
-             * @returns {Aja|String} chains or get the type
-             */
-            type : function(type){
-               return _chain.call(this, 'type', type, validators.type);
-            },
-
-            /**
-             * HTTP Request Header getter/setter.
-             *
-             * @example aja().header('Content-Type', 'application/json');
-             * 
-             * @throws TypeError
-             * @param {String} name - the name of the header to get/set
-             * @param {String} [value] - the value of the header to set
-             * @returns {Aja|String} chains or get the header from the given name
-             */
-            header : function(name, value){
-                data.headers = data.headers || {};
-
-                validators.string(name);
-                if(typeof value !== 'undefined'){
-                    validators.string(value);
-
-                    data.headers[name] = value;
-
-                    return this;
-                }
-
-                return data.headers[name];
-            },
-
-            /**
-             * <strong>Setter only</strong> to add authentication credentials to the request.
-             * 
-             * @throws TypeError
-             * @param {String} user - the user name
-             * @param {String} passwd - the password value
-             * @returns {Aja} chains
-             */
-            auth : function(user, passwd){
-                //setter only
-    
-                validators.string(user);
-                validators.string(passwd);
-                data.auth = {
-                   user : user,
-                   passwd : passwd 
-                };
-
-                return this;
-            },
-
-            /**
-             * HTTP method getter/setter.
-             *
-             * @throws TypeError if an unkown method is set
-             * @param {String} [method] - the method to set
-             * @returns {Aja|String} chains or get the method
-             */
-            method : function(method){
-               return _chain.call(this, 'method', method, validators.method, function(value){
-                    if(value.toLowerCase() === 'post'){
-                        this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
-                    }
-                    return value;
-               });
-            },
-
-            /**
-             * URL's queryString getter/setter. The parameters are ALWAYS appended to the URL.
-             *
-             * @throws TypeError
-             * @param {Object|String} [params] - key/values POJO or URL queryString directly to set 
-             * @returns {Aja|String} chains or get the params
-             */
-            queryString : function(params){
-               return _chain.call(this, 'queryString', params, validators.queryString);
-            },
-        
-            /**
-             * URL's queryString getter/setter.
-             * Regarding the HTTP method the data goes to the queryString or the body.
-             *
-             * @throws TypeError
-             * @param {Object} [params] - key/values POJO to set
-             * @returns {Aja|String} chains or get the params
-             */
-            data : function(params){
-               return _chain.call(this, 'data', params, validators.plainObject);
-            },
-            
-            /**
-             * Request Body getter/setter.
-             *
-             * @throws TypeError
-             * @param {String|Object|Array|Boolean|Number|FormData} [content] - the content value to set
-             * @returns {Aja|String|FormData} chains or get the body content
-             */
-            body : function(content){
-                return _chain.call(this, 'body', content, null, function(content){
-                   if(typeof content === 'object'){
-                        //support FormData to be sent direclty
-                        if( !(content instanceof FormData)){ 
-                            //otherwise encode the object/array to a string
-                            try {
-                                content = JSON.stringify(content);
-                            } catch(e){
-                                throw new TypeError('Unable to stringify body\'s content : ' + e.name);
-                            }
-                            this.header('Content-Type', 'application/json');
-                        }
-                   } else {
-                        content = content + ''; //cast
-                   }
-                   return content;
-                });
-            },
-            
-            /**
-             * Into selector getter/setter. When you want an Element to contain the response.
-             *
-             * @throws TypeError
-             * @param {String|HTMLElement} [selector] - the dom query selector or directly the Element
-             * @returns {Aja|Array} chains or get the list of found elements
-             */
-            into : function(selector){
-                return _chain.call(this, 'into', selector, validators.selector, function(selector){
-                    if(typeof selector === 'string'){
-                        return document.querySelectorAll(selector);
-                    }
-                    if(selector instanceof HTMLElement){
-                        return [selector];
-                    }
-                });
-            },
-
-            /**
-             * Padding name  getter/setter, ie. the callback's PARAMETER name in your JSONP query.
-             *
-             * @throws TypeError
-             * @param {String} [paramName] - a valid parameter name
-             * @returns {Aja|String} chains or get the parameter name
-             */
-            jsonPaddingName : function(paramName){
-                return _chain.call(this, 'jsonPaddingName', paramName, validators.string);
-            },
-
-            /**
-             * Padding value  getter/setter, ie. the callback's name in your JSONP query.
-             *
-             * @throws TypeError
-             * @param {String} [padding] - a valid function name
-             * @returns {Aja|String} chains or get the padding name
-             */
-            jsonPadding : function(padding){
-                return _chain.call(this, 'jsonPadding', padding, validators.func);
-            },
-           
-            /**
-             * Attach an handler to an event.
-             * Calling `on` with the same eventName multiple times add callbacks: they
-             * will all be executed. 
-             * 
-             * @param {String} name - the name of the event to listen 
-             * @param {Function} cb - the callback to run once the event is triggered
-             * @returns {Aja} chains
-             */ 
-            on : function(name, cb){
-                if(typeof cb === 'function'){
-                    events[name] = events[name] || [];
-                    events[name].push(cb);
-                }
-                return this;
-            },
-
-            /**
-             * Remove ALL handlers for an event.
-             * 
-             * @param {String} name - the name of the event 
-             * @returns {Aja} chains
-             */
-            off : function(name){
-                events[name] = [];
-                return this;
-            },
-
-            /**
-             * Trigger an event.
-             * This method will be called hardly ever outside Aja itself,
-             * but there is edge cases where it can be usefull.
-             *
-             * @param {String} name - the name of the event to trigger
-             * @param {*} data - arguments given to the handlers
-             * @returns {Aja} chains
-             */
-            trigger : function(name, data){
-                var self = this;
-                var eventCalls  = function eventCalls(name, data){
-                    if(events[name] instanceof Array){
-                        events[name].forEach(function(event){
-                            event.call(self, data);             
-                        });
-                    }
-                };
-                if(typeof name !== 'undefined'){
-                    name = name + '';
-                    var statusPattern = /^([0-9])([0-9x])([0-9x])$/i;
-                    var triggerStatus = name.match(statusPattern);
-                     
-                    //HTTP status pattern
-                    if(triggerStatus && triggerStatus.length > 3){
-                        Object.keys(events).forEach(function(eventName){
-                            var listenerStatus = eventName.match(statusPattern);
-                            if(listenerStatus && listenerStatus.length > 3 &&       //an listener on status
-                                triggerStatus[1] === listenerStatus[1] &&           //hundreds match exactly
-                                (listenerStatus[2] === 'x' ||  triggerStatus[2] === listenerStatus[2]) && //tens matches 
-                                (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //tens matches 
-
-                                eventCalls(eventName, data);
-                            } 
-                        });
-                    //or exact matching
-                    } else if(events[name]){
-                       eventCalls(name, data);
-                    }
-                }
-                return this;
-            },
-
-            //TODO split the method. (By type ?)
-            go : function(){
-                var self    = this;
-
-                //iterators
-                var key, header; 
-
-                var openParams = [];
-
-                var type        = data.type || (data.into ? 'html' : 'json');
-                var method      = data.method || 'get';
-                var async       = data.sync !== true;
-                var request     = new XMLHttpRequest();
-                var queryString = data.queryString;
-                var _data       = data.data;
-                var body        = data.body;
-
-
-                var url = _buildQuery();
-
-                if(typeof ajaGo[type] === 'function'){
-                    return ajaGo[type].call(this, url);
-                }
-
-                if(_data && _dataInBody(method)){
-                    body = body || '';
-                    for(key in _data){
-                        body += key + '=' + _data[key] + '\n\r';
-                    }
-                }
-               
-                //open the XHR request
-                openParams = [method, url, async];
-                if(data.auth){
-                    openParams.push(data.auth.user);
-                    openParams.push(data.auth.passwd);
-                }
-                request.open.apply(request, openParams);
-
-                //set the headers
-                if(data.headers){
-                    for(header in data.headers){
-                        request.setRequestHeader(header, data.headers[header]);
-                    }
-                }
-
-                //bind events
-                request.onprogress = function(e){
-                    if (e.lengthComputable) {
-                        self.trigger('progress', e.loaded / e.total);
-                    }
-                };
-        
-                request.onload = function onRequestLoad(){
-                    var response = request.responseText;
-
-                    if(this.status >= 200 && this.status < 300){
-
-                        if(type === 'json'){
-                            try {
-                                response= JSON.parse(response);
-                            } catch(e){
-                                return self.trigger('error', e);
-                            }
-                        }
-                        if(data.into && data.into.length){
-                            data.into.forEach(function(elt){
-                                elt.innerHTML = response; 
-                            });
-                        }
-                        self.trigger('success', response);
-                    }
-                    
-                    self.trigger(this.status, response);
-
-                    self.trigger('end', response);
-                };
-
-                request.onerror = function onRequestError (err){
-                    self.trigger('error', err, arguments);
-                };
-    
-                //send the request
-                request.send(body);
-            }
-        };
-
-        var ajaGo = {
-
-            /**
-             * @this {Aja}
-             */
-            jsonp : function(url){
-                var script;
-                var self            = this;
-                var head            = document.querySelector('head');
-                var async           = data.sync !== true;
-                var jsonPaddingName = data.jsonPaddingName || 'callback';
-                var jsonPadding     = data.jsonPadding || ('_padd' + new Date().getTime() + Math.floor(Math.random() * 10000));
-                var paddingQuery    = {};
-
-                if(aja[jsonPadding]){
-                    throw new Error('Padding ' + jsonPadding + '  already exists. It must be unique.');
-                }
-                if(!/^ajajsonp_/.test(jsonPadding)){
-                    jsonPadding = 'ajajsonp_' + jsonPadding;
-                }
-
-                //window.ajajsonp = window.ajajsonp || {};
-                window[jsonPadding] = function padding (response){
-                    self.trigger('success', response);
-                    head.removeChild(script);
-                    window[jsonPadding] = undefined;
-                };
-
-                paddingQuery[jsonPaddingName] = jsonPadding;
-                
-                url =  appendQueryString(url, paddingQuery);
-                
-                script = document.createElement('script');
-                script.async = async;
-                script.src = url;
-                script.onerror = function(){
-                    self.trigger('error', arguments);
-                    head.removeChild(script);
-                    window[jsonPadding] = undefined;
-                };
-                head.appendChild(script);
-                return;
-            }
-        };
-
+        //expose the Aja function 
         return Aja;
     };
 
