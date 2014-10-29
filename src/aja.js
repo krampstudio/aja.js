@@ -399,7 +399,7 @@
                 var url = _buildQuery();
 
                 if(typeof ajaGo[type] === 'function'){
-                    ajaGo[type].call(this, url);
+                    return ajaGo[type].call(this, url);
                 }
 
                 if(_data && _dataInBody(method)){
@@ -477,6 +477,7 @@
                 var async           = data.sync !== true;
                 var jsonPaddingName = data.jsonPaddingName || 'callback';
                 var jsonPadding     = data.jsonPadding || ('_padd' + new Date().getTime() + Math.floor(Math.random() * 10000));
+                var paddingQuery    = {};
 
                 if(aja[jsonPadding]){
                     throw new Error('Padding ' + jsonPadding + '  already exists. It must be unique.');
@@ -492,9 +493,9 @@
                     window[jsonPadding] = undefined;
                 };
 
-                url =  appendQueryString(url, {
-                    jsonPaddingName : jsonPadding
-                });
+                paddingQuery[jsonPaddingName] = jsonPadding;
+                
+                url =  appendQueryString(url, paddingQuery);
                 
                 script = document.createElement('script');
                 script.async = async;
