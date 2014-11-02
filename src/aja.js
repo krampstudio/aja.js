@@ -378,6 +378,11 @@
          */
         var ajaGo = {
 
+
+            /**
+             * XHR call to url to retrieve JSON
+             * @param {String} url - the 
+             */
             json : function(url){
                 var self = this;
                 ajaGo._xhr.call(this, url, function processRes(res){
@@ -391,6 +396,10 @@
                 });
             },
 
+            /**
+             * XHR call to url to retrieve HTML and add it to a container if set.
+             * @param {String} url - the 
+             */
             html : function(url){
                 var self = this;
                 ajaGo._xhr.call(this, url, function processRes(res){
@@ -403,6 +412,11 @@
                 });
             },
 
+            /**
+             * Create and send an XHR query.
+             * @param {String} url - the 
+             * @param {Function} processRes - to modify / process the response before sent to events.
+             */
             _xhr : function(url, processRes){
                 var self = this;
 
