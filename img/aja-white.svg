@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="420"
+   height="160"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="aja-white.svg"
+   inkscape:export-filename="/home/bertrand/dev/projects/aja.js/img/logo.png"
+   inkscape:export-xdpi="32.786858"
+   inkscape:export-ydpi="32.786858">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#222222"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.0937857"
+     inkscape:cx="185.18645"
+     inkscape:cy="50.925158"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1301"
+     inkscape:window-height="744"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     fit-margin-top="1"
+     fit-margin-left="1"
+     fit-margin-right="1"
+     fit-margin-bottom="1">
+    <sodipodi:guide
+       orientation="0,1"
+       position="-13.868954,18.0502"
+       id="guide3779" />
+    <sodipodi:guide
+       orientation="-0.70710678,0.70710678"
+       position="-8.6971436,187.42709"
+       id="guide3781" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="1.0000063,104.03158"
+       id="guide3783" />
+    <inkscape:grid
+       type="xygrid"
+       id="grid2996"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-129.58826,-4.698774)">
+    <g
+       id="g3773">
+      <text
+         sodipodi:linespacing="125%"
+         id="text2985"
+         y="109.97234"
+         x="124.20235"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:-5px;word-spacing:0px;fill:#efefef;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-size:144px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-5px;fill:#efefef;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Nimbus Mono L;-inkscape-font-specification:Nimbus Mono L Bold"
+           y="109.97234"
+           x="124.20235"
+           id="tspan2987"
+           sodipodi:role="line">aja<tspan
+   rotate="15 0"
+   dx="0"
+   id="tspan2989"
+   style="font-size:48px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-15px;fill:#efefef;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Nimbus Mono L;-inkscape-font-specification:Nimbus Mono L Bold">.</tspan><tspan
+   dy="0 15"
+   rotate="20 35 0"
+   id="tspan3769"
+   style="font-size:100px;letter-spacing:-5px;fill:#efefef;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"><tspan
+   id="tspan3785"
+   style="letter-spacing:-15px;fill:#efefef;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none">j</tspan>s</tspan></tspan></text>
+      <rect
+         ry="7.2142129"
+         y="125.12576"
+         x="131.15314"
+         height="14.428426"
+         width="109.9026"
+         id="rect3777"
+         style="fill:#efefef;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <rect
+         ry="0"
+         y="125.40272"
+         x="230.39793"
+         height="13.828253"
+         width="15.334625"
+         id="rect3777-4"
+         style="fill:#efefef;fill-opacity:1;stroke:none" />
+    </g>
+  </g>
+</svg>

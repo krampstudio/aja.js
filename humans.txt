@@ -1,0 +1,11 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Bertrand Chevrier -- Developer -- @kramp
+
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3

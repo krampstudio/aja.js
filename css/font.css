@@ -1,0 +1,10 @@
+@font-face {
+	font-family: 'ajicon';
+	src:url('../fonts/ajicon.eot?-ondbfv');
+	src:url('../fonts/ajicon.eot?#iefix-ondbfv') format('embedded-opentype'),
+		url('../fonts/ajicon.woff?-ondbfv') format('woff'),
+		url('../fonts/ajicon.ttf?-ondbfv') format('truetype'),
+		url('../fonts/ajicon.svg?-ondbfv#ajicon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
