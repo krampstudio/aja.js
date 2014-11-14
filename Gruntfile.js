@@ -9,9 +9,10 @@ module.exports = function(grunt) {
 
         pkg : grunt.file.readJSON('package.json'),
 
+
+
         mocha : {
             browser : {
-                //src : ['test/**/index.html'],
                 options : {
                     urls : [
                         'http://localhost:9901/test/properties/index.html', 
@@ -57,6 +58,28 @@ module.exports = function(grunt) {
             }
         },
 
+        instrument: {
+          files: 'src/*.js',
+          options: {
+            lazy: true,
+            basePath: '.coverage/instrument/'
+          }
+        },
+
+        storeCoverage: {
+          options: {
+            dir: '.coverage/data'
+          }
+        },
+
+        makeReport: {
+          src: '.coverage/data/**/*.json',
+          options: {
+            type: 'html',
+            dir: '.coverage/reports',
+          },
+        },
+
         jsdoc : {
             dist : {
                 src: ['src/*.js', 'README.md'], 
@@ -72,6 +95,7 @@ module.exports = function(grunt) {
 
     //tasks related unit tests
     grunt.registerTask('test', ['connect:test', 'mocha:browser']);
+    grunt.registerTask('testcov', ['connect:test', 'instrument', 'mocha:browser', 'storeCoverage', 'makeReport']);
 
     grunt.registerTask('devtest', ['connect:test', 'watch:test']);
 };
