@@ -10,8 +10,9 @@
 
     /**
      * supported request types.
+     * TODO support types new types :   'script', 'style', 'file'?
      */
-    var types = ['html', 'json', 'jsonp', 'script', 'style'];
+    var types = ['html', 'json', 'jsonp'];
 
     /**
      * supported http methods
@@ -362,6 +363,7 @@
                 var type    = data.type || (data.into ? 'html' : 'json');
                 var url     = _buildQuery();
 
+                //delegates to ajaGo
                 if(typeof ajaGo[type] === 'function'){
                     return ajaGo[type].call(this, url);
                 }
@@ -370,7 +372,7 @@
 
         /**
          * Contains the different communication methods.
-         * Used as mixins by {@link Aja.go}
+         * Used as provider by {@link Aja.go}
          *
          * @type {Object}
          * @private
@@ -559,8 +561,10 @@
         };
 
         /**
+         * Check wheter the data must be set in the body instead of the queryString
          * @private
          * @memberof aja
+         * @returns {Boolean} true id data goes to the body
          */
         var _dataInBody = function _dataInBody(){
             var method = data.method || 'get';
@@ -570,8 +574,10 @@
         };
 
         /**
+         * Build the URL to run the request against.
          * @private
          * @memberof aja
+         * @returns {String} the URL
          */
         var _buildQuery = function _buildQuery(){
 
@@ -597,15 +603,26 @@
         return Aja;
     };
 
-
-    
-
+    /**
+     * Validation/reparation rules for Aja's getter/setter.
+     */
     var validators = {
 
+        /**
+         * cast to boolean
+         * @param {*} value 
+         * @returns {Boolean} casted value
+         */
         bool : function(value){
             return !!value;    
         },
 
+        /**
+         * Check wheter the given parameter is a string
+         * @param {String} value 
+         * @returns {String} value
+         * @throws {TypeError} for non strings
+         */
         string : function(string){
             if(typeof string !== 'string'){
                 throw new TypeError('a string is expected, but ' + string + ' [' + (typeof string) + '] given');
@@ -613,6 +630,12 @@
             return string; 
         },
 
+        /**
+         * Check wheter the given parameter is a plain object (array and functions arn't accepeted)
+         * @param {Object} object
+         * @returns {Object} object
+         * @throws {TypeError} for non object
+         */
         plainObject : function(object){
             if(typeof object !== 'object' || object.constructor !== Object){
                 throw new TypeError('an object is expected, but ' + object + '  [' + (typeof object) + '] given');
@@ -621,6 +644,13 @@
             return object; 
         },
 
+        /**
+         * Check wheter the given parameter is a type supported by Aja.
+         * The list of supported types is set above, in the {@link types} variable.
+         * @param {String} type
+         * @returns {String} type
+         * @throws {TypeError} if the type isn't supported
+         */
         type : function(type){
             type = this.string(type);
             if(types.indexOf(type.toLowerCase()) < 0){
@@ -629,6 +659,13 @@
             return type.toLowerCase();
         },
 
+        /**
+         * Check wheter the given HTTP method is supported.
+         * The list of supported methods is set above, in the {@link methods} variable.
+         * @param {String} method
+         * @returns {String} method (but to lower case)
+         * @throws {TypeError} if the method isn't supported
+         */
         method : function(method){
             method = this.string(method);
             if(methods.indexOf(method.toLowerCase()) < 0){
@@ -637,6 +674,13 @@
             return method.toLowerCase();
         },
 
+        /**
+         * Check the queryString, and create an object if a string is given.
+         * 
+         * @param {String|Object} params 
+         * @returns {Object} key/value based queryString
+         * @throws {TypeError} if wrong params type or if the string isn't parseable
+         */
         queryString : function(params){
             var object = {};
             if(typeof params === 'string'){
@@ -652,6 +696,14 @@
             }
             return this.plainObject(object);
         },
+
+        /**
+         * Check if the parameter enables us to select a DOM Element.
+         * 
+         * @param {String|HTMLElement} selector - CSS selector or the element ref
+         * @returns {String|HTMLElement} same as input if valid
+         * @throws {TypeError} check it's a string or an HTMLElement
+         */
         selector : function(selector){
             if(typeof selector !== 'string' && !(selector instanceof HTMLElement)){
                 throw new TypeError('a selector or an HTMLElement is expected, ' + selector + ' [' + (typeof selector) + '] given');
@@ -659,6 +711,13 @@
             return selector; 
         },
 
+        /**
+         * Check if the parameter is a valid JavaScript function name.
+         * 
+         * @param {String} functionName
+         * @returns {String} same as input if valid
+         * @throws {TypeError} check it's a string and a valid name against the pattern inside.
+         */
         func : function(functionName){
             functionName = this.string(functionName);
             if(!/^([a-zA-Z_]{1})([a-zA-Z0-9_\-])+$/.test(functionName)){
@@ -668,6 +727,13 @@
          }
     };
 
+    /**
+     * Query string helper : append some parameters
+     * @private
+     * @param {String} url - the URL to append the parameters
+     * @param {Object} params - key/value 
+     * @returns {String} the new URL 
+     */
     var appendQueryString = function appendQueryString(url, params){
         var key;
         url = url || '';
@@ -679,6 +745,7 @@
                 url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]); 
             }
         }
+
         return url;
     };
 
