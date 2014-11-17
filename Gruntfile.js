@@ -1,58 +1,82 @@
 module.exports = function(grunt) {
     'use strict';
 
+    var url = require('url');
+    var coverageDir = '.coverage';
+
+
+    var instrumentMiddleware = function(req, res, next) {
+        if (/aja\.js$/.test(req.url)) {
+            return grunt.file.read(coverageDir + '/instrument/src/aja.js');
+        }
+        return next();
+    };
+
+    var jsonpMiddleware = function(req, res, next) {
+        if (/(jsonp)|(callback)/.test(req.url)) {
+            var parsed = url.parse(req.url, true);
+            var path = parsed.pathname.replace(/^\//, '');
+            var jsonp = parsed.query.jsonp || parsed.query.callback;
+            return res.end(jsonp + '(' + grunt.file.read(path) + ');');
+        }
+        return next();
+    };
+
     //load npm tasks
     require('load-grunt-tasks')(grunt);
 
     // Project configuration.
     grunt.initConfig({
 
-        pkg : grunt.file.readJSON('package.json'),
+        pkg: grunt.file.readJSON('package.json'),
 
-
-
-        mocha : {
-            browser : {
-                options : {
-                    urls : [
-                        'http://localhost:9901/test/properties/index.html', 
-                        'http://localhost:9901/test/methods/index.html', 
-                        'http://localhost:9901/test/integration/index.html'
-                    ],
-                    reporter : 'Spec',
-                    run : true,
-                    timeout : 10000,
+        //mocha but from grunt-mocha-phantom-istanbul 
+        mocha: {
+            options: {
+                urls: [
+                    'http://localhost:9901/test/properties/index.html',
+                    'http://localhost:9901/test/methods/index.html',
+                    'http://localhost:9901/test/integration/index.html'
+                ],
+                reporter: 'Spec',
+                run: true,
+                timeout: 10000,
+            },
+            browser: {},
+            browsercov: {
+                options: {
                     coverage: {
-                        coverageFile: '.coverage/data.json'
+                        coverageFile: coverageDir + '/data.json'
                     }
                 }
             }
         },
 
-        connect : {
-            test : {
-                options : {
-                    hostname : 'localhost',
-                    port : 9901,
-                    base : '.',
+        connect: {
+            test: {
+                options: {
+                    hostname: 'localhost',
+                    port: 9901,
+                    base: '.',
                     middleware: function(connect, options, middlewares) {
-                       var url = require('url');
-                       return [function(req, res, next) {
-                            if(/(jsonp)|(callback)/.test(req.url)){
-                                var parsed = url.parse(req.url, true);
-                                var path = parsed.pathname.replace(/^\//, '');
-                                var jsonp = parsed.query.jsonp || parsed.query.callback;
-                                return res.end(jsonp + '(' + grunt.file.read(path) + ');');
-                            }
-                            return next();
-                        }].concat(middlewares);
+                        return [jsonpMiddleware].concat(middlewares);
+                    },
+                }
+            },
+            testcov: {
+                options: {
+                    hostname: 'localhost',
+                    port: 9901,
+                    base: '.',
+                    middleware: function(connect, options, middlewares) {
+                        return [instrumentMiddleware, jsonpMiddleware].concat(middlewares);
                     },
                 }
             }
         },
 
-        watch : {
-            test : {
+        watch: {
+            test: {
                 files: '**/*.js',
                 tasks: ['mocha:browser'],
                 options: {
@@ -62,43 +86,64 @@ module.exports = function(grunt) {
         },
 
         instrument: {
-          files: 'src/*.js',
-          options: {
-            lazy: true,
-            basePath: '.coverage/instrument/'
-          }
-        },
-
-        storeCoverage: {
-          options: {
-            dir: '.coverage/data'
-          }
+            files: 'src/*.js',
+            options: {
+                lazy: true,
+                basePath: '.coverage/instrument/'
+            }
         },
 
         makeReport: {
-          src: '.coverage/data.json',
-          options: {
-            type: 'html',
-            dir: '.coverage/reports',
-          },
+            src: '.coverage/data.json',
+            options: {
+                type: 'html',
+                dir: '.coverage/reports',
+            },
         },
 
-        jsdoc : {
-            dist : {
-                src: ['src/*.js', 'README.md'], 
+        uglify: {
+            dev: {
+                files: {
+                    'src/aja.min.js': ['src/aja.js']
+                },
+                options: {
+                    banner: "/**\n * <%= pkg.name %> <<%= pkg.homepage %>\n *  \n * @version <=%pkg.version%>\n * @author <%= pkg.author.name %> <<%= pkg.author.email %>> © <%= grunt.template.today('yyyy') %>\n * @license MIT\n**/",
+                    sourceMap: true,
+                    beautify: {
+                        'max_line_len': 500
+                    }
+                }
+            },
+            prod: {
+                files: {
+                    'aja.min.js': ['src/aja.js']
+                }
+            }
+        },
+
+        jsdoc: {
+            dist: {
+                src: ['src/*.js', 'README.md'],
                 options: {
                     destination: 'doc',
-                    private : false,
-                    template : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template",
-                    configure : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json"
+                    private: false,
+                    template: "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template",
+                    configure: "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json"
                 }
             }
         }
     });
 
-    //tasks related unit tests
-    grunt.registerTask('test', ['connect:test', 'mocha:browser']);
-    grunt.registerTask('testcov', ['connect:test', 'instrument', 'mocha:browser', 'makeReport']);
-
+    //run tests while developping
     grunt.registerTask('devtest', ['connect:test', 'watch:test']);
+
+    //run just the tests
+    grunt.registerTask('test', ['connect:test', 'mocha:browser']);
+
+    //run the tests with code coverage
+    grunt.registerTask('testcov', ['connect:testcov', 'instrument', 'mocha:browsercov', 'makeReport']);
+
+
+    //build the package
+    grunt.registerTask('build', ['jsdoc', 'uglify:dev', 'uglify:prod']);
 };

@@ -14,7 +14,9 @@
     }],
     "main": [
         "src/aja.js",
-        "src/aja.min.js"
+        "src/aja.min.js",
+        "src/aja.min.js.map",
+        "aja.min.js"
     ],
     "ignore": [
         "node_modules",
