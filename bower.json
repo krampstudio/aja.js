@@ -1,0 +1,11 @@
+{
+  "name": "aja",
+  "version": "0.1.0",
+  "main" : [
+    "src/aja.js",
+    "src/aja.min.js"
+  ],
+  "ignore" : [
+    "node_modules"
+  ]
+}
