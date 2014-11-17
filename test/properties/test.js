@@ -91,8 +91,6 @@ describe('aja()', function(){
 
                 expect(function(){ aja().type('json'); }).to.not.throw();
                 expect(function(){ aja().type('html'); }).to.not.throw();
-                expect(function(){ aja().type('script'); }).to.not.throw();
-                expect(function(){ aja().type('style'); }).to.not.throw();
                 expect(function(){ aja().type('jsonp'); }).to.not.throw();
             });
 
