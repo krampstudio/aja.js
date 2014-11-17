@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
     var instrumentMiddleware = function(req, res, next) {
         if (/aja\.js$/.test(req.url)) {
-            return grunt.file.read(coverageDir + '/instrument/src/aja.js');
+            return res.end(grunt.file.read(coverageDir + '/instrument/src/aja.js'));
         }
         return next();
     };
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
         },
 
         instrument: {
-            files: 'src/*.js',
+            files: 'src/aja.js',
             options: {
                 lazy: true,
                 basePath: '.coverage/instrument/'
