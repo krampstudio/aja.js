@@ -21,7 +21,10 @@ module.exports = function(grunt) {
                     ],
                     reporter : 'Spec',
                     run : true,
-                    timeout : 10000
+                    timeout : 10000,
+                    coverage: {
+                        coverageFile: '.coverage/data.json'
+                    }
                 }
             }
         },
@@ -73,7 +76,7 @@ module.exports = function(grunt) {
         },
 
         makeReport: {
-          src: '.coverage/data/**/*.json',
+          src: '.coverage/data.json',
           options: {
             type: 'html',
             dir: '.coverage/reports',
@@ -95,7 +98,7 @@ module.exports = function(grunt) {
 
     //tasks related unit tests
     grunt.registerTask('test', ['connect:test', 'mocha:browser']);
-    grunt.registerTask('testcov', ['connect:test', 'instrument', 'mocha:browser', 'storeCoverage', 'makeReport']);
+    grunt.registerTask('testcov', ['connect:test', 'instrument', 'mocha:browser', 'makeReport']);
 
     grunt.registerTask('devtest', ['connect:test', 'watch:test']);
 };
