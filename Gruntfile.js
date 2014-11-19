@@ -145,5 +145,5 @@ module.exports = function(grunt) {
 
 
     //build the package
-    grunt.registerTask('build', ['jsdoc', 'uglify:dev', 'uglify:prod']);
+    grunt.registerTask('build', ['jsdoc:dist', 'uglify:dev', 'uglify:prod']);
 };

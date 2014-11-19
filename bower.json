@@ -20,6 +20,7 @@
     ],
     "ignore": [
         "node_modules",
+        "doc",
         ".coverage"
     ],
     "keywords" : [
