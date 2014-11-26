@@ -150,6 +150,7 @@ nav a:hover {
 
 .main header{
     padding: 5px;
+    color:#34a33c;    
 }
 .main header h1{ 
     margin: 5px 0;
@@ -163,9 +164,34 @@ nav a:hover {
 .main article{
     padding: 5px;
 }
-
+.main aside{
+    margin-top: 15px;
+}
+.main aside ul {
+    border: solid 1px #34a33c;
+    background-color: #A9EAAD;
+    padding: 5px 5px 5px 25px;
+    margin: 5px 10px;
+    list-style-type: circle;
+    -webkit-box-shadow: 0 1px 5px #aaa;
+       -moz-box-shadow: 0 1px 5px #aaa;
+            box-shadow: 0 1px 5px #aaa;
+    -webkit-border-radius: 2px;
+       -moz-border-radius: 2px;
+            border-radius: 2px;
+}
 .footer-container {
-    background: #34a33c;    
+    border-top: solid 20px #34a33c;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+}
+.footer-container code{
+    font-family: monospace;
+    font-size: .9em;
+}
+.footer-container a{
+    color: #fff;
 }
 
 [class^="icon-"], [class*=" icon-"] {
