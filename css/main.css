@@ -194,7 +194,7 @@ nav a:hover {
     color: #fff;
 }
 
-[class^="icon-"], [class*=" icon-"] {
+.icon {
 	font-family: 'ajicon';
 	speak: none;
 	font-style: normal;

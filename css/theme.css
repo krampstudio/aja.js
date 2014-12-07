@@ -1,0 +1,123 @@
+
+/* Theme */
+
+
+/* prim-color: #34a33c; 
+   intro : #43E44F or #47ed58
+   features : 
+
+*/
+
+
+html {
+    font-size: 1em;
+    line-height: 1.4;
+    color: #222;
+}
+body {
+    font: 16px sans-serif;
+}
+
+pre, code{
+    border: solid 1px #ddd;
+    background-color: #eee;
+    font-family: monospace;
+    text-align: left;
+    padding: 5px; 
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'ajicon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-github:before {
+	content: "\f09b";
+}
+.icon-cloud-download:before {
+	content: "\f0ed";
+}
+.icon-send:before {
+	content: "\f1d8";
+}
+.icon-rocket:before {
+	content: "\f135";
+}
+.icon-qq:before {
+	content: "\f1d6";
+}
+.icon-legal:before {
+	content: "\f0d3";
+}
+
+
+header{
+    background: #333;
+    color: #fff;
+}
+
+nav a {
+    position: relative;
+    text-align: center;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+nav a:hover{
+    color: #34a33c;
+    transition: color 0.5s linear;
+}
+nav a:before{
+    opacity: 0;
+    top: 40px;
+    content: '';
+    position: absolute;
+    margin: auto;
+    width: 0;
+    height: 0;
+    left: 0;
+    right: 0;
+    border: solid 10px transparent;
+    border-top: solid 10px #333;
+}
+nav a.active:before, nav a:hover:before {
+    top: 60px;
+    opacity: 1;
+    transition: all 0.4s ease;
+}
+
+.intro{
+    background: #43E44F;
+    color: #333;
+    text-shadow: 1px 1px #ccc; 
+    text-align: center;
+}
+
+.features {
+    color: #2e996e;
+}
+.features li {
+    border: solid gray 1px;
+    text-align:center;
+}
+.features .icon{
+    font-size: 5em;
+
+}
+.features h4{
+    margin: 0;
+    font-size: 2em;
+}
+.features strong{
+    font-size: 2em;
+    font-weight: bold;
+}

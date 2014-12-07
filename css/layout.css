@@ -1,0 +1,75 @@
+/* Border Box */
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+header {
+    width: 100%;
+    margin: 0;
+    height: 60px;
+}
+header h1 {
+    float: left;
+    margin: 0;
+    width: 40%;
+    padding: 10px 0 10px 25px;
+}
+nav {
+    float: left;
+    width: 60%;
+}
+nav ul {
+    margin: 0;
+    padding: 0;
+}
+
+nav a {
+    display: block;
+    width: 18%;
+    float: left;
+    height: 60px;
+    line-height: 60px; 
+}
+nav li:first-child a {
+    margin-left: 0;
+}
+
+nav li:last-child a {
+    margin-right: 0;
+}
+
+nav ul li {
+    display: inline;
+}
+
+.intro {
+    width: 100%;
+    margin: 0;
+    height: 300px;
+    padding: 100px 0;
+}
+.intro h1 {
+    margin: 0;
+}
+
+.features ul{
+    position: relative;
+    list-style-type: none;
+    padding: 0;
+    width: 50%;
+    margin: 0 auto;
+}
+.features ul li{
+    position: relative;
+    padding: 0;
+    margin: 0;
+    width: 50%;
+    height: 200px;
+    float: left;
+    overflow: hidden;
+}
+.content {
+    clear: both;
+}
