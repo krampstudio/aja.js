@@ -1,10 +1,33 @@
 @font-face {
 	font-family: 'ajicon';
-	src:url('../fonts/ajicon.eot?k1hf4u');
-	src:url('../fonts/ajicon.eot?#iefixk1hf4u') format('embedded-opentype'),
-		url('../fonts/ajicon.woff?k1hf4u') format('woff'),
-		url('../fonts/ajicon.ttf?k1hf4u') format('truetype'),
-		url('../fonts/ajicon.svg?k1hf4u#ajicon') format('svg');
+	src:url('../fonts/ajicon.eot?w1jcqe');
+	src:url('../fonts/ajicon.eot?#iefixw1jcqe') format('embedded-opentype'),
+		url('../fonts/ajicon.woff?w1jcqe') format('woff'),
+		url('../fonts/ajicon.ttf?w1jcqe') format('truetype'),
+		url('../fonts/ajicon.svg?w1jcqe#ajicon') format('svg');
 	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Roboto';
+	src:url('../fonts/Roboto-Regular.eot?w1jcqe');
+	src:url('../fonts/Roboto-Regular.eot?#iefixw1jcqe') format('embedded-opentype'),
+		url('../fonts/Roboto-Regular.woff?w1jcqe') format('woff'),
+		url('../fonts/Roboto-Regular.ttf?w1jcqe') format('truetype'),
+		url('../fonts/Roboto-Regular.svg?w1jcqe#ajicon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+
+@font-face {
+	font-family: 'Roboto';
+	src:url('../fonts/Roboto-Bold.eot?w1jcqe');
+	src:url('../fonts/Roboto-Bold.eot?#iefixw1jcqe') format('embedded-opentype'),
+		url('../fonts/Roboto-Bold.woff?w1jcqe') format('woff'),
+		url('../fonts/Roboto-Bold.ttf?w1jcqe') format('truetype'),
+		url('../fonts/Roboto-Bold.svg?w1jcqe#ajicon') format('svg');
+	font-weight: bold;
 	font-style: normal;
 }

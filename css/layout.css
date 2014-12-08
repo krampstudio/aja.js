@@ -5,20 +5,21 @@
     box-sizing: border-box;
 }
 
-header {
+body > header {
     width: 100%;
     margin: 0;
     height: 60px;
+    position: relative;
 }
-header h1 {
-    float: left;
+body > header h1 {
     margin: 0;
-    width: 40%;
     padding: 10px 0 10px 25px;
 }
 nav {
-    float: left;
-    width: 60%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    text-align: right;
 }
 nav ul {
     margin: 0;
@@ -27,17 +28,10 @@ nav ul {
 
 nav a {
     display: block;
-    width: 18%;
     float: left;
+    padding: 0 15px;
     height: 60px;
     line-height: 60px; 
-}
-nav li:first-child a {
-    margin-left: 0;
-}
-
-nav li:last-child a {
-    margin-right: 0;
 }
 
 nav ul li {
@@ -48,10 +42,10 @@ nav ul li {
     width: 100%;
     margin: 0;
     height: 300px;
-    padding: 100px 0;
+    padding: 75px 0;
 }
-.intro h1 {
-    margin: 0;
+.intro h1, .intro h2 {
+    margin: 7.5px 0;
 }
 
 .features ul{
@@ -63,13 +57,77 @@ nav ul li {
 }
 .features ul li{
     position: relative;
-    padding: 0;
+    padding: 40px 0 0 0;
     margin: 0;
     width: 50%;
-    height: 200px;
+    height: 250px;
     float: left;
     overflow: hidden;
 }
-.content {
+article {
     clear: both;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+article > header, 
+article > section{
+    position: relative;
+    width: 50%;
+    float: left;
+    padding: 0 10px;
+}
+article > header h3 {
+    margin: 20px 0;
+}
+article ol li{
+    margin-top: 10px; 
+}
+
+/* medium to small res */ 
+@media only screen and (max-width: 900px) {
+    article > header, 
+    article > section{
+        float: none;
+        width: 100%;
+    }
+
+    .features ul{
+        width: 100%;
+    }
+}
+/*  small res */ 
+@media only screen and (max-width: 500px) {
+    .features ul li{
+        width: 100%;
+        float: none;
+    }
+    body > header{
+        height: inherit;
+    }
+    nav {
+        position: relative;
+        left: 0;
+        right: 0;
+        top: 0;
+        text-align: left;
+        width: 100%;
+    }
+    nav ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    nav a {
+        display: block;
+        float: none;
+        height: 60px;
+        line-height: 60px; 
+    }
+
+    nav ul li {
+        display: block;
+    }
 }

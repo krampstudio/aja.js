@@ -23,7 +23,7 @@
         <![endif]-->
     </head>
     <body>
-        <header class="wrapper clearfix">
+        <header>
             <h1><a href="http://krampstudio.github.io/aja.js"><img src="img/logo.png" alt="aja.js" /></a></h1>
             <nav>
                 <ul>
@@ -31,7 +31,7 @@
                     <li><a href="#install">Install</a></li>
                     <li><a href="#samples">Samples</a></li>
                     <li><a href="#api">API</a></li>
-                    <li><a href="#code">Code</a></li>
+                    <li><a href="http://github.com/krampstudio/aja.js"><span class="icon icon-github"></span> Fork me</a></li>
                 </ul>
             </nav>
         </header>
@@ -40,22 +40,23 @@
             <h1>Ajax without XML</h1>
             <h2>Asynchronous JavaScript And JSON(P)</p>
         </section>
+
         <section class="features">
             <a name="features"></a>
             <ul>
                 <li>
-                    <span class="icon icon-send"></span>
+                    <span class="icon icon-paper-plane"></span>
                     <h4>Lightweight</h4>
                     <p>5Kb minified, no dependencies</p>
                 </li>
                 <li>
-                    <span class="icon icon-legal"></span>
+                    <span class="icon icon-shield"></span>
                     <h4>Robust</h4>
                     <p>Tested and 100% covered</p>
                 </li>
                 <li>
                     <span class="icon icon-qq"></span>
-                    <h4>Free</h4>
+                    <h4>100% Free</h4>
                     <p>MIT License</p>
                 </li>
                 <li>
@@ -65,47 +66,64 @@
                 </li>
             </ul>
         </section>
-        <section class="content">
-            <h3 id="install">Install</h3>
-            <p>Using <a href="http://bower.io">Bower</a> : </p>
-            <code class="language-c">$ bower install aja </code>
-            <p>Or download the package and put <code>aja.min.js</code> into your web page</p>
-            <br>
-            <p>If your browser doesn't support ES5 and XHR, please consider to include a polyfill, like:</p>
-            <code class="language-c">https://cdn.polyfill.io/v1/polyfill.min.js</code>
-        </section>
-                    <section>
-                        <h3 id="samples">Samples</h3>
-                        
-                        <p>Request JSON data</p>
-                        <pre class="line-numbers"><code class="language-javascript">aja()
+
+        <article id="install">
+            <header>
+                <h3>Install</h3>
+            </header>
+            <section>
+                <p>Installing and integrating aja.js is straight forward. You can load it using any module system (AMD, CommonJs) or using the old school window system. You can install it by either:</p>
+                <ol>
+                    <li>
+                        Using <a href="http://bower.io">Bower</a> : <code class="inline">$ bower install aja </code>
+                    </li>
+                    <li>
+                        <a href="http://www.github.com/krampstudio/aja.js/releases/tag/0.1.0"><span class="icon icon-download"></span>Download 0.1.0</a>
+                    </li>
+                    <li>
+                        <a href="http://www.github.com/kramstudio/aja.js"><span class="icon icon-github"></span>Fork or serve yourself</a>
+                    </li>
+                </ol>
+                <p class="warning">If you need to target browser doesn't support ES5 and XHR, please consider to include a polyfill, like: 
+                    <code class="inline">https://cdn.polyfill.io/v1/polyfill.min.js</code>
+                </p>
+            </section>
+        </article>
+
+        <article id="samples">
+            <header>
+                <h3>Samples</h3>
+            </header>
+            <section>
+                <p>Request json data</p>
+                <pre class="line-numbers"><code class="language-javascript">aja()
   .url('/api/data.json')
   .on('success', function(data){
-      //data is a JavaScript object
+      //data is a javascript object
   })
   .go();</code></pre>
 
-                        <p>Load html into an element</p>
-                        <pre class="line-numbers"><code class="language-javascript">aja()
+                <p>Load html into an element</p>
+                <pre class="line-numbers"><code class="language-javascript">aja()
   .url('/views/page.html')
   .into('.container')
   .go();</code></pre>
 
-                        <p>More options using the fluent api, terrific REST client.</p>
-                        <pre class="line-numbers"><code class="language-javascript">aja()
-  .method('GET')
+                <p>More options using the fluent api, terrific rest client.</p>
+                <pre class="line-numbers"><code class="language-javascript">aja()
+  .method('get')
   .url('/api/customer')
-  .data({firstname: 'John Romuald'})
+  .data({firstname: 'john romuald'})
   .on('200', function(response){
       //well done
   })
   .go();
 
 aja()
-  .method('PUT')
+  .method('put')
   .url('/api/customer')
   .cache(false)
-  .body({id : 12, firstname: 'John Romuald', job : 'linguist'})
+  .body({id : 12, firstname: 'john romuald', job : 'linguist'})
   .on('200', function(response){
       //well done
   })
@@ -117,39 +135,35 @@ aja()
   })
   .go();</code></pre>
 
-                        <p>JSONP</p>
-                        <pre class="line-numbers"><code class="language-javascript">aja()
-  .url('http://otherdomain.com/api/remoteScript')
+                <p>Jsonp</p>
+                <pre class="line-numbers"><code class="language-javascript">aja()
+  .url('http://otherdomain.com/api/remotescript')
   .type('jsonp')
-  .padding('someGlobalFunction')
+  .padding('someglobalfunction')
   .on('success', function(data){
-      //Fuk cross origin policy 
+      //fuk cross origin policy 
   })
   .go();</code></pre>
-                    </section>
-                    <section>
-                        <h3 id="api">API</h3>
-                        <p>The full and detailed API generated from sources is available in <a href="doc/aja.html">jsdoc</a>.</p>
-                        <h4>Using aja()</h4>
-                        <p>The function <code>aja()</code> is the main entry point. Call it each time you want to perform a request. <code>aja()</code> returns an Object (the request context). Then attach properties to the context using the chainable setter. Once the context is configured correctly, you can start the request by calling the method <code>go()</code>.</p>
-                        <p>Oh wait... to get feedback from your request, you can listen events on your context, using the usual <code>on/off/trigger</code> pattern.</p>
-                        <pre class="line-numbers"><code class="language-javascript">aja()    //creates your context
-  .url('/api/data.json') //attach the URL propery on the context
-  .on('success', cb)    //listen for feedback
-  .go();                //trigger the request</code></pre>
-                        
-                          
-                    </section>
-                </article>
+            </section>
+        </article>
 
-                <aside>
-
-                    <a class="btn" href="http://www.github.com/krampstudio/aja.js"><span class="icon-github"></span> Fork Me</a>
-                    
-                    <a class="btn"  href="http://www.github.com/krampstudio/aja.js/releases/tag/0.1.0"><span class="icon-cloud-download"></span> Download 0.1.0</a>
-                </aside>
-
-            </div>
+        <article id="api">
+            <header>
+                <h3>API</h3>
+            </header>
+            <section>
+                <p>the full and detailed api generated from sources is available in <a href="doc/aja.html">jsdoc</a>.</p>
+                <h4>using aja()</h4>
+                <p>the function <code>aja()</code> is the main entry point. call it each time you want to perform a request. <code>aja()</code> returns an object (the request context). then attach properties to the context using the chainable setter. once the context is configured correctly, you can start the request by calling the method <code>go()</code>.</p>
+                <p>oh wait... to get feedback from your request, you can listen events on your context, using the usual <code>on/off/trigger</code> pattern.</p>
+                <pre class="line-numbers"><code class="language-javascript">aja()    //creates your context
+    .url('/api/data.json') //attach the url propery on the context
+    .on('success', cb)    //listen for feedback
+    .go();                //trigger the request</code></pre>
+                
+                  
+            </section>
+        </aricle>
 
         <footer class="wrapper">
             <p>2014 - <code>&lt;eval ['chevrier', 'bertrand'].join('.') + '@gmail.com' &gt;</code> - <a href="http://krampstudio.com">krampstudio.com</a></p>

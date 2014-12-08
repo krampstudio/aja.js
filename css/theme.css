@@ -1,32 +1,46 @@
 
 /* Theme */
-
-
-/* prim-color: #34a33c; 
-   intro : #43E44F or #47ed58
-   features : 
-
+/* 
+    colors: #34a33c,  #5DB563;
 */
-
-
 html {
     font-size: 1em;
     line-height: 1.4;
     color: #222;
 }
 body {
-    font: 16px sans-serif;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
 }
 
-pre, code{
-    border: solid 1px #ddd;
-    background-color: #eee;
-    font-family: monospace;
-    text-align: left;
-    padding: 5px; 
+a {
+    text-decoration: none;
+    color: #34a33c;
+}
+a:hover{
+    color: #5db563;
+    transition: color 0.5s linear;
+}
+a .icon{
+    margin-right: 3px;
 }
 
-[class^="icon-"], [class*=" icon-"] {
+.inline{
+    font-family: Consolas,Monaco,"Andale Mono",monospace;
+    background-color: #272822;
+    padding: 2px 5px;
+    border-radius: 3px;
+    color: #F8F8F2;
+    text-shadow: 0px 1px rgba(0, 0, 0, 0.3);
+}
+
+.warning {
+    padding: 5px;
+    border-radius: 2px;
+    background-color: #fff;
+}
+
+.icon {
 	font-family: 'ajicon';
 	speak: none;
 	font-style: normal;
@@ -40,14 +54,8 @@ pre, code{
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.icon-github:before {
-	content: "\f09b";
-}
-.icon-cloud-download:before {
-	content: "\f0ed";
-}
-.icon-send:before {
-	content: "\f1d8";
+.icon-shield:before {
+	content: "\f132";
 }
 .icon-rocket:before {
 	content: "\f135";
@@ -55,16 +63,23 @@ pre, code{
 .icon-qq:before {
 	content: "\f1d6";
 }
-.icon-legal:before {
-	content: "\f0d3";
+.icon-paper-plane:before {
+	content: "\f1d8";
+}
+.icon-download:before {
+	content: "\e604";
+}
+.icon-github:before {
+	content: "\e605";
 }
 
-
-header{
+body > header{
     background: #333;
     color: #fff;
 }
-
+nav {
+    background: #333;
+}
 nav a {
     position: relative;
     text-align: center;
@@ -96,22 +111,28 @@ nav a.active:before, nav a:hover:before {
 }
 
 .intro{
-    background: #43E44F;
+    background: #5DB563;
     color: #333;
     text-shadow: 1px 1px #ccc; 
     text-align: center;
 }
+.intro h1{
+    font-size: 3.5em;
+}
+.intro h2{
+    font-size: 2em;
+}
 
 .features {
-    color: #2e996e;
+    color: #5DB563;
 }
 .features li {
-    border: solid gray 1px;
     text-align:center;
+    background-color: #f6f6f6;
+    border: solid 1px #fff;
 }
 .features .icon{
-    font-size: 5em;
-
+    font-size: 4.5em;
 }
 .features h4{
     margin: 0;
@@ -120,4 +141,21 @@ nav a.active:before, nav a:hover:before {
 .features strong{
     font-size: 2em;
     font-weight: bold;
+}
+
+article > header {
+    background: #5DB563;
+    color: #333;
+}
+article > header h3{
+    font-size: 2em;
+    text-shadow: 1px 1px #ccc; 
+}
+article > header h3:before{
+    content: '# ';
+    font-style: italic;
+}
+article > section {
+    background: #f6f6f6;
+    border-bottom: solid 1px #fff;
 }
