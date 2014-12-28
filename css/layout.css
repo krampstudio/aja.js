@@ -15,6 +15,10 @@ body > header h1 {
     margin: 0;
     padding: 10px 0 10px 25px;
 }
+body > footer {
+   height: 100px;
+   padding-top: 40px; 
+}
 nav {
     position: absolute;
     right: 0;
@@ -25,7 +29,6 @@ nav ul {
     margin: 0;
     padding: 0;
 }
-
 nav a {
     display: block;
     float: left;
@@ -71,12 +74,11 @@ article {
     height: 100%;
     margin: 0;
 }
-
 article > header, 
 article > section{
     position: relative;
-    width: 50%;
-    float: left;
+    /*width: 50%;*/
+    /*float: left;*/
     padding: 0 10px;
 }
 article > header h3 {

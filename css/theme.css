@@ -16,6 +16,7 @@ body {
 a {
     text-decoration: none;
     color: #34a33c;
+    transition: color 0.5s linear;
 }
 a:hover{
     color: #5db563;
@@ -76,6 +77,12 @@ a .icon{
 body > header{
     background: #333;
     color: #fff;
+}
+body > footer {
+    font-size: .9em;
+    text-align: center;
+    border-top: solid 10px #333;
+    background-color: #ddd;
 }
 nav {
     background: #333;
@@ -142,12 +149,12 @@ nav a.active:before, nav a:hover:before {
     font-size: 2em;
     font-weight: bold;
 }
-
 article > header {
     background: #5DB563;
     color: #333;
 }
 article > header h3{
+    color: #333;
     font-size: 2em;
     text-shadow: 1px 1px #ccc; 
 }
@@ -158,4 +165,36 @@ article > header h3:before{
 article > section {
     background: #f6f6f6;
     border-bottom: solid 1px #fff;
+}
+
+#install ul{
+    position: relative;
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    margin: 0 auto;
+}
+
+#install ul li{
+    position: relative;
+    padding: 40px 0 0 0;
+    margin: 0;
+    width: 25%;
+    height: 250px;
+    float: left;
+    overflow: hidden;
+    text-align: center;
+}
+
+#install ul li a{
+    font-size: 4em;
+    display: block;
+}
+#install ul li a img{
+    opacity: 1;
+    transition: opacity 0.5s linear;
+}
+#install ul li a:hover img{
+    opacity: 0.8;
+    transition: opacity 0.5s linear;
 }
