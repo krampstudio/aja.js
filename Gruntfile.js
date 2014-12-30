@@ -143,7 +143,6 @@ module.exports = function(grunt) {
     //run the tests with code coverage
     grunt.registerTask('testcov', ['connect:testcov', 'instrument', 'mocha:browsercov', 'makeReport']);
 
-
     //build the package
     grunt.registerTask('build', ['jsdoc:dist', 'uglify:dev', 'uglify:prod']);
 };
