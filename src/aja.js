@@ -5,7 +5,7 @@
  * @author Bertrand Chevrier <chevrier.bertrand@gmail.com>
  * @license MIT
  */
-(function(window){
+(function(){
     'use strict';
 
     /**
@@ -749,10 +749,15 @@
         return url;
     };
 
-    //TODO UMD ?
+    //AMD, CommonJs than globals
+    if (typeof define === 'function' && define.amd) {
+        define([], function(){
+            return aja;
+        });
+    } else if (typeof exports === 'object') {
+        module.exports = aja;
+    } else {
+        window.aja = window.aja || aja; 
+    }
 
-    window.aja = window.aja || aja; 
-    //aja().load('url').nocache.to('selector');
-
-
-}(window));
+}());
