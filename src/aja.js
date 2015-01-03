@@ -403,7 +403,6 @@
              * @param {String} url - the 
              */
             html : function(url){
-                var self = this;
                 ajaGo._xhr.call(this, url, function processRes(res){
                     if(data.into && data.into.length){
                         data.into.forEach(function(elt){
@@ -428,13 +427,11 @@
                 var method      = data.method || 'get';
                 var async       = data.sync !== true;
                 var request     = new XMLHttpRequest();
-                var queryString = data.queryString;
                 var _data       = data.data;
-                var body        = data.body;
-                var openParams = [];
+                var body        = data.body || '';
+                var openParams;
 
                 if(_data && _dataInBody(method)){
-                    body = body || '';
                     for(key in _data){
                         body += key + '=' + _data[key] + '\n\r';
                     }
@@ -525,7 +522,6 @@
                     window[jsonPadding] = undefined;
                 };
                 head.appendChild(script);
-                return;
             }
         };
 
@@ -720,7 +716,7 @@
          */
         func : function(functionName){
             functionName = this.string(functionName);
-            if(!/^([a-zA-Z_]{1})([a-zA-Z0-9_\-])+$/.test(functionName)){
+            if(!/^([a-zA-Z_])([a-zA-Z0-9_\-])+$/.test(functionName)){
                 throw new TypeError('a valid function name is expected, ' + functionName + ' [' + (typeof functionName) + '] given');
             }
             return functionName;
