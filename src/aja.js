@@ -22,9 +22,9 @@
     /**
      * API entry point.
      * It creates an new {@link Aja} object.
-     *        
+     *
      * @example aja().url('page.html').into('#selector').go();
-     * 
+     *
      * @exports aja
      * @namespace aja
      * @returns {Aja} the {@link Aja} object ready to create your request.
@@ -38,7 +38,7 @@
         var events = {};
 
         /**
-         * The Aja object is your context, it provides your getter/setter 
+         * The Aja object is your context, it provides your getter/setter
          * as well as methods the fluent way.
          * @typedef {Object} Aja
          */
@@ -50,12 +50,12 @@
         var Aja = {
 
             /**
-             * URL getter/setter: where your request goes. 
+             * URL getter/setter: where your request goes.
              * All URL formats are supported: <pre>[protocol:][//][user[:passwd]@][host.tld]/path[?query][#hash]</pre>.
              *
              * @example aja().url('bestlib?pattern=aja');
              *
-             * @throws TypeError  
+             * @throws TypeError
              * @param {String} [url] - the url to set
              * @returns {Aja|String} chains or get the URL
              */
@@ -81,7 +81,7 @@
              *
              * @example aja().cache(false);
              *
-             * @param {Boolean|*} [sync] - false means no cache  (other types than booleans are casted)
+             * @param {Boolean|*} [cache] - false means no cache  (other types than booleans are casted)
              * @returns {Aja|Boolean} chains or get cache value
              */
             cache : function(cache){
@@ -89,13 +89,13 @@
             },
 
             /**
-             * Type getter/setter: one of the predefined request type. 
+             * Type getter/setter: one of the predefined request type.
              * The supported types are : <pre>['html', 'json', 'jsonp', 'script', 'style']</pre>.
              * If not set, the default type is deduced regarding the context, but goes to json otherwise.
              *
              * @example aja().type('json');
              *
-             * @throws TypeError if an unkown type is set
+             * @throws TypeError if an unknown type is set
              * @param {String} [type] - the type to set
              * @returns {Aja|String} chains or get the type
              */
@@ -107,7 +107,7 @@
              * HTTP Request Header getter/setter.
              *
              * @example aja().header('Content-Type', 'application/json');
-             * 
+             *
              * @throws TypeError
              * @param {String} name - the name of the header to get/set
              * @param {String} [value] - the value of the header to set
@@ -130,7 +130,7 @@
 
             /**
              * <strong>Setter only</strong> to add authentication credentials to the request.
-             * 
+             *
              * @throws TypeError
              * @param {String} user - the user name
              * @param {String} passwd - the password value
@@ -138,12 +138,12 @@
              */
             auth : function(user, passwd){
                 //setter only
-    
+
                 validators.string(user);
                 validators.string(passwd);
                 data.auth = {
                    user : user,
-                   passwd : passwd 
+                   passwd : passwd
                 };
 
                 return this;
@@ -154,7 +154,7 @@
              *
              * @example aja().method('post');
              *
-             * @throws TypeError if an unkown method is set
+             * @throws TypeError if an unknown method is set
              * @param {String} [method] - the method to set
              * @returns {Aja|String} chains or get the method
              */
@@ -173,13 +173,13 @@
              * @example aja().queryString({ user : '12' }); //  ?user=12
              *
              * @throws TypeError
-             * @param {Object|String} [params] - key/values POJO or URL queryString directly to set 
+             * @param {Object|String} [params] - key/values POJO or URL queryString directly to set
              * @returns {Aja|String} chains or get the params
              */
             queryString : function(params){
                return _chain.call(this, 'queryString', params, validators.queryString);
             },
-        
+
             /**
              * URL's queryString getter/setter.
              * Regarding the HTTP method the data goes to the queryString or the body.
@@ -193,10 +193,10 @@
             data : function(params){
                return _chain.call(this, 'data', params, validators.plainObject);
             },
-            
+
             /**
              * Request Body getter/setter.
-             * Objects and arrays are stringified (except FormData instances) 
+             * Objects and arrays are stringified (except FormData instances)
              *
              * @example aja().body(new FormData());
              *
@@ -208,7 +208,7 @@
                 return _chain.call(this, 'body', content, null, function(content){
                    if(typeof content === 'object'){
                         //support FormData to be sent direclty
-                        if( !(content instanceof FormData)){ 
+                        if( !(content instanceof FormData)){
                             //otherwise encode the object/array to a string
                             try {
                                 content = JSON.stringify(content);
@@ -223,7 +223,7 @@
                    return content;
                 });
             },
-            
+
             /**
              * Into selector getter/setter. When you want an Element to contain the response.
              *
@@ -245,7 +245,7 @@
             },
 
             /**
-             * Padding name  getter/setter, ie. the callback's PARAMETER name in your JSONP query.
+             * Padding name getter/setter, ie. the callback's PARAMETER name in your JSONP query.
              *
              * @example aja().jsonPaddingName('callback');
              *
@@ -269,18 +269,18 @@
             jsonPadding : function(padding){
                 return _chain.call(this, 'jsonPadding', padding, validators.func);
             },
-           
+
             /**
              * Attach an handler to an event.
              * Calling `on` with the same eventName multiple times add callbacks: they
-             * will all be executed. 
+             * will all be executed.
              *
              * @example aja().on('success', function(res){ console.log('Cool', res);  });
-             * 
-             * @param {String} name - the name of the event to listen 
+             *
+             * @param {String} name - the name of the event to listen
              * @param {Function} cb - the callback to run once the event is triggered
              * @returns {Aja} chains
-             */ 
+             */
             on : function(name, cb){
                 if(typeof cb === 'function'){
                     events[name] = events[name] || [];
@@ -293,8 +293,8 @@
              * Remove ALL handlers for an event.
              *
              * @example aja().off('success');
-             * 
-             * @param {String} name - the name of the event 
+             *
+             * @param {String} name - the name of the event
              * @returns {Aja} chains
              */
             off : function(name){
@@ -305,7 +305,7 @@
             /**
              * Trigger an event.
              * This method will be called hardly ever outside Aja itself,
-             * but there is edge cases where it can be usefull.
+             * but there is edge cases where it can be useful.
              *
              * @example aja().trigger('error', new Error('Emergency alert'));
              *
@@ -318,7 +318,7 @@
                 var eventCalls  = function eventCalls(name, data){
                     if(events[name] instanceof Array){
                         events[name].forEach(function(event){
-                            event.call(self, data);             
+                            event.call(self, data);
                         });
                     }
                 };
@@ -326,18 +326,18 @@
                     name = name + '';
                     var statusPattern = /^([0-9])([0-9x])([0-9x])$/i;
                     var triggerStatus = name.match(statusPattern);
-                     
+
                     //HTTP status pattern
                     if(triggerStatus && triggerStatus.length > 3){
                         Object.keys(events).forEach(function(eventName){
                             var listenerStatus = eventName.match(statusPattern);
                             if(listenerStatus && listenerStatus.length > 3 &&       //an listener on status
                                 triggerStatus[1] === listenerStatus[1] &&           //hundreds match exactly
-                                (listenerStatus[2] === 'x' ||  triggerStatus[2] === listenerStatus[2]) && //tens matches 
-                                (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //tens matches 
+                                (listenerStatus[2] === 'x' ||  triggerStatus[2] === listenerStatus[2]) && //tens matches
+                                (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //ones matches
 
                                 eventCalls(eventName, data);
-                            } 
+                            }
                         });
                     //or exact matching
                     } else if(events[name]){
@@ -349,11 +349,11 @@
 
             /**
              * Trigger the call.
-             * This is the end of your chain loop. 
+             * This is the end of your chain loop.
              *
              * @example aja()
              *           .url('data.json')
-             *           .on('200', function(res){ 
+             *           .on('200', function(res){
              *               //Yeah !
              *            })
              *           .go();
@@ -383,7 +383,7 @@
 
             /**
              * XHR call to url to retrieve JSON
-             * @param {String} url - the 
+             * @param {String} url - the url
              */
             json : function(url){
                 var self = this;
@@ -400,13 +400,13 @@
 
             /**
              * XHR call to url to retrieve HTML and add it to a container if set.
-             * @param {String} url - the 
+             * @param {String} url - the url
              */
             html : function(url){
                 ajaGo._xhr.call(this, url, function processRes(res){
                     if(data.into && data.into.length){
                         data.into.forEach(function(elt){
-                            elt.innerHTML = res; 
+                            elt.innerHTML = res;
                         });
                     }
                     return res;
@@ -415,14 +415,14 @@
 
             /**
              * Create and send an XHR query.
-             * @param {String} url - the 
+             * @param {String} url - the url
              * @param {Function} processRes - to modify / process the response before sent to events.
              */
             _xhr : function(url, processRes){
                 var self = this;
 
                 //iterators
-                var key, header; 
+                var key, header;
 
                 var method      = data.method || 'get';
                 var async       = data.sync !== true;
@@ -436,7 +436,7 @@
                         body += key + '=' + _data[key] + '\n\r';
                     }
                 }
-               
+
                 //open the XHR request
                 openParams = [method, url, async];
                 if(data.auth){
@@ -458,7 +458,7 @@
                         self.trigger('progress', e.loaded / e.total);
                     }
                 };
-        
+
                 request.onload = function onRequestLoad(){
                     var response = request.responseText;
 
@@ -468,7 +468,7 @@
                         }
                         self.trigger('success', response);
                     }
-                    
+
                     self.trigger(this.status, response);
 
                     self.trigger('end', response);
@@ -477,14 +477,14 @@
                 request.onerror = function onRequestError (err){
                     self.trigger('error', err, arguments);
                 };
-    
+
                 //send the request
                 request.send(body);
             },
 
             /**
              * @this {Aja} call bound to the Aja context
-             * @param {String} url - the url 
+             * @param {String} url - the url
              */
             jsonp : function(url){
                 var script;
@@ -510,9 +510,9 @@
                 };
 
                 paddingQuery[jsonPaddingName] = jsonPadding;
-                
+
                 url =  appendQueryString(url, paddingQuery);
-                
+
                 script = document.createElement('script');
                 script.async = async;
                 script.src = url;
@@ -557,7 +557,7 @@
         };
 
         /**
-         * Check wheter the data must be set in the body instead of the queryString
+         * Check whether the data must be set in the body instead of the queryString
          * @private
          * @memberof aja
          * @param {String} [method] - the request method
@@ -585,7 +585,7 @@
 
             //add a cache buster
             if(cache === false){
-               queryString += 'ajabuster=' + new Date().getTime(); 
+               queryString += 'ajabuster=' + new Date().getTime();
             }
 
             url = appendQueryString(url, queryString);
@@ -596,7 +596,7 @@
             return url;
         };
 
-        //expose the Aja function 
+        //expose the Aja function
         return Aja;
     };
 
@@ -615,8 +615,8 @@
         },
 
         /**
-         * Check wheter the given parameter is a string
-         * @param {String} value 
+         * Check whether the given parameter is a string
+         * @param {String} string
          * @returns {String} value
          * @throws {TypeError} for non strings
          */
@@ -628,7 +628,7 @@
         },
 
         /**
-         * Check wheter the given parameter is a plain object (array and functions arn't accepeted)
+         * Check whether the given parameter is a plain object (array and functions aren't accepted)
          * @param {Object} object
          * @returns {Object} object
          * @throws {TypeError} for non object
@@ -642,7 +642,7 @@
         },
 
         /**
-         * Check wheter the given parameter is a type supported by Aja.
+         * Check whether the given parameter is a type supported by Aja.
          * The list of supported types is set above, in the {@link types} variable.
          * @param {String} type
          * @returns {String} type
@@ -657,7 +657,7 @@
         },
 
         /**
-         * Check wheter the given HTTP method is supported.
+         * Check whether the given HTTP method is supported.
          * The list of supported methods is set above, in the {@link methods} variable.
          * @param {String} method
          * @returns {String} method (but to lower case)
@@ -746,7 +746,7 @@
         return url;
     };
 
-    //AMD, CommonJs than globals
+    //AMD, CommonJs, then globals
     if (typeof define === 'function' && define.amd) {
         define([], function(){
             return aja;
