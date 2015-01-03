@@ -30,5 +30,5 @@ node_modules
 # Generated documentation
 doc
 
-#instrumented code
-.coverage
+# Editor
+.idea
