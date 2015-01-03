@@ -560,11 +560,12 @@
          * Check wheter the data must be set in the body instead of the queryString
          * @private
          * @memberof aja
+         * @param {String} [method] - the request method
          * @returns {Boolean} true id data goes to the body
          */
-        var _dataInBody = function _dataInBody(){
-            var method = data.method || 'get';
-            
+        var _dataInBody = function _dataInBody(method){
+            method = method || data.method || 'get';
+
             //TODO check which methods may use body parameters
             return ['post', 'put'].indexOf(method) > -1;
         };
