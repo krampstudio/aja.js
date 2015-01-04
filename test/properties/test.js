@@ -124,12 +124,14 @@ describe('aja()', function(){
                 expect(function(){ aja().method('head'); }).to.not.throw();
                 expect(function(){ aja().method('DELETE'); }).to.not.throw();
                 expect(function(){ aja().method('Put'); }).to.not.throw();
+                expect(function(){ aja().method('patch'); }).to.not.throw();
                 expect(function(){ aja().method('options'); }).to.not.throw();
             });
 
             it('should get / set value', function(){
                 expect(aja().method('get').method()).to.equals('get');
                 expect(aja().method('post').method()).to.equals('post');
+                expect(aja().method('patch').method()).to.equals('patch');
             });
 
             it('should chain', function(){

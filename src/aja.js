@@ -17,7 +17,7 @@
     /**
      * supported http methods
      */ 
-    var methods = ['get', 'post', 'delete', 'head', 'put', 'options'];
+    var methods = ['get', 'post', 'delete', 'head', 'put', 'options', 'patch'];
 
     /**
      * API entry point.
@@ -570,7 +570,7 @@
             var method = data.method || 'get';
             
             //TODO check which methods may use body parameters
-            return ['post', 'put'].indexOf(method) > -1;
+            return ['post', 'put', 'patch'].indexOf(method) > -1;
         };
 
         /**
