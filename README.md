@@ -62,14 +62,14 @@ JSONP
     .type('jsonp')
     .padding('someGlobalFunction')
     .on('success', function(data){
-        //Fuk cross origin policy 
+        //Fuk cross origin policy
     })
     .go();
 ```
 
 ## Development
 
-### Setup 
+### Setup
 
 You need [grunt >= 0.4][grunt] as well as [node] and [npm] installed and running on your system.
 
@@ -81,7 +81,7 @@ npm install
 
 ### Tests
 
-Run the tests: 
+Run the tests:
 
 ```
 grunt test
@@ -99,8 +99,15 @@ So tests run once something is modified and you can access it also at http://loc
 
 ## Contributing
 
-Contributions (issue reporting, bug fixes, feedback, typos, gimie a tip, etc.) are really welcomed! 
+Contributions (issue reporting, bug fixes, feedback, typos, gimie a tip, etc.) are really welcomed!
 This library is developed using the TDD principles, so I accept pull request only if they come with the according unit/integration test.
+
+> I'd love if somebody can create a nice logo for aja.js...
+
+## History
+
+ - _0.1.0_ : initial release
+ - _0.2.0_ : added support of new HTTP methods (trace, patch and connect)
 
 ## License
 
