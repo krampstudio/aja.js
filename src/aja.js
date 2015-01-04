@@ -91,7 +91,7 @@
              *
              * @example aja().cache(false);
              *
-             * @param {Boolean|*} [sync] - false means no cache  (other types than booleans are casted)
+             * @param {Boolean|*} [cache] - false means no cache  (other types than booleans are casted)
              * @returns {Aja|Boolean} chains or get cache value
              */
             cache : function(cache){
@@ -105,7 +105,7 @@
              *
              * @example aja().type('json');
              *
-             * @throws TypeError if an unkown type is set
+             * @throws TypeError if an unknown type is set
              * @param {String} [type] - the type to set
              * @returns {Aja|String} chains or get the type
              */
@@ -164,7 +164,7 @@
              *
              * @example aja().method('post');
              *
-             * @throws TypeError if an unkown method is set
+             * @throws TypeError if an unknown method is set
              * @param {String} [method] - the method to set
              * @returns {Aja|String} chains or get the method
              */
@@ -255,7 +255,7 @@
             },
 
             /**
-             * Padding name  getter/setter, ie. the callback's PARAMETER name in your JSONP query.
+             * Padding name getter/setter, ie. the callback's PARAMETER name in your JSONP query.
              *
              * @example aja().jsonPaddingName('callback');
              *
@@ -315,7 +315,7 @@
             /**
              * Trigger an event.
              * This method will be called hardly ever outside Aja itself,
-             * but there is edge cases where it can be usefull.
+             * but there is edge cases where it can be useful.
              *
              * @example aja().trigger('error', new Error('Emergency alert'));
              *
@@ -344,7 +344,7 @@
                             if(listenerStatus && listenerStatus.length > 3 &&       //an listener on status
                                 triggerStatus[1] === listenerStatus[1] &&           //hundreds match exactly
                                 (listenerStatus[2] === 'x' ||  triggerStatus[2] === listenerStatus[2]) && //tens matches
-                                (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //tens matches
+                                (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //ones matches
 
                                 eventCalls(eventName, data);
                             }
@@ -393,7 +393,7 @@
 
             /**
              * XHR call to url to retrieve JSON
-             * @param {String} url - the
+             * @param {String} url - the url
              */
             json : function(url){
                 var self = this;
@@ -410,10 +410,9 @@
 
             /**
              * XHR call to url to retrieve HTML and add it to a container if set.
-             * @param {String} url - the
+             * @param {String} url - the url
              */
             html : function(url){
-                var self = this;
                 ajaGo._xhr.call(this, url, function processRes(res){
                     if(data.into && data.into.length){
                         data.into.forEach(function(elt){
@@ -426,7 +425,7 @@
 
             /**
              * Create and send an XHR query.
-             * @param {String} url - the
+             * @param {String} url - the url
              * @param {Function} processRes - to modify / process the response before sent to events.
              */
             _xhr : function(url, processRes){
@@ -438,13 +437,11 @@
                 var method      = data.method || 'get';
                 var async       = data.sync !== true;
                 var request     = new XMLHttpRequest();
-                var queryString = data.queryString;
                 var _data       = data.data;
-                var body        = data.body;
-                var openParams = [];
+                var body        = data.body || '';
+                var openParams;
 
                 if(_data && _dataInBody(method)){
-                    body = body || '';
                     for(key in _data){
                         body += key + '=' + _data[key] + '\n\r';
                     }
@@ -535,7 +532,6 @@
                     window[jsonPadding] = undefined;
                 };
                 head.appendChild(script);
-                return;
             }
         };
 
@@ -571,13 +567,14 @@
         };
 
         /**
-         * Check wheter the data must be set in the body instead of the queryString
+         * Check whether the data must be set in the body instead of the queryString
          * @private
          * @memberof aja
+         * @param {String} [method] - the request method
          * @returns {Boolean} true id data goes to the body
          */
-        var _dataInBody = function _dataInBody(){
-            var method = data.method || 'get';
+        var _dataInBody = function _dataInBody(method){
+            method = method || data.method || 'get';
 
             //TODO check which methods may use body parameters
             return ['post', 'put', 'patch'].indexOf(method) > -1;
@@ -628,8 +625,8 @@
         },
 
         /**
-         * Check wheter the given parameter is a string
-         * @param {String} value
+         * Check whether the given parameter is a string
+         * @param {String} string
          * @returns {String} value
          * @throws {TypeError} for non strings
          */
@@ -641,7 +638,7 @@
         },
 
         /**
-         * Check wheter the given parameter is a plain object (array and functions arn't accepeted)
+         * Check whether the given parameter is a plain object (array and functions aren't accepted)
          * @param {Object} object
          * @returns {Object} object
          * @throws {TypeError} for non object
@@ -655,7 +652,7 @@
         },
 
         /**
-         * Check wheter the given parameter is a type supported by Aja.
+         * Check whether the given parameter is a type supported by Aja.
          * The list of supported types is set above, in the {@link types} variable.
          * @param {String} type
          * @returns {String} type
@@ -670,7 +667,7 @@
         },
 
         /**
-         * Check wheter the given HTTP method is supported.
+         * Check whether the given HTTP method is supported.
          * The list of supported methods is set above, in the {@link methods} variable.
          * @param {String} method
          * @returns {String} method (but to lower case)
@@ -730,7 +727,7 @@
          */
         func : function(functionName){
             functionName = this.string(functionName);
-            if(!/^([a-zA-Z_]{1})([a-zA-Z0-9_\-])+$/.test(functionName)){
+            if(!/^([a-zA-Z_])([a-zA-Z0-9_\-])+$/.test(functionName)){
                 throw new TypeError('a valid function name is expected, ' + functionName + ' [' + (typeof functionName) + '] given');
             }
             return functionName;
@@ -759,7 +756,7 @@
         return url;
     };
 
-    //AMD, CommonJs than globals
+    //AMD, CommonJs, then globals
     if (typeof define === 'function' && define.amd) {
         define([], function(){
             return aja;
