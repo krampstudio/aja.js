@@ -126,6 +126,8 @@ describe('aja()', function(){
                 expect(function(){ aja().method('Put'); }).to.not.throw();
                 expect(function(){ aja().method('patch'); }).to.not.throw();
                 expect(function(){ aja().method('options'); }).to.not.throw();
+                expect(function(){ aja().method('connect'); }).to.not.throw();
+                expect(function(){ aja().method('Trace'); }).to.not.throw();
             });
 
             it('should get / set value', function(){

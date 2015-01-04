@@ -17,7 +17,17 @@
     /**
      * supported http methods
      */
-    var methods = ['get', 'post', 'delete', 'head', 'put', 'options', 'patch'];
+    var methods = [
+        'connect',
+        'delete',
+        'get',
+        'head',
+        'options',
+        'patch',
+        'post',
+        'put',
+        'trace'
+    ];
 
     /**
      * API entry point.
