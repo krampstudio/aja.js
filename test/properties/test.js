@@ -7,11 +7,11 @@ describe('aja()', function(){
     it('should be a function', function(){
         expect(aja).to.be.a('function');
     });
-    
+
     it('should return an object', function(){
         expect(aja()).to.be.an('object');
     });
-   
+
     describe('setter/getter', function(){
 
         describe('url()', function(){
@@ -48,14 +48,14 @@ describe('aja()', function(){
                 expect(aja().sync(false).sync()).to.equals(false);
                 expect(aja().sync(0).sync()).to.equals(false);
             });
-            
+
             it('should chain', function(){
                 var a = aja();
                 expect(a.sync(true)).to.be.an('object');
                 expect(a.sync(true)).to.equals(a);
             });
         });
-        
+
         describe('cache()', function(){
 
             it('should be a function', function(){
@@ -68,7 +68,7 @@ describe('aja()', function(){
                 expect(aja().cache(false).cache()).to.equals(false);
                 expect(aja().cache(0).cache()).to.equals(false);
             });
-            
+
             it('should chain', function(){
                 var a = aja();
                 expect(a.cache(true)).to.be.an('object');
@@ -98,7 +98,7 @@ describe('aja()', function(){
                 expect(aja().type('json').type()).to.equals('json');
                 expect(aja().type('html').type()).to.equals('html');
             });
-            
+
             it('should chain', function(){
                 var a = aja();
                 expect(a.type('json')).to.be.an('object');
@@ -111,7 +111,7 @@ describe('aja()', function(){
             it('should be a function', function(){
                 expect(aja().method).to.be.a('function');
             });
-            
+
             it('should accept only defined values', function(){
 
                 expect(function(){ aja().method(false); }).to.throw(TypeError);
@@ -140,7 +140,7 @@ describe('aja()', function(){
                 expect(a.method('get')).to.equals(a);
             });
         });
-        
+
         describe('header()', function(){
             var header = 'Content-Type';
             var values = {
@@ -151,7 +151,7 @@ describe('aja()', function(){
             it('should be a function', function(){
                 expect(aja().header).to.be.a('function');
             });
-            
+
             it('should accept only strings', function(){
 
                 expect(function(){ aja().header(false); }).to.throw(TypeError);
@@ -172,7 +172,7 @@ describe('aja()', function(){
                 expect(a.header(header, values.json)).to.equals(a);
             });
         });
-        
+
         describe('auth()', function(){
             var user = 'admin';
             var passwd = 'admin123';
@@ -180,7 +180,7 @@ describe('aja()', function(){
             it('should be a function', function(){
                 expect(aja().auth).to.be.a('function');
             });
-            
+
             it('should accept only strings', function(){
 
                 expect(function(){ aja().auth(false); }).to.throw(TypeError);
@@ -209,7 +209,7 @@ describe('aja()', function(){
             it('should be a function', function(){
                 expect(aja().queryString).to.be.a('function');
             });
-            
+
             it('should accept plain object or strings', function(){
 
                 expect(function(){ aja().queryString(false); }).to.throw(TypeError);
@@ -236,7 +236,7 @@ describe('aja()', function(){
             it('should be a function', function(){
                 expect(aja().data).to.be.a('function');
             });
-            
+
             it('should accept plain objects', function(){
 
                 expect(function(){ aja().data(false); }).to.throw(TypeError);
@@ -258,11 +258,11 @@ describe('aja()', function(){
         });
 
         describe('body()', function(){
-            
+
             it('should be a function', function(){
                 expect(aja().body).to.be.a('function');
             });
-            
+
             it('should accept any value', function(){
 
                 expect(function(){ aja().body(false); }).to.not.throw();
@@ -273,14 +273,14 @@ describe('aja()', function(){
             });
 
             it('should get / set value', function(){
-                    
+
                 expect(aja().body(false).body()).to.equal('false');
                 expect(aja().body('foo=bar').body()).to.equal('foo=bar');
-                
+
                 var arr = ['foo', 'bar'];
                 expect(aja().body(arr).body()).to.equal(JSON.stringify(arr));
 
-                var obj = {foo: 'bar'}; 
+                var obj = {foo: 'bar'};
                 expect(aja().body(obj).body()).to.equal(JSON.stringify(obj));
 
                 var fdata = new FormData();
@@ -293,13 +293,13 @@ describe('aja()', function(){
                 expect(a.body('b')).to.equals(a);
             });
         });
-        
+
         describe('into()', function(){
-            
+
             it('should be a function', function(){
                 expect(aja().into).to.be.a('function');
             });
-            
+
             it('should accept only selectors and HTMLElement', function(){
 
                 expect(function(){ aja().into('#foo-container'); }).to.not.throw();
@@ -308,7 +308,7 @@ describe('aja()', function(){
                 expect(function(){ aja().into(false); }).to.throw(TypeError);
                 expect(function(){ aja().into(new Date()); }).to.throw(TypeError);
                 expect(function(){ aja().into([]); }).to.throw(TypeError);
-    
+
             });
 
             it('should get / set value', function(){
@@ -318,7 +318,7 @@ describe('aja()', function(){
                 expect(aja().into('#foo-container').into()[0]).to.be.an.instanceof(HTMLElement);
                 expect(aja().into(elt).into()[0].id).to.equal(elt.id);
                 expect(aja().into('#foo-container').into()[0].id).to.equal(elt.id);
-                
+
             });
 
             it('should chain', function(){
@@ -327,13 +327,13 @@ describe('aja()', function(){
                 expect(a.into('#foo-container')).to.equals(a);
             });
         });
-        
+
         describe('jsonPaddingName()', function(){
-            
+
             it('should be a function', function(){
                 expect(aja().jsonPaddingName).to.be.a('function');
             });
-            
+
             it('should accept only strings', function(){
 
                 expect(function(){ aja().jsonPaddingName(false); }).to.throw(TypeError);
@@ -345,7 +345,7 @@ describe('aja()', function(){
             it('should get / set value', function(){
                 expect(aja().jsonPaddingName('cb').jsonPaddingName()).to.equal('cb');
                 expect(aja().jsonPaddingName('callback').jsonPaddingName()).to.equal('callback');
-                
+
             });
 
             it('should chain', function(){
@@ -354,13 +354,13 @@ describe('aja()', function(){
                 expect(a.jsonPaddingName('cb')).to.equals(a);
             });
         });
-        
+
         describe('jsonPadding()', function(){
-            
+
             it('should be a function', function(){
                 expect(aja().jsonPadding).to.be.a('function');
             });
-            
+
             it('should accept only valid function names', function(){
 
                 expect(function(){ aja().jsonPadding(false); }).to.throw(TypeError);
@@ -375,7 +375,7 @@ describe('aja()', function(){
             it('should get / set value', function(){
                 expect(aja().jsonPadding('cb').jsonPadding()).to.equal('cb');
                 expect(aja().jsonPadding('callback').jsonPadding()).to.equal('callback');
-                
+
             });
 
             it('should chain', function(){

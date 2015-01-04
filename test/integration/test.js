@@ -9,11 +9,11 @@ describe('aja()', function(){
     it('should be a function', function(){
         expect(aja).to.be.a('function');
     });
-    
+
     it('should return an object', function(){
         expect(aja()).to.be.an('object');
     });
-  
+
     it('should load the json sample', function(done){
         aja()
             .url('/test/samples/data.json')
@@ -24,8 +24,8 @@ describe('aja()', function(){
                 done();
             })
             .go();
-    }); 
-    
+    });
+
     it('should load an html sample into an element', function(done){
         var element = document.getElementById('into1');
         expect(element).to.not.equal(null);
@@ -39,7 +39,7 @@ describe('aja()', function(){
                 done();
             })
             .go();
-    }); 
+    });
 
     it('should load the json sample and trigger a 200', function(done){
         aja()
@@ -51,8 +51,8 @@ describe('aja()', function(){
                 done();
             })
             .go();
-    }); 
-    
+    });
+
     it('should load the json sample and trigger a 20x like', function(done){
         aja()
             .url('/test/samples/data.json')
@@ -64,7 +64,7 @@ describe('aja()', function(){
             })
             .go();
     });
- 
+
     it('should trigger a 404 on wrong URL', function(done){
         aja()
             .url('/test/zamples/zaza.json')
@@ -73,8 +73,8 @@ describe('aja()', function(){
                 done();
             })
             .go();
-    }); 
-    
+    });
+
     it('should handle jsonp', function(done){
         aja()
             .url('/test/samples/data.json')
@@ -86,5 +86,5 @@ describe('aja()', function(){
                 done();
             })
             .go();
-    }); 
+    });
 });

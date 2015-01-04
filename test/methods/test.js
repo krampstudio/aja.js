@@ -8,12 +8,12 @@ describe('aja()', function(){
     it('should be a function', function(){
         expect(aja).to.be.a('function');
     });
-    
+
     it('should return an object', function(){
         expect(aja()).to.be.an('object');
         aja().url();
     });
-   
+
     describe('method', function(){
 
         describe('on/off/trigger()', function(){
