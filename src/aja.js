@@ -10,7 +10,7 @@
 
     /**
      * supported request types.
-     * TODO support types new types :   'script', 'style', 'file'?
+     * TODO support new types :   'script', 'style', 'file'?
      */
     var types = ['html', 'json', 'jsonp'];
 
@@ -438,10 +438,13 @@
                 var async       = data.sync !== true;
                 var request     = new XMLHttpRequest();
                 var _data       = data.data;
-                var body        = data.body || '';
+                var body        = data.body;
                 var openParams;
 
-                if(_data && _dataInBody(method)){
+                if(_data && _dataInBody()){
+                    if(typeof body !== 'string'){
+                        body = '';
+                    }
                     for(key in _data){
                         body += key + '=' + _data[key] + '\n\r';
                     }
@@ -570,14 +573,10 @@
          * Check whether the data must be set in the body instead of the queryString
          * @private
          * @memberof aja
-         * @param {String} [method] - the request method
          * @returns {Boolean} true id data goes to the body
          */
-        var _dataInBody = function _dataInBody(method){
-            method = method || data.method || 'get';
-
-            //TODO check which methods may use body parameters
-            return ['post', 'put', 'patch'].indexOf(method) > -1;
+        var _dataInBody = function _dataInBody(){
+            return ['delete', 'patch', 'post', 'put'].indexOf(data.method) > -1;
         };
 
         /**
@@ -646,7 +645,6 @@
         plainObject : function(object){
             if(typeof object !== 'object' || object.constructor !== Object){
                 throw new TypeError('an object is expected, but ' + object + '  [' + (typeof object) + '] given');
-
             }
             return object;
         },
