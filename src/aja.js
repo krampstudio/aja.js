@@ -1,7 +1,7 @@
 /**
  * Aja.js
  * Ajax without XML : Asynchronous Javascript and JavaScript/JSON(P)
- * 
+ *
  * @author Bertrand Chevrier <chevrier.bertrand@gmail.com>
  * @license MIT
  */
@@ -16,15 +16,15 @@
 
     /**
      * supported http methods
-     */ 
+     */
     var methods = ['get', 'post', 'delete', 'head', 'put', 'options', 'patch'];
 
     /**
      * API entry point.
      * It creates an new {@link Aja} object.
-     *        
+     *
      * @example aja().url('page.html').into('#selector').go();
-     * 
+     *
      * @exports aja
      * @namespace aja
      * @returns {Aja} the {@link Aja} object ready to create your request.
@@ -38,7 +38,7 @@
         var events = {};
 
         /**
-         * The Aja object is your context, it provides your getter/setter 
+         * The Aja object is your context, it provides your getter/setter
          * as well as methods the fluent way.
          * @typedef {Object} Aja
          */
@@ -50,12 +50,12 @@
         var Aja = {
 
             /**
-             * URL getter/setter: where your request goes. 
+             * URL getter/setter: where your request goes.
              * All URL formats are supported: <pre>[protocol:][//][user[:passwd]@][host.tld]/path[?query][#hash]</pre>.
              *
              * @example aja().url('bestlib?pattern=aja');
              *
-             * @throws TypeError  
+             * @throws TypeError
              * @param {String} [url] - the url to set
              * @returns {Aja|String} chains or get the URL
              */
@@ -89,7 +89,7 @@
             },
 
             /**
-             * Type getter/setter: one of the predefined request type. 
+             * Type getter/setter: one of the predefined request type.
              * The supported types are : <pre>['html', 'json', 'jsonp', 'script', 'style']</pre>.
              * If not set, the default type is deduced regarding the context, but goes to json otherwise.
              *
@@ -107,7 +107,7 @@
              * HTTP Request Header getter/setter.
              *
              * @example aja().header('Content-Type', 'application/json');
-             * 
+             *
              * @throws TypeError
              * @param {String} name - the name of the header to get/set
              * @param {String} [value] - the value of the header to set
@@ -130,7 +130,7 @@
 
             /**
              * <strong>Setter only</strong> to add authentication credentials to the request.
-             * 
+             *
              * @throws TypeError
              * @param {String} user - the user name
              * @param {String} passwd - the password value
@@ -138,12 +138,12 @@
              */
             auth : function(user, passwd){
                 //setter only
-    
+
                 validators.string(user);
                 validators.string(passwd);
                 data.auth = {
                    user : user,
-                   passwd : passwd 
+                   passwd : passwd
                 };
 
                 return this;
@@ -173,13 +173,13 @@
              * @example aja().queryString({ user : '12' }); //  ?user=12
              *
              * @throws TypeError
-             * @param {Object|String} [params] - key/values POJO or URL queryString directly to set 
+             * @param {Object|String} [params] - key/values POJO or URL queryString directly to set
              * @returns {Aja|String} chains or get the params
              */
             queryString : function(params){
                return _chain.call(this, 'queryString', params, validators.queryString);
             },
-        
+
             /**
              * URL's queryString getter/setter.
              * Regarding the HTTP method the data goes to the queryString or the body.
@@ -193,10 +193,10 @@
             data : function(params){
                return _chain.call(this, 'data', params, validators.plainObject);
             },
-            
+
             /**
              * Request Body getter/setter.
-             * Objects and arrays are stringified (except FormData instances) 
+             * Objects and arrays are stringified (except FormData instances)
              *
              * @example aja().body(new FormData());
              *
@@ -208,7 +208,7 @@
                 return _chain.call(this, 'body', content, null, function(content){
                    if(typeof content === 'object'){
                         //support FormData to be sent direclty
-                        if( !(content instanceof FormData)){ 
+                        if( !(content instanceof FormData)){
                             //otherwise encode the object/array to a string
                             try {
                                 content = JSON.stringify(content);
@@ -223,7 +223,7 @@
                    return content;
                 });
             },
-            
+
             /**
              * Into selector getter/setter. When you want an Element to contain the response.
              *
@@ -269,18 +269,18 @@
             jsonPadding : function(padding){
                 return _chain.call(this, 'jsonPadding', padding, validators.func);
             },
-           
+
             /**
              * Attach an handler to an event.
              * Calling `on` with the same eventName multiple times add callbacks: they
-             * will all be executed. 
+             * will all be executed.
              *
              * @example aja().on('success', function(res){ console.log('Cool', res);  });
-             * 
-             * @param {String} name - the name of the event to listen 
+             *
+             * @param {String} name - the name of the event to listen
              * @param {Function} cb - the callback to run once the event is triggered
              * @returns {Aja} chains
-             */ 
+             */
             on : function(name, cb){
                 if(typeof cb === 'function'){
                     events[name] = events[name] || [];
@@ -293,8 +293,8 @@
              * Remove ALL handlers for an event.
              *
              * @example aja().off('success');
-             * 
-             * @param {String} name - the name of the event 
+             *
+             * @param {String} name - the name of the event
              * @returns {Aja} chains
              */
             off : function(name){
@@ -318,7 +318,7 @@
                 var eventCalls  = function eventCalls(name, data){
                     if(events[name] instanceof Array){
                         events[name].forEach(function(event){
-                            event.call(self, data);             
+                            event.call(self, data);
                         });
                     }
                 };
@@ -326,18 +326,18 @@
                     name = name + '';
                     var statusPattern = /^([0-9])([0-9x])([0-9x])$/i;
                     var triggerStatus = name.match(statusPattern);
-                     
+
                     //HTTP status pattern
                     if(triggerStatus && triggerStatus.length > 3){
                         Object.keys(events).forEach(function(eventName){
                             var listenerStatus = eventName.match(statusPattern);
                             if(listenerStatus && listenerStatus.length > 3 &&       //an listener on status
                                 triggerStatus[1] === listenerStatus[1] &&           //hundreds match exactly
-                                (listenerStatus[2] === 'x' ||  triggerStatus[2] === listenerStatus[2]) && //tens matches 
-                                (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //tens matches 
+                                (listenerStatus[2] === 'x' ||  triggerStatus[2] === listenerStatus[2]) && //tens matches
+                                (listenerStatus[3] === 'x' ||  triggerStatus[3] === listenerStatus[3])){ //tens matches
 
                                 eventCalls(eventName, data);
-                            } 
+                            }
                         });
                     //or exact matching
                     } else if(events[name]){
@@ -349,11 +349,11 @@
 
             /**
              * Trigger the call.
-             * This is the end of your chain loop. 
+             * This is the end of your chain loop.
              *
              * @example aja()
              *           .url('data.json')
-             *           .on('200', function(res){ 
+             *           .on('200', function(res){
              *               //Yeah !
              *            })
              *           .go();
@@ -383,7 +383,7 @@
 
             /**
              * XHR call to url to retrieve JSON
-             * @param {String} url - the 
+             * @param {String} url - the
              */
             json : function(url){
                 var self = this;
@@ -400,14 +400,14 @@
 
             /**
              * XHR call to url to retrieve HTML and add it to a container if set.
-             * @param {String} url - the 
+             * @param {String} url - the
              */
             html : function(url){
                 var self = this;
                 ajaGo._xhr.call(this, url, function processRes(res){
                     if(data.into && data.into.length){
                         data.into.forEach(function(elt){
-                            elt.innerHTML = res; 
+                            elt.innerHTML = res;
                         });
                     }
                     return res;
@@ -416,14 +416,14 @@
 
             /**
              * Create and send an XHR query.
-             * @param {String} url - the 
+             * @param {String} url - the
              * @param {Function} processRes - to modify / process the response before sent to events.
              */
             _xhr : function(url, processRes){
                 var self = this;
 
                 //iterators
-                var key, header; 
+                var key, header;
 
                 var method      = data.method || 'get';
                 var async       = data.sync !== true;
@@ -439,7 +439,7 @@
                         body += key + '=' + _data[key] + '\n\r';
                     }
                 }
-               
+
                 //open the XHR request
                 openParams = [method, url, async];
                 if(data.auth){
@@ -461,7 +461,7 @@
                         self.trigger('progress', e.loaded / e.total);
                     }
                 };
-        
+
                 request.onload = function onRequestLoad(){
                     var response = request.responseText;
 
@@ -471,7 +471,7 @@
                         }
                         self.trigger('success', response);
                     }
-                    
+
                     self.trigger(this.status, response);
 
                     self.trigger('end', response);
@@ -480,14 +480,14 @@
                 request.onerror = function onRequestError (err){
                     self.trigger('error', err, arguments);
                 };
-    
+
                 //send the request
                 request.send(body);
             },
 
             /**
              * @this {Aja} call bound to the Aja context
-             * @param {String} url - the url 
+             * @param {String} url - the url
              */
             jsonp : function(url){
                 var script;
@@ -513,9 +513,9 @@
                 };
 
                 paddingQuery[jsonPaddingName] = jsonPadding;
-                
+
                 url =  appendQueryString(url, paddingQuery);
-                
+
                 script = document.createElement('script');
                 script.async = async;
                 script.src = url;
@@ -568,7 +568,7 @@
          */
         var _dataInBody = function _dataInBody(){
             var method = data.method || 'get';
-            
+
             //TODO check which methods may use body parameters
             return ['post', 'put', 'patch'].indexOf(method) > -1;
         };
@@ -588,7 +588,7 @@
 
             //add a cache buster
             if(cache === false){
-               queryString += 'ajabuster=' + new Date().getTime(); 
+               queryString += 'ajabuster=' + new Date().getTime();
             }
 
             url = appendQueryString(url, queryString);
@@ -599,7 +599,7 @@
             return url;
         };
 
-        //expose the Aja function 
+        //expose the Aja function
         return Aja;
     };
 
@@ -610,16 +610,16 @@
 
         /**
          * cast to boolean
-         * @param {*} value 
+         * @param {*} value
          * @returns {Boolean} casted value
          */
         bool : function(value){
-            return !!value;    
+            return !!value;
         },
 
         /**
          * Check wheter the given parameter is a string
-         * @param {String} value 
+         * @param {String} value
          * @returns {String} value
          * @throws {TypeError} for non strings
          */
@@ -627,7 +627,7 @@
             if(typeof string !== 'string'){
                 throw new TypeError('a string is expected, but ' + string + ' [' + (typeof string) + '] given');
             }
-            return string; 
+            return string;
         },
 
         /**
@@ -641,7 +641,7 @@
                 throw new TypeError('an object is expected, but ' + object + '  [' + (typeof object) + '] given');
 
             }
-            return object; 
+            return object;
         },
 
         /**
@@ -676,8 +676,8 @@
 
         /**
          * Check the queryString, and create an object if a string is given.
-         * 
-         * @param {String|Object} params 
+         *
+         * @param {String|Object} params
          * @returns {Object} key/value based queryString
          * @throws {TypeError} if wrong params type or if the string isn't parseable
          */
@@ -688,7 +688,7 @@
                params.replace('?', '').split('&').forEach(function(kv){
                     var pair = kv.split('=');
                     if(pair.length === 2){
-                        object[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);         
+                        object[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
                     }
                });
             } else {
@@ -699,7 +699,7 @@
 
         /**
          * Check if the parameter enables us to select a DOM Element.
-         * 
+         *
          * @param {String|HTMLElement} selector - CSS selector or the element ref
          * @returns {String|HTMLElement} same as input if valid
          * @throws {TypeError} check it's a string or an HTMLElement
@@ -708,12 +708,12 @@
             if(typeof selector !== 'string' && !(selector instanceof HTMLElement)){
                 throw new TypeError('a selector or an HTMLElement is expected, ' + selector + ' [' + (typeof selector) + '] given');
             }
-            return selector; 
+            return selector;
         },
 
         /**
          * Check if the parameter is a valid JavaScript function name.
-         * 
+         *
          * @param {String} functionName
          * @returns {String} same as input if valid
          * @throws {TypeError} check it's a string and a valid name against the pattern inside.
@@ -731,18 +731,18 @@
      * Query string helper : append some parameters
      * @private
      * @param {String} url - the URL to append the parameters
-     * @param {Object} params - key/value 
-     * @returns {String} the new URL 
+     * @param {Object} params - key/value
+     * @returns {String} the new URL
      */
     var appendQueryString = function appendQueryString(url, params){
         var key;
         url = url || '';
-        if(params){ 
+        if(params){
             if(url.indexOf('?') === -1){
-                url += '?';    
+                url += '?';
             }
             for(key in params){
-                url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]); 
+                url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
             }
         }
 
@@ -757,7 +757,7 @@
     } else if (typeof exports === 'object') {
         module.exports = aja;
     } else {
-        window.aja = window.aja || aja; 
+        window.aja = window.aja || aja;
     }
 
 }());
