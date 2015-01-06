@@ -12,6 +12,7 @@
     "type": "git",
     "url": "https://github.com/krampstudio/aja.js.git"
   },
+  "main" : "src/aja.js",
   "scripts": {
     "test": "grunt test"
   },
