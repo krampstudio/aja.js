@@ -12,7 +12,7 @@
      * supported request types.
      * TODO support new types :   'script', 'style', 'file'?
      */
-    var types = ['html', 'json', 'jsonp'];
+    var types = ['html', 'json', 'jsonp', 'script'];
 
     /**
      * supported http methods
