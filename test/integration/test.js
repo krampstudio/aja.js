@@ -87,4 +87,18 @@ describe('aja()', function(){
             })
             .go();
     });
+
+    it('should load a remote script', function(done){
+        expect(window).to.not.contain.key('awesomeLib');
+        aja()
+            .url('/test/samples/lib.js')
+            .type('script')
+            .on('success', function(){
+                expect(window).to.contain.key('awesomeLib');
+                expect(window.awesomeLib).to.be.an('object');
+                expect(window.awesomeLib).to.contain.keys(['doSomethingCrazy']);
+                done();
+            })
+            .go();
+    });
 });

@@ -12,7 +12,7 @@
      * supported request types.
      * TODO support new types :   'script', 'style', 'file'?
      */
-    var types = ['html', 'json', 'jsonp'];
+    var types = ['html', 'json', 'jsonp', 'script'];
 
     /**
      * supported http methods
@@ -534,6 +534,40 @@
                     head.removeChild(script);
                     window[jsonPadding] = undefined;
                 };
+                head.appendChild(script);
+            },
+
+            /**
+             * Loads a script.
+             *
+             * This kind of ugly script loading is sometimes used by 3rd part libraries to load
+             * a configured script. For example, to embed google analytics or a twitter button.
+             *
+             * @this {Aja} call bound to the Aja context
+             * @param {String} url - the url
+             */
+            script : function(url){
+
+                var self    = this;
+                var head    = document.querySelector('head') || document.querySelector('body');
+                var async   = data.sync !== true;
+                var script;
+
+                if(!head){
+                    throw new Error('Ok, wait a second, you want to load a script, but you don\'t have at least a head or body tag...');
+                }
+
+                script = document.createElement('script');
+                script.async = async;
+                script.src = url;
+                script.onerror = function onScriptError(){
+                    self.trigger('error', arguments);
+                    head.removeChild(script);
+                };
+                script.onload = function onScriptLoad(){
+                    self.trigger('success', arguments);
+                };
+
                 head.appendChild(script);
             }
         };
