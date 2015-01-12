@@ -4,7 +4,7 @@ var aja = window.aja;
 
 describe('aja()', function(){
 
-    this.timeout(1000);
+    this.timeout(2000);
 
     this.afterEach(function() {
         var element = document.getElementById('into1');
@@ -65,6 +65,7 @@ describe('aja()', function(){
             })
             .go();
     });
+
     it('should load the json sample and trigger a 200', function(done){
         aja()
             .url('/test/samples/data.json')
@@ -97,6 +98,30 @@ describe('aja()', function(){
                 done();
             })
             .go();
+    });
+
+    it('should bust cache', function(done){
+        aja()
+            .url('/time')
+            .on('success', function(data){
+                expect(data).to.be.an('object');
+                expect(data.ts).to.be.a('number');
+                expect(data.ts).to.be.above(0);
+                var ts = data.ts;
+                aja()
+                    .url('/time')
+                    .cache(false)
+                    .on('success', function(data){
+                        expect(data).to.be.an('object');
+                        expect(data.ts).to.be.a('number');
+                        expect(data.ts).to.be.above(0);
+                        expect(data.ts).to.be.not.equal(ts);
+                        done();
+                    })
+                    .go();
+            })
+            .go();
+
     });
 
     it('should handle jsonp', function(done){

@@ -397,7 +397,8 @@
              */
             json : function(url){
                 var self = this;
-                ajaGo._xhr.call(this, url, function processRes(res){
+
+               ajaGo._xhr.call(this, url, function processRes(res){
                     try {
                         res = JSON.parse(res);
                     } catch(e){
@@ -623,12 +624,12 @@
 
             var url         = data.url;
             var cache       = typeof data.cache !== 'undefined' ? !!data.cache : true;
-            var queryString = data.queryString;
+            var queryString = data.queryString || '';
             var _data       = data.data;
 
             //add a cache buster
             if(cache === false){
-               queryString += 'ajabuster=' + new Date().getTime();
+               queryString += '&ajabuster=' + new Date().getTime();
             }
 
             url = appendQueryString(url, queryString);
@@ -780,8 +781,12 @@
             if(url.indexOf('?') === -1){
                 url += '?';
             }
-            for(key in params){
-                url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+            if(typeof params === 'string'){
+                url += params;
+            } else if (typeof params === 'object'){
+                for(key in params){
+                    url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+                }
             }
         }
 
