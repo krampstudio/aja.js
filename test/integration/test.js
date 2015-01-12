@@ -3,7 +3,15 @@
 var aja = window.aja;
 
 describe('aja()', function(){
-    this.timeout(1000);
+
+    this.timeout(2000);
+
+    this.afterEach(function() {
+        var element = document.getElementById('into1');
+        if(element){
+            element.innerHTML = '';
+        }
+    });
 
     //test basic module behavior
     it('should be a function', function(){
@@ -32,6 +40,23 @@ describe('aja()', function(){
         aja()
             .url('/test/samples/data.html')
             .into(element)
+            .on('success', function(){
+                expect(element.children.length).to.equal(2);
+                expect(element.children[0].tagName).to.equal('H1');
+                expect(element.children[1].tagName).to.equal('P');
+                done();
+            })
+            .go();
+    });
+
+    it('should load an html sample into a selector', function(done){
+        var element = document.getElementById('into1');
+        expect(element).to.not.equal(null);
+        expect(element.children.length).to.equal(0);
+
+        aja()
+            .url('/test/samples/data.html')
+            .into('#into1')
             .on('success', function(){
                 expect(element.children.length).to.equal(2);
                 expect(element.children[0].tagName).to.equal('H1');
@@ -75,6 +100,30 @@ describe('aja()', function(){
             .go();
     });
 
+    it('should bust cache', function(done){
+        aja()
+            .url('/time')
+            .on('success', function(data){
+                expect(data).to.be.an('object');
+                expect(data.ts).to.be.a('number');
+                expect(data.ts).to.be.above(0);
+                var ts = data.ts;
+                aja()
+                    .url('/time')
+                    .cache(false)
+                    .on('success', function(data){
+                        expect(data).to.be.an('object');
+                        expect(data.ts).to.be.a('number');
+                        expect(data.ts).to.be.above(0);
+                        expect(data.ts).to.be.not.equal(ts);
+                        done();
+                    })
+                    .go();
+            })
+            .go();
+
+    });
+
     it('should handle jsonp', function(done){
         aja()
             .url('/test/samples/data.json')
@@ -83,6 +132,20 @@ describe('aja()', function(){
                 expect(data).to.be.an('object');
                 expect(data).to.contain.keys(['kill']);
                 expect(data.kill).to.equal('bill');
+                done();
+            })
+            .go();
+    });
+
+    it('should load a remote script', function(done){
+        expect(window).to.not.contain.key('awesomeLib');
+        aja()
+            .url('/test/samples/lib.js')
+            .type('script')
+            .on('success', function(){
+                expect(window).to.contain.key('awesomeLib');
+                expect(window.awesomeLib).to.be.an('object');
+                expect(window.awesomeLib).to.contain.keys(['doSomethingCrazy']);
                 done();
             })
             .go();

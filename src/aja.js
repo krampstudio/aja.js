@@ -12,7 +12,7 @@
      * supported request types.
      * TODO support new types :   'script', 'style', 'file'?
      */
-    var types = ['html', 'json', 'jsonp'];
+    var types = ['html', 'json', 'jsonp', 'script'];
 
     /**
      * supported http methods
@@ -397,7 +397,8 @@
              */
             json : function(url){
                 var self = this;
-                ajaGo._xhr.call(this, url, function processRes(res){
+
+               ajaGo._xhr.call(this, url, function processRes(res){
                     try {
                         res = JSON.parse(res);
                     } catch(e){
@@ -415,7 +416,7 @@
             html : function(url){
                 ajaGo._xhr.call(this, url, function processRes(res){
                     if(data.into && data.into.length){
-                        data.into.forEach(function(elt){
+                        [].forEach.call(data.into, function(elt){
                             elt.innerHTML = res;
                         });
                     }
@@ -535,6 +536,40 @@
                     window[jsonPadding] = undefined;
                 };
                 head.appendChild(script);
+            },
+
+            /**
+             * Loads a script.
+             *
+             * This kind of ugly script loading is sometimes used by 3rd part libraries to load
+             * a configured script. For example, to embed google analytics or a twitter button.
+             *
+             * @this {Aja} call bound to the Aja context
+             * @param {String} url - the url
+             */
+            script : function(url){
+
+                var self    = this;
+                var head    = document.querySelector('head') || document.querySelector('body');
+                var async   = data.sync !== true;
+                var script;
+
+                if(!head){
+                    throw new Error('Ok, wait a second, you want to load a script, but you don\'t have at least a head or body tag...');
+                }
+
+                script = document.createElement('script');
+                script.async = async;
+                script.src = url;
+                script.onerror = function onScriptError(){
+                    self.trigger('error', arguments);
+                    head.removeChild(script);
+                };
+                script.onload = function onScriptLoad(){
+                    self.trigger('success', arguments);
+                };
+
+                head.appendChild(script);
             }
         };
 
@@ -589,12 +624,12 @@
 
             var url         = data.url;
             var cache       = typeof data.cache !== 'undefined' ? !!data.cache : true;
-            var queryString = data.queryString;
+            var queryString = data.queryString || '';
             var _data       = data.data;
 
             //add a cache buster
             if(cache === false){
-               queryString += 'ajabuster=' + new Date().getTime();
+               queryString += '&ajabuster=' + new Date().getTime();
             }
 
             url = appendQueryString(url, queryString);
@@ -746,8 +781,12 @@
             if(url.indexOf('?') === -1){
                 url += '?';
             }
-            for(key in params){
-                url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+            if(typeof params === 'string'){
+                url += params;
+            } else if (typeof params === 'object'){
+                for(key in params){
+                    url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+                }
             }
         }
 

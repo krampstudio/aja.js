@@ -4,7 +4,11 @@ module.exports = function(grunt) {
     var url = require('url');
     var coverageDir = '.coverage';
 
+    /*
+     * HTTP Middlewares for the local web server
+     */
 
+    //to serve instrumented code to the tests runners
     var instrumentMiddleware = function(req, res, next) {
         if (/aja\.js$/.test(req.url)) {
             return res.end(grunt.file.read(coverageDir + '/instrument/src/aja.js'));
@@ -12,12 +16,23 @@ module.exports = function(grunt) {
         return next();
     };
 
+    //to test JSONP
     var jsonpMiddleware = function(req, res, next) {
         if (/(jsonp)|(callback)/.test(req.url)) {
             var parsed = url.parse(req.url, true);
             var path = parsed.pathname.replace(/^\//, '');
             var jsonp = parsed.query.jsonp || parsed.query.callback;
             return res.end(jsonp + '(' + grunt.file.read(path) + ');');
+        }
+        return next();
+    };
+
+    //to test browser caching
+    var timeMiddleware = function(req, res, next) {
+        if (/time/.test(req.url)) {
+            return res.end(JSON.stringify({
+                ts : new Date().getTime()
+        }));
         }
         return next();
     };
@@ -30,7 +45,7 @@ module.exports = function(grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
-        //mocha but from grunt-mocha-phantom-istanbul 
+        //mocha but from grunt-mocha-phantom-istanbul
         mocha: {
             options: {
                 urls: [
@@ -59,7 +74,7 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [jsonpMiddleware].concat(middlewares);
+                        return [jsonpMiddleware, timeMiddleware].concat(middlewares);
                     },
                 }
             },
@@ -69,7 +84,7 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [instrumentMiddleware, jsonpMiddleware].concat(middlewares);
+                        return [instrumentMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
                     },
                 }
             }

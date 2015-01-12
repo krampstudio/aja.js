@@ -108,7 +108,9 @@ This library is developed using the TDD principles, so I accept pull request onl
 
  - _0.1.0_ : initial release
  - _0.2.0_ : added support of new HTTP methods (trace, patch and connect)
-   - _0.2.1_ : Fix missing  `main` prop in package.json 
+   - _0.2.1_ : Fix missing  `main` prop in package.json
+ - _0.3.0_ : support new request type : script
+   - _0.3.1_ : Fix issue #4 and cache management
 
 ## License
 
