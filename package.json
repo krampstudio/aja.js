@@ -1,7 +1,7 @@
 {
   "name": "aja",
   "description" : "Asynchronous JavaScript And JavaScript/JSON(P) : Ajax without XML",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "http://krampstudio.github.io/aja.js/",
   "author": {
     "name": "Bertrand Chevrier",
