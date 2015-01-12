@@ -415,7 +415,7 @@
             html : function(url){
                 ajaGo._xhr.call(this, url, function processRes(res){
                     if(data.into && data.into.length){
-                        data.into.forEach(function(elt){
+                        [].forEach.call(data.into, function(elt){
                             elt.innerHTML = res;
                         });
                     }

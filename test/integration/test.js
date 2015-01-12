@@ -3,7 +3,15 @@
 var aja = window.aja;
 
 describe('aja()', function(){
+
     this.timeout(1000);
+
+    this.afterEach(function() {
+        var element = document.getElementById('into1');
+        if(element){
+            element.innerHTML = '';
+        }
+    });
 
     //test basic module behavior
     it('should be a function', function(){
@@ -41,6 +49,22 @@ describe('aja()', function(){
             .go();
     });
 
+    it('should load an html sample into a selector', function(done){
+        var element = document.getElementById('into1');
+        expect(element).to.not.equal(null);
+        expect(element.children.length).to.equal(0);
+
+        aja()
+            .url('/test/samples/data.html')
+            .into('#into1')
+            .on('success', function(){
+                expect(element.children.length).to.equal(2);
+                expect(element.children[0].tagName).to.equal('H1');
+                expect(element.children[1].tagName).to.equal('P');
+                done();
+            })
+            .go();
+    });
     it('should load the json sample and trigger a 200', function(done){
         aja()
             .url('/test/samples/data.json')
