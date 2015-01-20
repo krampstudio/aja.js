@@ -10,7 +10,7 @@
 
     /**
      * supported request types.
-     * TODO support new types :   'script', 'style', 'file'?
+     * TODO support new types : 'style', 'file'?
      */
     var types = ['html', 'json', 'jsonp', 'script'];
 
@@ -440,14 +440,32 @@
                 var request     = new XMLHttpRequest();
                 var _data       = data.data;
                 var body        = data.body;
+                var headers     = data.headers || {};
+                var contentType = this.header('Content-Type');
+                var isUrlEncoded;
                 var openParams;
 
+                //if data is used in body, it needs some modifications regarding the content type
                 if(_data && _dataInBody()){
                     if(typeof body !== 'string'){
                         body = '';
                     }
-                    for(key in _data){
-                        body += key + '=' + _data[key] + '\n\r';
+
+                    if(contentType.indexOf('json') > -1){
+                        try {
+                            body = JSON.stringify(_data);
+                        } catch(e){
+                            throw new TypeError('Unable to stringify body\'s content : ' + e.name);
+                        }
+                    } else {
+                        isUrlEncoded = contentType && contentType.indexOf('x-www-form-urlencoded') > 1;
+                        for(key in _data){
+                            if(isUrlEncoded){
+                                body += encodeURIComponent(key) + '=' + encodeURIComponent(_data[key]) + '&';
+                            } else {
+                                body += key + '=' + _data[key] + '\n\r';
+                            }
+                        }
                     }
                 }
 
@@ -460,10 +478,8 @@
                 request.open.apply(request, openParams);
 
                 //set the headers
-                if(data.headers){
-                    for(header in data.headers){
-                        request.setRequestHeader(header, data.headers[header]);
-                    }
+                for(header in data.headers){
+                    request.setRequestHeader(header, data.headers[header]);
                 }
 
                 //bind events

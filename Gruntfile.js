@@ -37,6 +37,16 @@ module.exports = function(grunt) {
         return next();
     };
 
+    //to test post
+    var postMiddleware = function(req, res, next) {
+        if (req.method === 'POST') {
+            return res.end(JSON.stringify({
+                body : req.body
+            }));
+        }
+        return next();
+    };
+
     //load npm tasks
     require('load-grunt-tasks')(grunt);
 
@@ -74,7 +84,7 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [jsonpMiddleware, timeMiddleware].concat(middlewares);
+                        return [connect.bodyParser(), postMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
                     },
                 }
             },
@@ -84,7 +94,7 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [instrumentMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
+                        return [instrumentMiddleware, connect.bodyParser(), postMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
                     },
                 }
             }
@@ -122,7 +132,7 @@ module.exports = function(grunt) {
                     'src/aja.min.js': ['src/aja.js']
                 },
                 options: {
-                    banner: "/**\n * <%= pkg.name %> <<%= pkg.homepage %>\n *  \n * @version <=%pkg.version%>\n * @author <%= pkg.author.name %> <<%= pkg.author.email %>> © <%= grunt.template.today('yyyy') %>\n * @license MIT\n**/",
+                    banner: "/**\n * <%= pkg.name %> <%= pkg.homepage %>\n *  \n * @version <=%pkg.version%>\n * @author <%= pkg.author.name %> <<%= pkg.author.email %>> © <%= grunt.template.today('yyyy') %>\n * @license MIT\n**/",
                     sourceMap: true,
                     beautify: {
                         'max_line_len': 500
