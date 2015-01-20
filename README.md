@@ -45,7 +45,7 @@ More options using the fluent api, terrific REST client.
     .on('200', function(response){
         //well done
     })
-     .on('40*', function(response){
+    .on('40*', function(response){
         //something is definitely wrong
     })
     .on('500', function(response){
