@@ -80,6 +80,20 @@ describe('aja()', function(){
             .go();
     });
 
+    it('should put urlencoded data', function(done){
+        aja()
+            .url('/put')
+            .method('put')
+            .data({ kill: 'him'})
+            .on('success', function(data){
+                expect(data).to.be.an('object');
+                expect(data.body).to.be.an('object');
+                expect(data.body).to.contain.keys(['kill']);
+                done();
+            })
+            .go();
+    });
+
     it('should load the json sample and trigger a 200', function(done){
         aja()
             .url('/test/samples/data.json')

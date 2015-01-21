@@ -47,6 +47,16 @@ module.exports = function(grunt) {
         return next();
     };
 
+    //to test put
+    var putMiddleware = function(req, res, next) {
+        if (req.method === 'PUT') {
+            return res.end(JSON.stringify({
+                body : req.body
+            }));
+        }
+        return next();
+    };
+
     //load npm tasks
     require('load-grunt-tasks')(grunt);
 
@@ -84,7 +94,7 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [connect.bodyParser(), postMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
+                        return [connect.bodyParser(), postMiddleware, putMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
                     },
                 }
             },
