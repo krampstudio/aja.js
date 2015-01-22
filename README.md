@@ -1,7 +1,10 @@
-aja.js
+aja.js  [![Build Status](https://travis-ci.org/krampstudio/aja.png)](https://travis-ci.org/krampstudio/aja) [![NPM version](https://badge.fury.io/js/aja.png)](http://badge.fury.io/js/aja) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 ======
+> Ajax without XML : Asynchronous Javascript and JavaScript/JSON(P)
 
-Ajax without XML : Asynchronous Javascript and JavaScript/JSON(P)
+[![Npm Downloads](https://nodei.co/npm/aja.png?downloads=true&stars=true)](https://nodei.co/npm/aja.png?downloads=true&stars=true)
+
+
 
 ## Basic Sample
 
