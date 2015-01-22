@@ -67,6 +67,18 @@ JSONP
     .go();
 ```
 
+Raw script loading
+
+```javascript
+    aja()
+        .url('http://platform.twitter.com/widgets.js')
+        .type('script')
+        .on('success', function(){
+            window.twttr.widgets.load();
+        })
+        .go();
+```
+
 ## Development
 
 ### Setup
@@ -112,6 +124,7 @@ This library is developed using the TDD principles, so I accept pull request onl
  - _0.3.0_ : support new request type : script
    - _0.3.1_ : Fix issue #4 and cache management
    - _0.3.2_ : Fix issue #7
+   - _0.3.3_ : Fix issue #10 and #11
 
 ## License
 
