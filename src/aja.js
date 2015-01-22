@@ -169,12 +169,7 @@
              * @returns {Aja|String} chains or get the method
              */
             method : function(method){
-               return _chain.call(this, 'method', method, validators.method, function(value){
-                    if(value.toLowerCase() === 'post'){
-                        this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
-                    }
-                    return value;
-               });
+               return _chain.call(this, 'method', method, validators.method);
             },
 
             /**
@@ -390,7 +385,6 @@
          */
         var ajaGo = {
 
-
             /**
              * XHR call to url to retrieve JSON
              * @param {String} url - the url
@@ -399,11 +393,13 @@
                 var self = this;
 
                ajaGo._xhr.call(this, url, function processRes(res){
-                    try {
-                        res = JSON.parse(res);
-                    } catch(e){
-                        self.trigger('error', e);
-                        return null;
+                    if(res){
+                        try {
+                            res = JSON.parse(res);
+                        } catch(e){
+                            self.trigger('error', e);
+                            return null;
+                        }
                     }
                     return res;
                 });
@@ -444,6 +440,12 @@
                 var contentType = this.header('Content-Type');
                 var isUrlEncoded;
                 var openParams;
+
+                //guess content type
+                if(!contentType && _data && _dataInBody()){
+                    this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+                    contentType = this.header('Content-Type');
+                }
 
                 //if data is used in body, it needs some modifications regarding the content type
                 if(_data && _dataInBody()){

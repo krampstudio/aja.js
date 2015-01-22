@@ -68,8 +68,22 @@ describe('aja()', function(){
 
     it('should post urlencoded data', function(done){
         aja()
-            .url('/post')
+            .url('/mirror')
             .method('post')
+            .data({ kill: 'bill'})
+            .on('success', function(data){
+                expect(data).to.be.an('object');
+                expect(data.body).to.be.an('object');
+                expect(data.body).to.contain.keys(['kill']);
+                done();
+            })
+            .go();
+    });
+
+    it('should put urlencoded data', function(done){
+        aja()
+            .url('/mirror')
+            .method('put')
             .data({ kill: 'bill'})
             .on('success', function(data){
                 expect(data).to.be.an('object');
@@ -136,6 +150,22 @@ describe('aja()', function(){
             })
             .go();
 
+    });
+
+    it('should not trigger error when the response is empty', function(done){
+        aja()
+            .url('/empty')
+            .method('post')
+            .type('json')
+            .data({ kill: 'bill'})
+            .on('204', function(data){
+                expect(data).to.be.empty();
+                done();
+            })
+            .on('error', function() {
+                expect.fail('Should NOT trigger an error.');
+            })
+            .go();
     });
 
     it('should handle jsonp', function(done){

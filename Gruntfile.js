@@ -1,51 +1,8 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var url = require('url');
+    var testMiddlewares = require('./test/server/middlewares.js');
     var coverageDir = '.coverage';
-
-    /*
-     * HTTP Middlewares for the local web server
-     */
-
-    //to serve instrumented code to the tests runners
-    var instrumentMiddleware = function(req, res, next) {
-        if (/aja\.js$/.test(req.url)) {
-            return res.end(grunt.file.read(coverageDir + '/instrument/src/aja.js'));
-        }
-        return next();
-    };
-
-    //to test JSONP
-    var jsonpMiddleware = function(req, res, next) {
-        if (/(jsonp)|(callback)/.test(req.url)) {
-            var parsed = url.parse(req.url, true);
-            var path = parsed.pathname.replace(/^\//, '');
-            var jsonp = parsed.query.jsonp || parsed.query.callback;
-            return res.end(jsonp + '(' + grunt.file.read(path) + ');');
-        }
-        return next();
-    };
-
-    //to test browser caching
-    var timeMiddleware = function(req, res, next) {
-        if (/time/.test(req.url)) {
-            return res.end(JSON.stringify({
-                ts : new Date().getTime()
-        }));
-        }
-        return next();
-    };
-
-    //to test post
-    var postMiddleware = function(req, res, next) {
-        if (req.method === 'POST') {
-            return res.end(JSON.stringify({
-                body : req.body
-            }));
-        }
-        return next();
-    };
 
     //load npm tasks
     require('load-grunt-tasks')(grunt);
@@ -84,7 +41,9 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [connect.bodyParser(), postMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
+                        return [connect.json(), connect.urlencoded()]
+                                    .concat(testMiddlewares)
+                                    .concat(middlewares);
                     },
                 }
             },
@@ -94,7 +53,16 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [instrumentMiddleware, connect.bodyParser(), postMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
+                        //to serve instrumented code to the tests runners
+                        var instrumentMiddleware = function(req, res, next) {
+                            if (/aja\.js$/.test(req.url)) {
+                                return res.end(grunt.file.read(coverageDir + '/instrument/src/aja.js'));
+                            }
+                            return next();
+                        };
+                        return [connect.json(), connect.urlencoded(), instrumentMiddleware]
+                                    .concat(testMiddlewares)
+                                    .concat(middlewares);
                     },
                 }
             }
