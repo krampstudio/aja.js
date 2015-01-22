@@ -170,7 +170,7 @@
              */
             method : function(method){
                return _chain.call(this, 'method', method, validators.method, function(value){
-                    if(value.toLowerCase() === 'post'){
+                    if(value.toLowerCase() !== 'get'){
                         this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
                     }
                     return value;
@@ -400,7 +400,9 @@
 
                ajaGo._xhr.call(this, url, function processRes(res){
                     try {
-                        res = JSON.parse(res);
+                        if(res){
+                            res = JSON.parse(res);
+                        }
                     } catch(e){
                         self.trigger('error', e);
                         return null;
