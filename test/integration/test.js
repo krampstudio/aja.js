@@ -80,6 +80,22 @@ describe('aja()', function(){
             .go();
     });
 
+    it('should not trigger error on JSON access when 200 returned and intentionally returned no content', function(done){
+        aja()
+        .url('/nocontent')
+        .method('post')
+        .type('json')
+        .data({ kill: 'bill'})
+        .on('success', function(data){
+            expect(data).not.to.be.ok();
+            done();
+        })
+        .on('error', function() {
+            expect.fail('Should NOT trigger error when 200 returned even no content returned.');
+        })
+        .go();
+    });
+
     it('should put urlencoded data', function(done){
         aja()
             .url('/put')

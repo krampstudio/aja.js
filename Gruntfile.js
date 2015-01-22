@@ -57,6 +57,14 @@ module.exports = function(grunt) {
         return next();
     };
 
+    //to test if no content 200 response doesn't trigger error
+    var nocontentMiddleware = function(req, res, next) {
+        if (req.method === 'POST') {
+            return res.end();
+        }
+        return next();
+    };
+
     //load npm tasks
     require('load-grunt-tasks')(grunt);
 
@@ -94,7 +102,7 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [connect.bodyParser(), postMiddleware, putMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
+                        return [connect.bodyParser(), postMiddleware, nocontentMiddleware, putMiddleware, jsonpMiddleware, timeMiddleware].concat(middlewares);
                     },
                 }
             },
