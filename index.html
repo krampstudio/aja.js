@@ -79,8 +79,8 @@
                         <code class="inline">$ npm install aja </code>
                     </li>
                     <li>
-                        <a href="http://goo.gl/tl43WA"><span class="icon icon-download"></span></a>
-                        <code class="inline">$ wget goo.gl/tl43WA -O aja.zip</code>
+                        <a href="http://goo.gl/Sz8mzj"><span class="icon icon-download"></span></a>
+                        <code class="inline">$ wget goo.gl/Sz8mzj -O aja.zip</code>
                     </li>
                     <li>
                         <a href="http://www.github.com/krampstudio/aja.js"><img src="./img/github.png" alt="aja.js on github" /></a>
@@ -145,6 +145,15 @@ aja()
   .on('success', function(data){
       //fuk cross origin policy
   })
+  .go();</code></pre>
+
+                <p>Raw script loading</p>
+                <pre class="line-numbers"><code class="language-javascript">aja()
+        .url('http://platform.twitter.com/widgets.js')
+        .type('script')
+        .on('success', function(){
+            window.twttr.widgets.load();
+        })
   .go();</code></pre>
             </section>
         </article>
