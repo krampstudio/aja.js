@@ -128,6 +128,7 @@ This library is developed using the TDD principles, so I accept pull request onl
    - _0.3.1_ : Fix issue #4 and cache management
    - _0.3.2_ : Fix issue #7
    - _0.3.3_ : Fix issue #10 and #11
+   - _0.3.4_ : reminify
 
 ## License
 
