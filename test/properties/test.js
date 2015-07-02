@@ -387,5 +387,36 @@ describe('aja()', function(){
                 expect(a.jsonPadding('cb')).to.equals(a);
             });
         });
+
+
+        describe('timeout()', function(){
+
+            it('should be a function', function(){
+                expect(aja().timeout).to.be.a('function');
+            });
+
+            it('should accept only an integer', function(){
+                expect(function(){ aja().timeout(false); }).to.throw(TypeError);
+                expect(function(){ aja().timeout([]); }).to.throw(TypeError);
+                expect(function(){ aja().timeout(['invalid']); }).to.throw(TypeError);
+                expect(function(){ aja().timeout([1000, 'invalid']); }).to.throw(TypeError);
+                expect(function(){ aja().timeout('anystring'); }).to.throw(TypeError);
+                expect(function(){ aja().timeout({}); }).to.throw(TypeError);
+                expect(function(){ aja().timeout(0); }).to.throw(TypeError);
+                expect(function(){ aja().timeout(-42); }).to.throw(TypeError);
+
+                expect(function(){ aja().timeout(1000); }).to.not.throw();
+            });
+
+            it('should get / set value', function(){
+                expect(aja().timeout(1000).timeout()).to.equal(1000);
+            });
+
+            it('should chain', function(){
+                var a = aja();
+                expect(a.timeout(1000)).to.be.an('object');
+                expect(a.timeout(1000)).to.equals(a);
+            });
+        });
     });
 });

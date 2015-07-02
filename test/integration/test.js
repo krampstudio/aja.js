@@ -128,6 +128,42 @@ describe('aja()', function(){
             .go();
     });
 
+    it('should trigger timeout event after timeout threshold is reached', function(done){
+        aja()
+            .url('/beinglate')
+            .timeout(1)
+            .on('timeout', function(err){
+                expect(err).to.deep.equal({
+                    type: 'timeout',
+                    expiredAfter: 1
+                });
+                done();
+            })
+            .on('success', function(err) {
+                throw new Error('Thou shalt not execute this callback');
+            })
+            .on('error', function(err) {
+                throw new Error('Thou shalt not execute this callback');
+            })
+            .go();
+    });
+
+    it('should not trigger timeout event if the call succeeds', function(done){
+        aja()
+            .url('/beinglate')
+            .timeout(10000)
+            .on('timeout', function(err){
+                throw new Error('Thou shalt not pass from this callback');
+            })
+            .on('success', function(err) {
+                throw new Error('Thou shalt not pass from this callback');
+            })
+            .on('error', function(err) {
+                done();
+            })
+            .go();
+    });
+
     it('should bust cache', function(done){
         aja()
             .url('/time')

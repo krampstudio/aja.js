@@ -160,6 +160,19 @@
             },
 
             /**
+             * Sets a timeout (expressed in ms) after which it will halt the request and the 'timeout' event will be fired.
+             *
+             * @example aja().timeout(1000); // Terminate the request and fire the 'timeout' event after 1s
+             *
+             * @throws TypeError
+             * @param {Number} [ms] - timeout in ms to set. It has to be an integer > 0.
+             * @returns {Aja|String} chains or get the params
+             */
+            timeout : function(ms){
+                return _chain.call(this, 'timeout', ms, validators.positiveInteger);
+            },
+
+            /**
              * HTTP method getter/setter.
              *
              * @example aja().method('post');
@@ -438,6 +451,8 @@
                 var body        = data.body;
                 var headers     = data.headers || {};
                 var contentType = this.header('Content-Type');
+                var timeout     = data.timeout;
+                var timeoutId;
                 var isUrlEncoded;
                 var openParams;
 
@@ -509,6 +524,18 @@
                 request.onerror = function onRequestError (err){
                     self.trigger('error', err, arguments);
                 };
+
+                //sets the timeout
+                if (timeout) {
+                    timeoutId = setTimeout(function() {
+                        request.abort();
+                        self.trigger('timeout', {
+                            type: 'timeout',
+                            expiredAfter: timeout
+                        }, request, arguments);
+                        clearTimeout(timeoutId);
+                    }, timeout);
+                }
 
                 //send the request
                 request.send(body);
@@ -687,6 +714,19 @@
                 throw new TypeError('a string is expected, but ' + string + ' [' + (typeof string) + '] given');
             }
             return string;
+        },
+
+        /**
+         * Check whether the given parameter is a positive integer > 0
+         * @param {Number} integer
+         * @returns {Number} value
+         * @throws {TypeError} for non strings
+         */
+        positiveInteger : function(integer){
+            if(parseInt(integer) !== integer || integer <= 0){
+                throw new TypeError('an integer is expected, but ' + integer + ' [' + (typeof integer) + '] given');
+            }
+            return integer;
         },
 
         /**
