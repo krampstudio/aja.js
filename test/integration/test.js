@@ -131,35 +131,66 @@ describe('aja()', function(){
     it('should trigger timeout event after timeout threshold is reached', function(done){
         aja()
             .url('/beinglate')
-            .timeout(1)
+            .timeout(500)
+            .on('success', function(err) {
+                expect.fail('Thou shalt not execute the success callback.');
+            })
+            .on('error', function(err) {
+                expect.fail('Thou shalt not execute the error callback.');
+            })
             .on('timeout', function(err){
                 expect(err).to.deep.equal({
                     type: 'timeout',
-                    expiredAfter: 1
+                    expiredAfter: 500
                 });
                 done();
             })
+            .go();
+    });
+
+    it('should trigger the success callback on retry after a timeout', function(done){
+        aja()
+            .url('/beinglate-retry')
+            .timeout(250)
             .on('success', function(err) {
-                throw new Error('Thou shalt not execute this callback');
+                expect.fail('Thou shalt not execute the success callback.');
             })
             .on('error', function(err) {
-                throw new Error('Thou shalt not execute this callback');
+                expect.fail('Thou shalt not execute the error callback.');
+            })
+            .on('timeout', function(err){
+                aja()
+                    .url('/beinglate-retry')
+                    .timeout(1000)
+                    .on('success', function(err){
+                        done();
+                    })
+                    .on('error', function(err) {
+                        console.log('beinglate-second error?', err);
+                        expect.fail('Thou shalt not execute the error callback on retry.');
+                    })
+                    .on('timeout', function(err){
+                        console.log('beinglate-second timeout?', JSON.stringify(err));
+                        expect.fail('Thou shalt not execute the timeout callback on retry.');
+                    })
+
+                    .go();
             })
             .go();
     });
 
     it('should not trigger timeout event if the call succeeds', function(done){
         aja()
-            .url('/beinglate')
-            .timeout(10000)
-            .on('timeout', function(err){
-                throw new Error('Thou shalt not pass from this callback');
-            })
+            .url('/beinglate-no-to')
+            .timeout(1000)
             .on('success', function(err) {
-                throw new Error('Thou shalt not pass from this callback');
+                done();
             })
             .on('error', function(err) {
-                done();
+                expect.fail('Thou shalt not execute the success callback.');
+            })
+            .on('timeout', function(err){
+                expect.fail('Thou shalt not execute the timeout callback.');
             })
             .go();
     });

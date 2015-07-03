@@ -509,6 +509,9 @@
                 request.onload = function onRequestLoad(){
                     var response = request.responseText;
 
+                    if (timeoutId) {
+                        clearTimeout(timeoutId);
+                    }
                     if(this.status >= 200 && this.status < 300){
                         if(typeof processRes === 'function'){
                             response = processRes(response);
@@ -522,18 +525,21 @@
                 };
 
                 request.onerror = function onRequestError (err){
-                    self.trigger('error', err, arguments);
+                    if (timeoutId) {
+                        clearTimeout(timeoutId);
+                    } else {
+                        self.trigger('error', err, arguments);
+                    }
                 };
 
                 //sets the timeout
                 if (timeout) {
                     timeoutId = setTimeout(function() {
-                        request.abort();
                         self.trigger('timeout', {
                             type: 'timeout',
                             expiredAfter: timeout
                         }, request, arguments);
-                        clearTimeout(timeoutId);
+                        request.abort();
                     }, timeout);
                 }
 

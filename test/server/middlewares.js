@@ -30,12 +30,13 @@ var timeMiddleware = function(req, res, next) {
 //to test timeout
 var timeoutMiddleware = function(req, res, next) {
     if (/beinglate/.test(req.url)) {
-        res.writeHead(404);
-        setTimeout(function(){
+        setTimeout(function() {
+            res.writeHead(204);
             return res.end();
-        }, 1000);
+        }, 500);
+    } else {
+        return next();
     }
-    return next();
 };
 
 //to mirror the request content
