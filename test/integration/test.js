@@ -195,7 +195,7 @@ describe('aja()', function(){
             .type('json')
             .data({ kill: 'bill'})
             .on('204', function(data){
-                expect(data).to.be.empty();
+                expect(data).to.be.empty;
                 done();
             })
             .on('error', function() {
