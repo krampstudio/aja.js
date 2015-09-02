@@ -4,7 +4,24 @@ aja.js  [![Build Status](https://travis-ci.org/krampstudio/aja.js.png)](https://
 
 [![Npm Downloads](https://nodei.co/npm/aja.png?downloads=true&stars=true)](https://nodei.co/npm/aja.png?downloads=true&stars=true)
 
+### Difference with the original/krampstudio's aja.js: timeout!
+There's a new function called `timeout`. Guess what its job is going to be? :)
 
+```javascript
+  aja()
+    .timeout(2500)
+    .url('/api/data.json')
+    .on('success', function(data){
+      //data is a JavaScript object
+    })
+    .on('timeout', function(err){
+      // This will be executed if the server will take more than 2.5s to respond.
+      // In this case, the XHR call will be ended thru XHR's `.abort()` function.
+      console.log(err.type); // outputs the string 'timeout'
+      console.log(err.expiredAfter); // outputs '2500' (eg: the timeout value in ms)
+    }
+    .go();
+```
 
 ## Basic Sample
 
@@ -34,9 +51,13 @@ More options using the fluent api, terrific REST client.
   aja()
     .method('GET')
     .url('/api/customer')
+    .timeout(2500)
     .data({firstname: 'John Romuald'})
     .on('200', function(response){
         //well done
+    })
+    .on('timeout', functon(){
+        // uh oh... Request ended. Do something fancy here, don't let your user wait forever!
     })
     .go();
 

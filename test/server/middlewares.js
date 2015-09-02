@@ -27,6 +27,18 @@ var timeMiddleware = function(req, res, next) {
     return next();
 };
 
+//to test timeout
+var timeoutMiddleware = function(req, res, next) {
+    if (/beinglate/.test(req.url)) {
+        setTimeout(function() {
+            res.writeHead(204);
+            return res.end();
+        }, 500);
+    } else {
+        return next();
+    }
+};
+
 //to mirror the request content
 var mirrorMiddleware = function(req, res, next) {
     var parsed;
@@ -53,6 +65,7 @@ var emptyMiddleware = function(req, res, next) {
 module.exports = [
     jsonpMiddleware,
     timeMiddleware,
+    timeoutMiddleware,
     mirrorMiddleware,
     emptyMiddleware
 ];
