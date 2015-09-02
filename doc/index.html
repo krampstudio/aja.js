@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Index</title>
+    <title>JSDoc: Home</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,9 +17,10 @@
 
 <div id="main">
 
-    <h1 class="page-title">Index</h1>
+    <h1 class="page-title">Home</h1>
 
     
+
 
 
     
@@ -35,13 +36,17 @@
 
 
 
+
     
 
 
 
 
     <section>
-        <article><h1>aja.js</h1><p>Ajax without XML : Asynchronous Javascript and JavaScript/JSON(P)</p>
+        <article><h1>aja.js  <a href="https://travis-ci.org/krampstudio/aja.js"><img src="https://travis-ci.org/krampstudio/aja.js.png" alt="Build Status"></a> <a href="http://badge.fury.io/js/aja"><img src="https://badge.fury.io/js/aja.png" alt="NPM version"></a> <a href="http://gruntjs.com/"><img src="https://cdn.gruntjs.com/builtwith.png" alt="Built with Grunt"></a></h1><blockquote>
+<p>Ajax without XML : Asynchronous Javascript and JavaScript/JSON(P)</p>
+</blockquote>
+<p><a href="https://nodei.co/npm/aja.png?downloads=true&amp;stars=true"><img src="https://nodei.co/npm/aja.png?downloads=true&amp;stars=true" alt="Npm Downloads"></a></p>
 <h2>Basic Sample</h2><p>Request JSON data</p>
 <pre class="prettyprint source lang-javascript"><code>  aja()
     .url('/api/data.json')
@@ -56,9 +61,13 @@
 <pre class="prettyprint source lang-javascript"><code>  aja()
     .method('GET')
     .url('/api/customer')
+    .timeout(2500)
     .data({firstname: 'John Romuald'})
     .on('200', function(response){
         //well done
+    })
+    .on('timeout', functon(){
+        // uh oh... Request ended. Do something fancy here, don't let your user wait forever!
     })
     .go();
 
@@ -70,7 +79,7 @@
     .on('200', function(response){
         //well done
     })
-     .on('40*', function(response){
+    .on('40*', function(response){
         //something is definitely wrong
     })
     .on('500', function(response){
@@ -82,16 +91,41 @@
     .type('jsonp')
     .padding('someGlobalFunction')
     .on('success', function(data){
-        //Fuk cross origin policy 
+        //Fuk cross origin policy
     })
-    .go();</code></pre><h2>Development</h2><h3>Setup</h3><p>You need <a href="https://gruntjs.com">grunt &gt;= 0.4</a> as well as <a href="http://nodejs.org">node</a> and <a href="http://npmjs.org">npm</a> installed and running on your system.</p>
+    .go();</code></pre><p>Raw script loading</p>
+<pre class="prettyprint source lang-javascript"><code>    aja()
+        .url('http://platform.twitter.com/widgets.js')
+        .type('script')
+        .on('success', function(){
+            window.twttr.widgets.load();
+        })
+        .go();</code></pre><h2>Development</h2><h3>Setup</h3><p>You need <a href="https://gruntjs.com">grunt &gt;= 0.4</a> as well as <a href="http://nodejs.org">node</a> and <a href="http://npmjs.org">npm</a> installed and running on your system.</p>
 <pre class="prettyprint source"><code>git clone https://github.com/krampstudio/aja.js.git
 cd aja.js
-npm install</code></pre><h3>Tests</h3><p>Run the tests: </p>
+npm install</code></pre><h3>Tests</h3><p>Run the tests:</p>
 <pre class="prettyprint source"><code>grunt test</code></pre><h3>Development</h3><p>The dev of this library is based on TDD principle. So, dev means <em>write tests</em>. Run the developent server :</p>
 <pre class="prettyprint source"><code>grunt devtest</code></pre><p>So tests run once something is modified and you can access it also at http://localhost:9901/test</p>
-<h2>Contributing</h2><p>Contributions (issue reporting, bug fixes, feedback, typos, gimie a tip, etc.) are really welcomed! 
+<h2>Contributing</h2><p>Contributions (issue reporting, bug fixes, feedback, typos, gimie a tip, etc.) are really welcomed!
 This library is developed using the TDD principles, so I accept pull request only if they come with the according unit/integration test.</p>
+<blockquote>
+<p>I'd love if somebody can create a nice logo for aja.js...</p>
+</blockquote>
+<h2>History</h2><ul>
+<li><em>0.1.0</em> : initial release</li>
+<li><em>0.2.0</em> : added support of new HTTP methods (trace, patch and connect)<ul>
+<li><em>0.2.1</em> : Fix missing  <code>main</code> prop in package.json</li>
+</ul>
+</li>
+<li><em>0.3.0</em> : support new request type : script<ul>
+<li><em>0.3.1</em> : Fix issue #4 and cache management</li>
+<li><em>0.3.2</em> : Fix issue #7</li>
+<li><em>0.3.3</em> : Fix issue #10 and #11</li>
+<li><em>0.3.4</em> : reminify</li>
+</ul>
+</li>
+<li><em>0.4.0</em> : added timeout</li>
+</ul>
 <h2>License</h2><p>Copyright (c) 2014 Bertrand Chevrier <code>&lt;&quot;chevrier_bertrand gmail_com&quot;.replace(/\s/, '@').replace(/_/g, '.')&gt;</code>
 Licensed under the MIT license.</p></article>
     </section>
@@ -104,13 +138,13 @@ Licensed under the MIT license.</p></article>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Namespaces</h3><ul><li><a href="aja.html">aja</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="aja.html">aja</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Tue Nov 18 2014 22:30:06 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 02 2015 13:53:40 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>
