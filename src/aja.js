@@ -527,9 +527,8 @@
                 request.onerror = function onRequestError (err){
                     if (timeoutId) {
                         clearTimeout(timeoutId);
-                    } else {
-                        self.trigger('error', err, arguments);
                     }
+                    self.trigger('error', err, arguments);
                 };
 
                 //sets the timeout

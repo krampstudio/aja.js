@@ -128,10 +128,33 @@ describe('aja()', function(){
             .go();
     });
 
+    it('should trigger an error on network failure', function(done){
+        aja()
+            .url('http://notallowed.example')
+            .on('error', function(data){
+                expect(data).to.contain.keys(['target', 'srcElement']);
+                expect(data.type).to.equal('error');
+                done();
+            })
+            .go();
+    });
+
+    it('should trigger an error on network failure, even if there is a timeout', function(done){
+        aja()
+            .url('http://notallowed.example')
+            .timeout(1000)
+            .on('error', function(data){
+                expect(data).to.contain.keys(['target', 'srcElement']);
+                expect(data.type).to.equal('error');
+                done();
+            })
+            .go();
+    });
+
     it('should trigger timeout event after timeout threshold is reached', function(done){
         aja()
             .url('/beinglate')
-            .timeout(500)
+            .timeout(300)
             .on('success', function(err) {
                 expect.fail('Thou shalt not execute the success callback.');
             })
@@ -141,7 +164,7 @@ describe('aja()', function(){
             .on('timeout', function(err){
                 expect(err).to.deep.equal({
                     type: 'timeout',
-                    expiredAfter: 500
+                    expiredAfter: 300
                 });
                 done();
             })
