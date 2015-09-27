@@ -17,7 +17,7 @@ body > header h1 {
 }
 body > footer {
    height: 100px;
-   padding-top: 40px; 
+   padding-top: 40px;
 }
 nav {
     position: absolute;
@@ -34,7 +34,7 @@ nav a {
     float: left;
     padding: 0 15px;
     height: 60px;
-    line-height: 60px; 
+    line-height: 60px;
 }
 
 nav ul li {
@@ -74,7 +74,7 @@ article {
     height: 100%;
     margin: 0;
 }
-article > header, 
+article > header,
 article > section{
     position: relative;
     /*width: 50%;*/
@@ -85,12 +85,12 @@ article > header h3 {
     margin: 20px 0;
 }
 article ol li{
-    margin-top: 10px; 
+    margin-top: 10px;
 }
 
-/* medium to small res */ 
+/* medium to small res */
 @media only screen and (max-width: 900px) {
-    article > header, 
+    article > header,
     article > section{
         float: none;
         width: 100%;
@@ -100,7 +100,7 @@ article ol li{
         width: 100%;
     }
 }
-/*  small res */ 
+/*  small res */
 @media only screen and (max-width: 500px) {
     .features ul li{
         width: 100%;
@@ -126,7 +126,7 @@ article ol li{
         display: block;
         float: none;
         height: 60px;
-        line-height: 60px; 
+        line-height: 60px;
     }
 
     nav ul li {

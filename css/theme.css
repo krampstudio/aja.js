@@ -1,6 +1,6 @@
 
 /* Theme */
-/* 
+/*
     colors: #34a33c,  #5DB563;
 */
 html {
@@ -120,7 +120,7 @@ nav a.active:before, nav a:hover:before {
 .intro{
     background: #5DB563;
     color: #333;
-    text-shadow: 1px 1px #ccc; 
+    text-shadow: 1px 1px #ccc;
     text-align: center;
 }
 .intro h1{
@@ -156,7 +156,7 @@ article > header {
 article > header h3{
     color: #333;
     font-size: 2em;
-    text-shadow: 1px 1px #ccc; 
+    text-shadow: 1px 1px #ccc;
 }
 article > header h3:before{
     content: '# ';
