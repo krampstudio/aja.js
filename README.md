@@ -132,6 +132,7 @@ This library is developed using the TDD principles, so I accept pull request onl
    - _0.3.3_ : Fix issue #10 and #11
    - _0.3.4_ : reminify
  - _0.4.0_ : added timeout
+   - _0.4.1_ : Merge PR #16
 
 ## License
 

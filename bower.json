@@ -6,7 +6,7 @@
       "type": "git",
       "url": "git://github.com/krampstudio/aja.js.git"
     },
-    "version": "0.4.0",
+    "version": "0.4.1",
     "license" : "MIT",
     "authors": [{
         "name": "Bertrand Chevrier",
@@ -24,6 +24,7 @@
         "aja",
         "ajax",
         "xhr",
+        "request",
         "aja.js",
         "jsonp"
     ]
