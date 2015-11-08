@@ -6,17 +6,14 @@
       "type": "git",
       "url": "git://github.com/krampstudio/aja.js.git"
     },
-    "version": "0.1.1",
+    "version": "0.4.1",
     "license" : "MIT",
     "authors": [{
         "name": "Bertrand Chevrier",
         "email": "chevrier.bertrand@gmail.com"
     }],
     "main": [
-        "src/aja.js",
-        "src/aja.min.js",
-        "src/aja.min.js.map",
-        "aja.min.js"
+        "src/aja.js"
     ],
     "ignore": [
         "node_modules",
@@ -25,8 +22,9 @@
     ],
     "keywords" : [
         "aja",
-        "ajax", 
+        "ajax",
         "xhr",
+        "request",
         "aja.js",
         "jsonp"
     ]

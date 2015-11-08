@@ -1,7 +1,7 @@
 /**
  * Aja.js
  * Ajax without XML : Asynchronous Javascript and JavaScript/JSON(P)
- * 
+ *
  * @author Bertrand Chevrier <chevrier.bertrand@gmail.com>
  * @license MIT
  */
@@ -10,14 +10,24 @@
 
     /**
      * supported request types.
-     * TODO support types new types :   'script', 'style', 'file'?
+     * TODO support new types : 'style', 'file'?
      */
-    var types = ['html', 'json', 'jsonp'];
+    var types = ['html', 'json', 'jsonp', 'script'];
 
     /**
      * supported http methods
-     */ 
-    var methods = ['get', 'post', 'delete', 'head', 'put', 'options'];
+     */
+    var methods = [
+        'connect',
+        'delete',
+        'get',
+        'head',
+        'options',
+        'patch',
+        'post',
+        'put',
+        'trace'
+    ];
 
     /**
      * API entry point.
@@ -150,6 +160,19 @@
             },
 
             /**
+             * Sets a timeout (expressed in ms) after which it will halt the request and the 'timeout' event will be fired.
+             *
+             * @example aja().timeout(1000); // Terminate the request and fire the 'timeout' event after 1s
+             *
+             * @throws TypeError
+             * @param {Number} [ms] - timeout in ms to set. It has to be an integer > 0.
+             * @returns {Aja|String} chains or get the params
+             */
+            timeout : function(ms){
+                return _chain.call(this, 'timeout', ms, validators.positiveInteger);
+            },
+
+            /**
              * HTTP method getter/setter.
              *
              * @example aja().method('post');
@@ -159,12 +182,7 @@
              * @returns {Aja|String} chains or get the method
              */
             method : function(method){
-               return _chain.call(this, 'method', method, validators.method, function(value){
-                    if(value.toLowerCase() === 'post'){
-                        this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
-                    }
-                    return value;
-               });
+               return _chain.call(this, 'method', method, validators.method);
             },
 
             /**
@@ -380,19 +398,21 @@
          */
         var ajaGo = {
 
-
             /**
              * XHR call to url to retrieve JSON
              * @param {String} url - the url
              */
             json : function(url){
                 var self = this;
-                ajaGo._xhr.call(this, url, function processRes(res){
-                    try {
-                        res = JSON.parse(res);
-                    } catch(e){
-                        self.trigger('error', e);
-                        return null;
+
+               ajaGo._xhr.call(this, url, function processRes(res){
+                    if(res){
+                        try {
+                            res = JSON.parse(res);
+                        } catch(e){
+                            self.trigger('error', e);
+                            return null;
+                        }
                     }
                     return res;
                 });
@@ -405,7 +425,7 @@
             html : function(url){
                 ajaGo._xhr.call(this, url, function processRes(res){
                     if(data.into && data.into.length){
-                        data.into.forEach(function(elt){
+                        [].forEach.call(data.into, function(elt){
                             elt.innerHTML = res;
                         });
                     }
@@ -428,12 +448,41 @@
                 var async       = data.sync !== true;
                 var request     = new XMLHttpRequest();
                 var _data       = data.data;
-                var body        = data.body || '';
+                var body        = data.body;
+                var headers     = data.headers || {};
+                var contentType = this.header('Content-Type');
+                var timeout     = data.timeout;
+                var timeoutId;
+                var isUrlEncoded;
                 var openParams;
 
-                if(_data && _dataInBody(method)){
-                    for(key in _data){
-                        body += key + '=' + _data[key] + '\n\r';
+                //guess content type
+                if(!contentType && _data && _dataInBody()){
+                    this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+                    contentType = this.header('Content-Type');
+                }
+
+                //if data is used in body, it needs some modifications regarding the content type
+                if(_data && _dataInBody()){
+                    if(typeof body !== 'string'){
+                        body = '';
+                    }
+
+                    if(contentType.indexOf('json') > -1){
+                        try {
+                            body = JSON.stringify(_data);
+                        } catch(e){
+                            throw new TypeError('Unable to stringify body\'s content : ' + e.name);
+                        }
+                    } else {
+                        isUrlEncoded = contentType && contentType.indexOf('x-www-form-urlencoded') > 1;
+                        for(key in _data){
+                            if(isUrlEncoded){
+                                body += encodeURIComponent(key) + '=' + encodeURIComponent(_data[key]) + '&';
+                            } else {
+                                body += key + '=' + _data[key] + '\n\r';
+                            }
+                        }
                     }
                 }
 
@@ -446,10 +495,8 @@
                 request.open.apply(request, openParams);
 
                 //set the headers
-                if(data.headers){
-                    for(header in data.headers){
-                        request.setRequestHeader(header, data.headers[header]);
-                    }
+                for(header in data.headers){
+                    request.setRequestHeader(header, data.headers[header]);
                 }
 
                 //bind events
@@ -462,6 +509,9 @@
                 request.onload = function onRequestLoad(){
                     var response = request.responseText;
 
+                    if (timeoutId) {
+                        clearTimeout(timeoutId);
+                    }
                     if(this.status >= 200 && this.status < 300){
                         if(typeof processRes === 'function'){
                             response = processRes(response);
@@ -475,8 +525,22 @@
                 };
 
                 request.onerror = function onRequestError (err){
+                    if (timeoutId) {
+                        clearTimeout(timeoutId);
+                    }
                     self.trigger('error', err, arguments);
                 };
+
+                //sets the timeout
+                if (timeout) {
+                    timeoutId = setTimeout(function() {
+                        self.trigger('timeout', {
+                            type: 'timeout',
+                            expiredAfter: timeout
+                        }, request, arguments);
+                        request.abort();
+                    }, timeout);
+                }
 
                 //send the request
                 request.send(body);
@@ -522,6 +586,40 @@
                     window[jsonPadding] = undefined;
                 };
                 head.appendChild(script);
+            },
+
+            /**
+             * Loads a script.
+             *
+             * This kind of ugly script loading is sometimes used by 3rd part libraries to load
+             * a configured script. For example, to embed google analytics or a twitter button.
+             *
+             * @this {Aja} call bound to the Aja context
+             * @param {String} url - the url
+             */
+            script : function(url){
+
+                var self    = this;
+                var head    = document.querySelector('head') || document.querySelector('body');
+                var async   = data.sync !== true;
+                var script;
+
+                if(!head){
+                    throw new Error('Ok, wait a second, you want to load a script, but you don\'t have at least a head or body tag...');
+                }
+
+                script = document.createElement('script');
+                script.async = async;
+                script.src = url;
+                script.onerror = function onScriptError(){
+                    self.trigger('error', arguments);
+                    head.removeChild(script);
+                };
+                script.onload = function onScriptLoad(){
+                    self.trigger('success', arguments);
+                };
+
+                head.appendChild(script);
             }
         };
 
@@ -560,14 +658,10 @@
          * Check whether the data must be set in the body instead of the queryString
          * @private
          * @memberof aja
-         * @param {String} [method] - the request method
          * @returns {Boolean} true id data goes to the body
          */
-        var _dataInBody = function _dataInBody(method){
-            method = method || data.method || 'get';
-
-            //TODO check which methods may use body parameters
-            return ['post', 'put'].indexOf(method) > -1;
+        var _dataInBody = function _dataInBody(){
+            return ['delete', 'patch', 'post', 'put'].indexOf(data.method) > -1;
         };
 
         /**
@@ -580,12 +674,12 @@
 
             var url         = data.url;
             var cache       = typeof data.cache !== 'undefined' ? !!data.cache : true;
-            var queryString = data.queryString;
+            var queryString = data.queryString || '';
             var _data       = data.data;
 
             //add a cache buster
             if(cache === false){
-               queryString += 'ajabuster=' + new Date().getTime();
+               queryString += '&ajabuster=' + new Date().getTime();
             }
 
             url = appendQueryString(url, queryString);
@@ -607,11 +701,11 @@
 
         /**
          * cast to boolean
-         * @param {*} value 
+         * @param {*} value
          * @returns {Boolean} casted value
          */
         bool : function(value){
-            return !!value;    
+            return !!value;
         },
 
         /**
@@ -624,7 +718,20 @@
             if(typeof string !== 'string'){
                 throw new TypeError('a string is expected, but ' + string + ' [' + (typeof string) + '] given');
             }
-            return string; 
+            return string;
+        },
+
+        /**
+         * Check whether the given parameter is a positive integer > 0
+         * @param {Number} integer
+         * @returns {Number} value
+         * @throws {TypeError} for non strings
+         */
+        positiveInteger : function(integer){
+            if(parseInt(integer) !== integer || integer <= 0){
+                throw new TypeError('an integer is expected, but ' + integer + ' [' + (typeof integer) + '] given');
+            }
+            return integer;
         },
 
         /**
@@ -636,9 +743,8 @@
         plainObject : function(object){
             if(typeof object !== 'object' || object.constructor !== Object){
                 throw new TypeError('an object is expected, but ' + object + '  [' + (typeof object) + '] given');
-
             }
-            return object; 
+            return object;
         },
 
         /**
@@ -673,8 +779,8 @@
 
         /**
          * Check the queryString, and create an object if a string is given.
-         * 
-         * @param {String|Object} params 
+         *
+         * @param {String|Object} params
          * @returns {Object} key/value based queryString
          * @throws {TypeError} if wrong params type or if the string isn't parseable
          */
@@ -685,7 +791,7 @@
                params.replace('?', '').split('&').forEach(function(kv){
                     var pair = kv.split('=');
                     if(pair.length === 2){
-                        object[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);         
+                        object[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
                     }
                });
             } else {
@@ -696,7 +802,7 @@
 
         /**
          * Check if the parameter enables us to select a DOM Element.
-         * 
+         *
          * @param {String|HTMLElement} selector - CSS selector or the element ref
          * @returns {String|HTMLElement} same as input if valid
          * @throws {TypeError} check it's a string or an HTMLElement
@@ -705,12 +811,12 @@
             if(typeof selector !== 'string' && !(selector instanceof HTMLElement)){
                 throw new TypeError('a selector or an HTMLElement is expected, ' + selector + ' [' + (typeof selector) + '] given');
             }
-            return selector; 
+            return selector;
         },
 
         /**
          * Check if the parameter is a valid JavaScript function name.
-         * 
+         *
          * @param {String} functionName
          * @returns {String} same as input if valid
          * @throws {TypeError} check it's a string and a valid name against the pattern inside.
@@ -728,18 +834,22 @@
      * Query string helper : append some parameters
      * @private
      * @param {String} url - the URL to append the parameters
-     * @param {Object} params - key/value 
-     * @returns {String} the new URL 
+     * @param {Object} params - key/value
+     * @returns {String} the new URL
      */
     var appendQueryString = function appendQueryString(url, params){
         var key;
         url = url || '';
-        if(params){ 
+        if(params){
             if(url.indexOf('?') === -1){
-                url += '?';    
+                url += '?';
             }
-            for(key in params){
-                url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]); 
+            if(typeof params === 'string'){
+                url += params;
+            } else if (typeof params === 'object'){
+                for(key in params){
+                    url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+                }
             }
         }
 
@@ -754,7 +864,7 @@
     } else if (typeof exports === 'object') {
         module.exports = aja;
     } else {
-        window.aja = window.aja || aja; 
+        window.aja = window.aja || aja;
     }
 
 }());

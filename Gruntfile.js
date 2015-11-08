@@ -1,26 +1,8 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var url = require('url');
+    var testMiddlewares = require('./test/server/middlewares.js');
     var coverageDir = '.coverage';
-
-
-    var instrumentMiddleware = function(req, res, next) {
-        if (/aja\.js$/.test(req.url)) {
-            return res.end(grunt.file.read(coverageDir + '/instrument/src/aja.js'));
-        }
-        return next();
-    };
-
-    var jsonpMiddleware = function(req, res, next) {
-        if (/(jsonp)|(callback)/.test(req.url)) {
-            var parsed = url.parse(req.url, true);
-            var path = parsed.pathname.replace(/^\//, '');
-            var jsonp = parsed.query.jsonp || parsed.query.callback;
-            return res.end(jsonp + '(' + grunt.file.read(path) + ');');
-        }
-        return next();
-    };
 
     //load npm tasks
     require('load-grunt-tasks')(grunt);
@@ -30,7 +12,7 @@ module.exports = function(grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
-        //mocha but from grunt-mocha-phantom-istanbul 
+        //mocha but from grunt-mocha-phantom-istanbul
         mocha: {
             options: {
                 urls: [
@@ -59,7 +41,9 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [jsonpMiddleware].concat(middlewares);
+                        return [connect.json(), connect.urlencoded()]
+                                    .concat(testMiddlewares)
+                                    .concat(middlewares);
                     },
                 }
             },
@@ -69,7 +53,16 @@ module.exports = function(grunt) {
                     port: 9901,
                     base: '.',
                     middleware: function(connect, options, middlewares) {
-                        return [instrumentMiddleware, jsonpMiddleware].concat(middlewares);
+                        //to serve instrumented code to the tests runners
+                        var instrumentMiddleware = function(req, res, next) {
+                            if (/aja\.js$/.test(req.url)) {
+                                return res.end(grunt.file.read(coverageDir + '/instrument/src/aja.js'));
+                            }
+                            return next();
+                        };
+                        return [connect.json(), connect.urlencoded(), instrumentMiddleware]
+                                    .concat(testMiddlewares)
+                                    .concat(middlewares);
                     },
                 }
             }
@@ -107,7 +100,7 @@ module.exports = function(grunt) {
                     'src/aja.min.js': ['src/aja.js']
                 },
                 options: {
-                    banner: "/**\n * <%= pkg.name %> <<%= pkg.homepage %>\n *  \n * @version <=%pkg.version%>\n * @author <%= pkg.author.name %> <<%= pkg.author.email %>> © <%= grunt.template.today('yyyy') %>\n * @license MIT\n**/",
+                    banner: "/**\n * <%= pkg.name %> <%= pkg.homepage %>\n *  \n * @version <=%pkg.version%>\n * @author <%= pkg.author.name %> <<%= pkg.author.email %>> © <%= grunt.template.today('yyyy') %>\n * @license MIT\n**/",
                     sourceMap: true,
                     beautify: {
                         'max_line_len': 500

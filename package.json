@@ -1,7 +1,7 @@
 {
   "name": "aja",
   "description" : "Asynchronous JavaScript And JavaScript/JSON(P) : Ajax without XML",
-  "version": "0.1.1",
+  "version": "0.4.1",
   "homepage": "http://krampstudio.github.io/aja.js/",
   "author": {
     "name": "Bertrand Chevrier",
@@ -12,20 +12,31 @@
     "type": "git",
     "url": "https://github.com/krampstudio/aja.js.git"
   },
+  "license" : "MIT",
+  "main" : "src/aja.js",
   "scripts": {
     "test": "grunt test"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
-    "chai": "^1.9.1",
-    "istanbul": "^0.3.2",
-    "mocha": "^2.0.1",
-    "load-grunt-tasks": "^0.4.0",
-    "grunt-contrib-connect": "^0.8.0",
-    "grunt-contrib-uglify": "^0.6.0",
+    "chai": "^3.0.0",
+    "istanbul": "^0.3.17",
+    "mocha": "^2.2.5",
+    "load-grunt-tasks": "^3.2.0",
+    "grunt-contrib-connect": "^0.10.1",
+    "grunt-contrib-uglify": "^0.9.1",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-istanbul": "^0.3.0",
-    "grunt-mocha-phantom-istanbul": "^0.1.1",
-    "grunt-jsdoc" : "^0.6.0"
-  }
+    "grunt-istanbul": "^0.6.1",
+    "grunt-mocha-phantom-istanbul": "^0.2.1",
+    "grunt-jsdoc": "^0.6.7"
+  },
+  "keywords" : [
+    "request",
+    "ajax",
+    "xhr",
+    "aja",
+    "ajajs",
+    "json",
+    "jsonp"
+  ]
 }
