@@ -12,6 +12,10 @@ module.exports = function(grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
+        eslint : {
+            dist : ['src/aja.js']
+        },
+
         //mocha but from grunt-mocha-phantom-istanbul
         mocha: {
             options: {
@@ -22,7 +26,7 @@ module.exports = function(grunt) {
                 ],
                 reporter: 'Spec',
                 run: true,
-                timeout: 10000,
+                timeout: 10000
             },
             browser: {},
             browsercov: {
@@ -131,7 +135,7 @@ module.exports = function(grunt) {
     grunt.registerTask('devtest', ['connect:test', 'watch:test']);
 
     //run just the tests
-    grunt.registerTask('test', ['connect:test', 'mocha:browser']);
+    grunt.registerTask('test', ['eslint', 'connect:test', 'mocha:browser']);
 
     //run the tests with code coverage
     grunt.registerTask('testcov', ['connect:testcov', 'instrument', 'mocha:browsercov', 'makeReport']);
