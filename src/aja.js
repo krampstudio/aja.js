@@ -449,7 +449,6 @@
                 var request     = new XMLHttpRequest();
                 var _data       = data.data;
                 var body        = data.body;
-                var headers     = data.headers || {};
                 var contentType = this.header('Content-Type');
                 var timeout     = data.timeout;
                 var timeoutId;
@@ -495,8 +494,8 @@
                 request.open.apply(request, openParams);
 
                 //set the headers
-                for(header in headers){
-                    request.setRequestHeader(header, headers[header]);
+                for(header in data.headers){
+                    request.setRequestHeader(header, data.headers[header]);
                 }
 
                 //bind events
