@@ -70,7 +70,7 @@
              * @returns {Aja|String} chains or get the URL
              */
             url : function(url){
-               return _chain.call(this, 'url', url, validators.string);
+                return _chain.call(this, 'url', url, validators.string);
             },
 
             /**
@@ -82,7 +82,7 @@
              * @returns {Aja|Boolean} chains or get the sync value
              */
             sync : function(sync){
-               return _chain.call(this, 'sync', sync, validators.bool);
+                return _chain.call(this, 'sync', sync, validators.bool);
             },
 
             /**
@@ -95,7 +95,7 @@
              * @returns {Aja|Boolean} chains or get cache value
              */
             cache : function(cache){
-               return _chain.call(this, 'cache', cache, validators.bool);
+                return _chain.call(this, 'cache', cache, validators.bool);
             },
 
             /**
@@ -110,7 +110,7 @@
              * @returns {Aja|String} chains or get the type
              */
             type : function(type){
-               return _chain.call(this, 'type', type, validators.type);
+                return _chain.call(this, 'type', type, validators.type);
             },
 
             /**
@@ -152,8 +152,8 @@
                 validators.string(user);
                 validators.string(passwd);
                 data.auth = {
-                   user : user,
-                   passwd : passwd
+                    user : user,
+                    passwd : passwd
                 };
 
                 return this;
@@ -182,7 +182,7 @@
              * @returns {Aja|String} chains or get the method
              */
             method : function(method){
-               return _chain.call(this, 'method', method, validators.method);
+                return _chain.call(this, 'method', method, validators.method);
             },
 
             /**
@@ -195,7 +195,7 @@
              * @returns {Aja|String} chains or get the params
              */
             queryString : function(params){
-               return _chain.call(this, 'queryString', params, validators.queryString);
+                return _chain.call(this, 'queryString', params, validators.queryString);
             },
 
             /**
@@ -209,7 +209,7 @@
              * @returns {Aja|String} chains or get the params
              */
             data : function(params){
-               return _chain.call(this, 'data', params, validators.plainObject);
+                return _chain.call(this, 'data', params, validators.plainObject);
             },
 
             /**
@@ -224,7 +224,7 @@
              */
             body : function(content){
                 return _chain.call(this, 'body', content, null, function(content){
-                   if(typeof content === 'object'){
+                    if(typeof content === 'object'){
                         //support FormData to be sent direclty
                         if( !(content instanceof FormData)){
                             //otherwise encode the object/array to a string
@@ -235,10 +235,10 @@
                             }
                             this.header('Content-Type', 'application/json');
                         }
-                   } else {
+                    } else {
                         content = content + ''; //cast
-                   }
-                   return content;
+                    }
+                    return content;
                 });
             },
 
@@ -359,7 +359,7 @@
                         });
                     //or exact matching
                     } else if(events[name]){
-                       eventCalls(name, data);
+                        eventCalls(name, data);
                     }
                 }
                 return this;
@@ -405,7 +405,7 @@
             json : function(url){
                 var self = this;
 
-               ajaGo._xhr.call(this, url, function processRes(res){
+                ajaGo._xhr.call(this, url, function processRes(res){
                     if(res){
                         try {
                             res = JSON.parse(res);
@@ -449,7 +449,6 @@
                 var request     = new XMLHttpRequest();
                 var _data       = data.data;
                 var body        = data.body;
-                var headers     = data.headers || {};
                 var contentType = this.header('Content-Type');
                 var timeout     = data.timeout;
                 var timeoutId;
@@ -679,13 +678,13 @@
 
             //add a cache buster
             if(cache === false){
-               queryString += '&ajabuster=' + new Date().getTime();
+                queryString += '&ajabuster=' + new Date().getTime();
             }
 
             url = appendQueryString(url, queryString);
 
             if(_data && !_dataInBody()){
-               url =  appendQueryString(url, _data);
+                url =  appendQueryString(url, _data);
             }
             return url;
         };
@@ -788,12 +787,12 @@
             var object = {};
             if(typeof params === 'string'){
 
-               params.replace('?', '').split('&').forEach(function(kv){
+                params.replace('?', '').split('&').forEach(function(kv){
                     var pair = kv.split('=');
                     if(pair.length === 2){
                         object[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
                     }
-               });
+                });
             } else {
                 object = params;
             }
@@ -827,7 +826,7 @@
                 throw new TypeError('a valid function name is expected, ' + functionName + ' [' + (typeof functionName) + '] given');
             }
             return functionName;
-         }
+        }
     };
 
     /**
@@ -857,8 +856,8 @@
     };
 
     //AMD, CommonJs, then globals
-    if (typeof define === 'function' && define.amd) {
-        define([], function(){
+    if (typeof window.define === 'function' && window.define.amd) {
+        window.define([], function(){
             return aja;
         });
     } else if (typeof exports === 'object') {
