@@ -66,6 +66,19 @@ describe('aja()', function(){
             .go();
     });
 
+    it('should get with a queryString', function(done){
+        aja()
+            .url('/mirror')
+            .queryString({ kill: 'bill'})
+            .on('success', function(data){
+                expect(data).to.be.an('object');
+                expect(data.queryString).to.be.an('object');
+                expect(data.queryString).to.contain.keys(['kill']);
+                done();
+            })
+            .go();
+    });
+
     it('should post urlencoded data', function(done){
         aja()
             .url('/mirror')

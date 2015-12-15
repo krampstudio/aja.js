@@ -847,7 +847,10 @@
                 url += params;
             } else if (typeof params === 'object'){
                 for(key in params){
-                    url += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+                    if(!/[?&]$/.test(url)){
+                        url += '&';
+                    }
+                    url += encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
                 }
             }
         }
