@@ -76,12 +76,12 @@ Raw script loading
 
 ```javascript
     aja()
-        .url('http://platform.twitter.com/widgets.js')
-        .type('script')
-        .on('success', function(){
-            window.twttr.widgets.load();
-        })
-        .go();
+      .url('http://platform.twitter.com/widgets.js')
+      .type('script')
+      .on('success', function(){
+          window.twttr.widgets.load();
+      })
+      .go();
 ```
 
 ## Development
