@@ -858,6 +858,12 @@
         return url;
     };
 
+    aja.appendQueryString = appendQueryString;
+
+    aja.parseQueryString = function(params){
+        return validators.queryString.call(validators,params);
+    };
+
     //AMD, CommonJs, then globals
     if (typeof window.define === 'function' && window.define.amd) {
         window.define([], function(){
