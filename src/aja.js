@@ -6,8 +6,8 @@
  * @license MIT
  */
 
-import { types, methods } from './config.js';
 import validators from './validator.js';
+import http from './util/http.js';
 
 /**
  * API entry point.
@@ -37,7 +37,7 @@ const ajaFactory = function ajaFactory() {
      * @type {Aja}
      * @lends aja
      */
-    var aja = {
+    const aja = {
 
         /**
          * URL getter/setter: where your request goes.
@@ -49,7 +49,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} [url] - the url to set
          * @returns {Aja|String} chains or get the URL
          */
-        url: function(url) {
+        url(url) {
             return _chain.call(this, 'url', url, validators.string);
         },
 
@@ -61,7 +61,7 @@ const ajaFactory = function ajaFactory() {
          * @param {Boolean|*} [sync] - true means sync (other types than booleans are casted)
          * @returns {Aja|Boolean} chains or get the sync value
          */
-        sync: function(sync) {
+        sync(sync) {
             return _chain.call(this, 'sync', sync, validators.bool);
         },
 
@@ -74,7 +74,7 @@ const ajaFactory = function ajaFactory() {
          * @param {Boolean|*} [cache] - false means no cache  (other types than booleans are casted)
          * @returns {Aja|Boolean} chains or get cache value
          */
-        cache: function(cache) {
+        cache(cache) {
             return _chain.call(this, 'cache', cache, validators.bool);
         },
 
@@ -89,7 +89,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} [type] - the type to set
          * @returns {Aja|String} chains or get the type
          */
-        type: function(type) {
+        type(type) {
             return _chain.call(this, 'type', type, validators.type);
         },
 
@@ -103,7 +103,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} [value] - the value of the header to set
          * @returns {Aja|String} chains or get the header from the given name
          */
-        header: function(name, value) {
+        header(name, value) {
             data.headers = data.headers || {};
 
             validators.string(name);
@@ -126,7 +126,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} passwd - the password value
          * @returns {Aja} chains
          */
-        auth: function(user, passwd) {
+        auth(user, passwd) {
             //setter only
 
             validators.string(user);
@@ -148,7 +148,7 @@ const ajaFactory = function ajaFactory() {
          * @param {Number} [ms] - timeout in ms to set. It has to be an integer > 0.
          * @returns {Aja|String} chains or get the params
          */
-        timeout: function(ms) {
+        timeout(ms) {
             return _chain.call(this, 'timeout', ms, validators.positiveInteger);
         },
 
@@ -161,7 +161,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} [method] - the method to set
          * @returns {Aja|String} chains or get the method
          */
-        method: function(method) {
+        method(method) {
             return _chain.call(this, 'method', method, validators.method);
         },
 
@@ -174,7 +174,7 @@ const ajaFactory = function ajaFactory() {
          * @param {Object|String} [params] - key/values POJO or URL queryString directly to set
          * @returns {Aja|String} chains or get the params
          */
-        queryString: function(params) {
+        queryString(params) {
             return _chain.call(this, 'queryString', params, validators.queryString);
         },
 
@@ -188,7 +188,7 @@ const ajaFactory = function ajaFactory() {
          * @param {Object} [params] - key/values POJO to set
          * @returns {Aja|String} chains or get the params
          */
-        data: function(params) {
+        data(params) {
             return _chain.call(this, 'data', params, validators.plainObject);
         },
 
@@ -202,7 +202,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String|Object|Array|Boolean|Number|FormData} [content] - the content value to set
          * @returns {Aja|String|FormData} chains or get the body content
          */
-        body: function(content) {
+        body(content) {
             return _chain.call(this, 'body', content, null, function(content) {
                 if (typeof content === 'object') {
                     //support FormData to be sent direclty
@@ -231,7 +231,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String|HTMLElement} [selector] - the dom query selector or directly the Element
          * @returns {Aja|Array} chains or get the list of found elements
          */
-        into: function(selector) {
+        into(selector) {
             return _chain.call(this, 'into', selector, validators.selector, function(selector) {
                 if (typeof selector === 'string') {
                     return document.querySelectorAll(selector);
@@ -251,7 +251,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} [paramName] - a valid parameter name
          * @returns {Aja|String} chains or get the parameter name
          */
-        jsonPaddingName: function(paramName) {
+        jsonPaddingName(paramName) {
             return _chain.call(this, 'jsonPaddingName', paramName, validators.string);
         },
 
@@ -264,7 +264,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} [padding] - a valid function name
          * @returns {Aja|String} chains or get the padding name
          */
-        jsonPadding: function(padding) {
+        jsonPadding(padding) {
             return _chain.call(this, 'jsonPadding', padding, validators.func);
         },
 
@@ -279,7 +279,7 @@ const ajaFactory = function ajaFactory() {
          * @param {Function} cb - the callback to run once the event is triggered
          * @returns {Aja} chains
          */
-        on: function(name, cb) {
+        on(name, cb) {
             if (typeof cb === 'function') {
                 events[name] = events[name] || [];
                 events[name].push(cb);
@@ -295,7 +295,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} name - the name of the event
          * @returns {Aja} chains
          */
-        off: function(name) {
+        off(name) {
             events[name] = [];
             return this;
         },
@@ -311,13 +311,11 @@ const ajaFactory = function ajaFactory() {
          * @param {*} data - arguments given to the handlers
          * @returns {Aja} chains
          */
-        trigger: function(name, data) {
-            var self = this;
-            var eventCalls = function eventCalls(name, data) {
-                if (events[name] instanceof Array) {
-                    events[name].forEach(function(event) {
-                        event.call(self, data);
-                    });
+        trigger(name, data) {
+
+            var eventCalls = (name, data) => {
+                if (events[name] && events[name].length) {
+                    events[name].forEach( event => event.call(this, data) );
                 }
             };
             if (typeof name !== 'undefined') {
@@ -327,10 +325,10 @@ const ajaFactory = function ajaFactory() {
 
                 //HTTP status pattern
                 if (triggerStatus && triggerStatus.length > 3) {
-                    Object.keys(events).forEach(function(eventName) {
+                    Object.keys(events).forEach( eventName => {
                         var listenerStatus = eventName.match(statusPattern);
-                        if (listenerStatus && listenerStatus.length > 3 && //an listener on status
-                            triggerStatus[1] === listenerStatus[1] && //hundreds match exactly
+                        if (listenerStatus && listenerStatus.length > 3 &&      // an listener on status
+                            triggerStatus[1] === listenerStatus[1] && // hundreds match exactly
                             (listenerStatus[2] === 'x' || triggerStatus[2] === listenerStatus[2]) && //tens matches
                             (listenerStatus[3] === 'x' || triggerStatus[3] === listenerStatus[3])) { //ones matches
 
@@ -356,7 +354,7 @@ const ajaFactory = function ajaFactory() {
          *            })
          *           .go();
          */
-        go: function() {
+        go() {
 
             var type = data.type || (data.into ? 'html' : 'json');
             var url = _buildQuery();
@@ -382,7 +380,7 @@ const ajaFactory = function ajaFactory() {
          * XHR call to url to retrieve JSON
          * @param {String} url - the url
          */
-        json: function(url) {
+        json(url) {
             var self = this;
 
             ajaGo._xhr.call(this, url, function processRes(res) {
@@ -402,7 +400,7 @@ const ajaFactory = function ajaFactory() {
          * XHR call to url to retrieve HTML and add it to a container if set.
          * @param {String} url - the url
          */
-        html: function(url) {
+        html(url) {
             ajaGo._xhr.call(this, url, function processRes(res) {
                 if (data.into && data.into.length) {
                     [].forEach.call(data.into, function(elt) {
@@ -418,7 +416,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} url - the url
          * @param {Function} processRes - to modify / process the response before sent to events.
          */
-        _xhr: function(url, processRes) {
+        _xhr(url, processRes) {
             var self = this;
 
             //iterators
@@ -429,6 +427,7 @@ const ajaFactory = function ajaFactory() {
             var request = new XMLHttpRequest();
             var _data = data.data;
             var body = data.body;
+            var useBody = http.dataInBody(method);
             var contentType = this.header('Content-Type');
             var timeout = data.timeout;
             var timeoutId;
@@ -436,13 +435,13 @@ const ajaFactory = function ajaFactory() {
             var openParams;
 
             //guess content type
-            if (!contentType && _data && _dataInBody()) {
+            if (!contentType && _data && useBody) {
                 this.header('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
                 contentType = this.header('Content-Type');
             }
 
             //if data is used in body, it needs some modifications regarding the content type
-            if (_data && _dataInBody()) {
+            if (_data && useBody) {
                 if (typeof body !== 'string') {
                     body = '';
                 }
@@ -529,7 +528,7 @@ const ajaFactory = function ajaFactory() {
          * @this {Aja} call bound to the Aja context
          * @param {String} url - the url
          */
-        jsonp: function(url) {
+        jsonp(url) {
             var script;
             var self = this;
             var head = document.querySelector('head');
@@ -541,7 +540,7 @@ const ajaFactory = function ajaFactory() {
             if (aja[jsonPadding]) {
                 throw new Error('Padding ' + jsonPadding + '  already exists. It must be unique.');
             }
-            if (!/^ajajsonp_/.test(jsonPadding)) {
+            if ( ! /^ajajsonp_/.test(jsonPadding)) {
                 jsonPadding = 'ajajsonp_' + jsonPadding;
             }
 
@@ -554,7 +553,7 @@ const ajaFactory = function ajaFactory() {
 
             paddingQuery[jsonPaddingName] = jsonPadding;
 
-            url = appendQueryString(url, paddingQuery);
+            url = http.appendQueryString(url, paddingQuery);
 
             script = document.createElement('script');
             script.async = async;
@@ -576,7 +575,7 @@ const ajaFactory = function ajaFactory() {
          * @this {Aja} call bound to the Aja context
          * @param {String} url - the url
          */
-        script: function(url) {
+        script(url) {
 
             var self = this;
             var head = document.querySelector('head') || document.querySelector('body');
@@ -634,16 +633,6 @@ const ajaFactory = function ajaFactory() {
     };
 
     /**
-     * Check whether the data must be set in the body instead of the queryString
-     * @private
-     * @memberof aja
-     * @returns {Boolean} true id data goes to the body
-     */
-    var _dataInBody = function _dataInBody() {
-        return ['delete', 'patch', 'post', 'put'].indexOf(data.method) > -1;
-    };
-
-    /**
      * Build the URL to run the request against.
      * @private
      * @memberof aja
@@ -658,13 +647,13 @@ const ajaFactory = function ajaFactory() {
 
         //add a cache buster
         if (cache === false) {
-            queryString += '&ajabuster=' + new Date().getTime();
+            queryString += '&ajabuster=' + Date.now();
         }
 
-        url = appendQueryString(url, queryString);
+        url = http.appendQueryString(url, queryString);
 
-        if (_data && !_dataInBody()) {
-            url = appendQueryString(url, _data);
+        if (_data && !http.dataInBody(data.method)) {
+            url = http.appendQueryString(url, _data);
         }
         return url;
     };
@@ -672,36 +661,4 @@ const ajaFactory = function ajaFactory() {
     return aja;
 };
 
-
-
-/**
- * Query string helper : append some parameters
- * @private
- * @param {String} url - the URL to append the parameters
- * @param {Object} params - key/value
- * @returns {String} the new URL
- */
-const appendQueryString = function appendQueryString(url, params) {
-    var key;
-    url = url || '';
-    if (params) {
-        if (url.indexOf('?') === -1) {
-            url += '?';
-        }
-        if (typeof params === 'string') {
-            url += params;
-        } else if (typeof params === 'object') {
-            for (key in params) {
-                if (!/[?&]$/.test(url)) {
-                    url += '&';
-                }
-                url += encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-            }
-        }
-    }
-
-    return url;
-};
-
 export default ajaFactory;
-

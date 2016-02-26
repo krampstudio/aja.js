@@ -68,9 +68,6 @@ describe('aja()', function(){
                 })
                 .trigger('foo', 'bar');
             });
-
         });
-
-
     });
 });
