@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "eslint": "^2.2.0",
     "grunt": "^1.0.0-rc1",
     "grunt-contrib-connect": "^0.10.1",
     "grunt-contrib-uglify": "^0.9.1",
