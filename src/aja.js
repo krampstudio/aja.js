@@ -228,7 +228,7 @@ const ajaFactory = function ajaFactory() {
          * @example aja().into('div > .container');
          *
          * @throws TypeError
-         * @param {String|HTMLElement} [selector] - the dom query selector or directly the Element
+         * @param {String|HTMLElement|NodeList} [selector] - the dom query selector or directly the Element
          * @returns {Aja|Array} chains or get the list of found elements
          */
         into(selector) {
@@ -238,6 +238,9 @@ const ajaFactory = function ajaFactory() {
                 }
                 if (selector instanceof HTMLElement) {
                     return [selector];
+                }
+                if (selector instanceof NodeList){
+                    return selector;
                 }
             });
         },

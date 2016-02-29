@@ -32,3 +32,8 @@ doc
 
 # Editor
 .idea
+.*.swp
+
+# Intermediate bundles
+
+**/*.bundle.js

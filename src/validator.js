@@ -122,7 +122,7 @@ const validators = {
      * @throws {TypeError} check it's a string or an HTMLElement
      */
     selector(selector) {
-        if (typeof selector !== 'string' && !(selector instanceof HTMLElement)) {
+        if (typeof selector !== 'string' && !(selector instanceof HTMLElement) && !(selector instanceof NodeList)) {
             throw new TypeError(`a selector or an HTMLElement is expected, ${selector} [${typeof selector}] given`);
         }
         return selector;

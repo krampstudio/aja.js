@@ -5,25 +5,24 @@
  * @author Bertrand Chevrier <chevrier.bertrand@gmail.com>
  * @license MIT
  */
-export default {
 
-    /**
-     * supported request types.
-     */
-    types : ['html', 'json', 'jsonp', 'script'],
+/**
+ * supported request types.
+ */
+export const types = ['html', 'json', 'jsonp', 'script'];
 
-    /**
-     * supported http methods
-     */
-    methods : [
-        'connect',
-        'delete',
-        'get',
-        'head',
-        'options',
-        'patch',
-        'post',
-        'put',
-        'trace'
-    ];
-};
+/**
+ * supported http methods
+ */
+export const methods = [
+    'connect',
+    'delete',
+    'get',
+    'head',
+    'options',
+    'patch',
+    'post',
+    'put',
+    'trace'
+];
+
