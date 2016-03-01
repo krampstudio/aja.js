@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         eslint : {
-            dist : ['src/aja.js']
+            dist : ['src/*.js', '!src/*.bundle.js']
         },
 
         browserify : {
@@ -58,23 +58,17 @@ module.exports = function(grunt) {
             options: {
                 hostname: '<%=pkg.config.host%>',
                 port: '<%=pkg.config.port%>',
-                base: '.'
+                base: '.',
+                middleware: function(connect, options, middlewares) {
+                    return testMiddlewares.concat(middlewares);
+                }
             },
             devtest: {
                 options: {
-                    livereload: true,
-                    open: {
-
-                    }
+                    livereload: true
                 }
             },
-            test: {
-                    //middleware: function(connect, options, middlewares) {
-                        //return [connect.json(), connect.urlencoded()]
-                                    //.concat(testMiddlewares)
-                                    //.concat(middlewares);
-                    //}
-            }
+            test: { }
         },
 
         open: {
@@ -90,6 +84,16 @@ module.exports = function(grunt) {
                 tasks : ['browserify:test'],
                 options: {
                     livereload : true
+                }
+            }
+        },
+
+        qunit : {
+            test: {
+                options: {
+                    urls : grunt.file.expand('test/**/test.html').map(function(url){
+                        return 'http://<%=pkg.config.host%>:<%=pkg.config.port%>/' + url;
+                    })
                 }
             }
         }
@@ -212,11 +216,11 @@ module.exports = function(grunt) {
     grunt.registerTask('devtest', ['browserify:test', 'connect:devtest', 'open:test', 'watch:devtest']);
 
     //run just the tests
-    //grunt.registerTask('test', ['eslint', 'connect:test', 'mocha:browser']);
+    grunt.registerTask('test', ['eslint:dist', 'browserify:bundle', 'browserify:test', 'connect:test', 'qunit:test']);
 
     //run the tests with code coverage
     //grunt.registerTask('testcov', ['connect:testcov', 'instrument', 'mocha:browsercov', 'makeReport']);
 
     //build the package
-    //grunt.registerTask('build', ['jsdoc:dist', 'uglify:dev', 'uglify:prod']);
+    grunt.registerTask('build', ['browserify:bundle']);
 };

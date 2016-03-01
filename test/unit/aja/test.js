@@ -1,5 +1,5 @@
 import QUnit from 'qunitjs';
-import aja from '../../src/aja.js';
+import aja from '../../../src/aja.js';
 
 QUnit.module('Module');
 
