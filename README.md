@@ -65,7 +65,8 @@ JSONP
   aja()
     .url('http://otherdomain.com/api/remoteScript')
     .type('jsonp')
-    .padding('someGlobalFunction')
+    .jsonPaddingName('callbackParameter')
+    .jsonPadding('someGlobalFunction')
     .on('success', function(data){
         //Fuk cross origin policy
     })
