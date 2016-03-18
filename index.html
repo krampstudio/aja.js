@@ -141,7 +141,8 @@ aja()
                 <pre class="line-numbers"><code class="language-javascript">aja()
   .url('http://otherdomain.com/api/remotescript')
   .type('jsonp')
-  .padding('someglobalfunction')
+  .jsonPaddingName('callbackParameter')
+  .jsonPadding('someGlobalFunction')
   .on('success', function(data){
       //fuk cross origin policy
   })
