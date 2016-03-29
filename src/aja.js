@@ -311,29 +311,32 @@ const ajaFactory = function ajaFactory() {
          * @example aja().trigger('error', new Error('Emergency alert'));
          *
          * @param {String} name - the name of the event to trigger
+
          * @param {*} data - arguments given to the handlers
          * @returns {Aja} chains
          */
-        trigger(name, data) {
+        trigger(name = '', data) {
 
-            var eventCalls = (name, data) => {
+            const statusPattern = /^([0-9])([0-9x])([0-9x])$/i;
+            const eventCalls = (name, data) => {
                 if (events[name] && events[name].length) {
                     events[name].forEach( event => event.call(this, data) );
                 }
             };
             if (typeof name !== 'undefined') {
                 name = name + '';
-                var statusPattern = /^([0-9])([0-9x])([0-9x])$/i;
-                var triggerStatus = name.match(statusPattern);
+
+                let triggerStatus = name.match(statusPattern);
 
                 //HTTP status pattern
                 if (triggerStatus && triggerStatus.length > 3) {
                     Object.keys(events).forEach( eventName => {
                         var listenerStatus = eventName.match(statusPattern);
-                        if (listenerStatus && listenerStatus.length > 3 &&      // an listener on status
-                            triggerStatus[1] === listenerStatus[1] && // hundreds match exactly
-                            (listenerStatus[2] === 'x' || triggerStatus[2] === listenerStatus[2]) && //tens matches
-                            (listenerStatus[3] === 'x' || triggerStatus[3] === listenerStatus[3])) { //ones matches
+                        //check for wildcards or x in the eventName
+                        if (listenerStatus && listenerStatus.length > 3 &&
+                            triggerStatus[1] === listenerStatus[1] &&
+                            (listenerStatus[2] === 'x' || triggerStatus[2] === listenerStatus[2]) &&
+                            (listenerStatus[3] === 'x' || triggerStatus[3] === listenerStatus[3])) {
 
                             eventCalls(eventName, data);
                         }
@@ -384,14 +387,12 @@ const ajaFactory = function ajaFactory() {
          * @param {String} url - the url
          */
         json(url) {
-            var self = this;
-
-            ajaGo._xhr.call(this, url, function processRes(res) {
+            ajaGo._xhr.call(this, url, res => {
                 if (res) {
                     try {
                         res = JSON.parse(res);
                     } catch (e) {
-                        self.trigger('error', e);
+                        this.trigger('error', e);
                         return null;
                     }
                 } else {
@@ -406,7 +407,7 @@ const ajaFactory = function ajaFactory() {
          * @param {String} url - the url
          */
         html(url) {
-            ajaGo._xhr.call(this, url, function processRes(res) {
+            ajaGo._xhr.call(this, url, res => {
                 if (data.into && data.into.length) {
                     [].forEach.call(data.into, function(elt) {
                         elt.innerHTML = res;
@@ -483,9 +484,9 @@ const ajaFactory = function ajaFactory() {
             }
 
             //bind events
-            request.onprogress = function(e) {
+            request.onprogress = e => {
                 if (e.lengthComputable) {
-                    self.trigger('progress', e.loaded / e.total);
+                    this.trigger('progress', e.loaded / e.total);
                 }
             };
 
