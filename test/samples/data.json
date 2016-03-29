@@ -1,3 +1,8 @@
 {
-    "kill" : "bill"
+    "kill" : "bill",
+    "django" : ["unchained", "poney"],
+    "z" : {
+      "pulp" : true,
+      "state" : { "is dead" : -1 }
+    }
 }

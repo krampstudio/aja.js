@@ -394,6 +394,8 @@ const ajaFactory = function ajaFactory() {
                         self.trigger('error', e);
                         return null;
                     }
+                } else {
+                    res = null;
                 }
                 return res;
             });

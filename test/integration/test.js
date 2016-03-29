@@ -3,10 +3,6 @@ import aja from '../../src/aja.js';
 import jsonData from '../samples/data.json';
 
 
-QUnit.module('JSON');
-
-
-
 QUnit.module('HTML');
 
 QUnit.test('load html into an element', assert => {
@@ -86,7 +82,7 @@ QUnit.test('load json data', assert => {
         .go();
 });
 
-QUnit.test('should get with a queryString', assert => {
+QUnit.test('GET with a queryString', assert => {
     QUnit.expect(2);
     const done = assert.async();
     const req = aja();
@@ -103,222 +99,196 @@ QUnit.test('should get with a queryString', assert => {
         .go();
 });
 
-    //it('should post urlencoded data', function(done){
-        //aja()
-            //.url('/mirror')
-            //.method('post')
-            //.data({ kill: 'bill'})
-            //.on('success', function(data){
-                //expect(data).to.be.an('object');
-                //expect(data.body).to.be.an('object');
-                //expect(data.body).to.contain.keys(['kill']);
-                //done();
-            //})
-            //.go();
-    //});
+QUnit.test('POST urlencoded data', assert => {
+    QUnit.expect(2);
+    const done = assert.async();
+    const req = aja();
+    const data = { kill: 'bill' };
 
-    //it('should put urlencoded data', function(done){
-        //aja()
-            //.url('/mirror')
-            //.method('put')
-            //.data({ kill: 'bill'})
-            //.on('success', function(data){
-                //expect(data).to.be.an('object');
-                //expect(data.body).to.be.an('object');
-                //expect(data.body).to.contain.keys(['kill']);
-                //done();
-            //})
-            //.go();
-    //});
+    req
+        .url('/mirror')
+        .method('post')
+        .data(data)
+        .on('success', function(received){
+            assert.equal(typeof received, 'object', 'We have received data');
+            assert.deepEqual(received.body, data, 'The sent data matches');
+            done();
+        })
+        .go();
+});
 
-    //it('should load the json sample and trigger a 200', function(done){
-        //aja()
-            //.url('/test/samples/data.json')
-            //.on('200', function(data){
-                //expect(data).to.be.an('object');
-                //expect(data).to.contain.keys(['kill']);
-                //expect(data.kill).to.equal('bill');
-                //done();
-            //})
-            //.go();
-    //});
+QUnit.test('PUT urlencoded data', assert => {
+    QUnit.expect(2);
+    const done = assert.async();
+    const req = aja();
+    const data = { kill: 'bill' };
 
-    //it('should load the json sample and trigger a 20x like', function(done){
-        //aja()
-            //.url('/test/samples/data.json')
-            //.on('20x', function(data){
-                //expect(data).to.be.an('object');
-                //expect(data).to.contain.keys(['kill']);
-                //expect(data.kill).to.equal('bill');
-                //done();
-            //})
-            //.go();
-    //});
+    req
+        .url('/mirror')
+        .method('put')
+        .data(data)
+        .on('success', function(received){
+            assert.equal(typeof received, 'object', 'We have received data');
+            assert.deepEqual(received.body, data, 'The sent data matches');
+            done();
+        })
+        .go();
+});
 
-    //it('should trigger a 404 on wrong URL', function(done){
-        //aja()
-            //.url('/test/zamples/zaza.json')
-            //.on('404', function(data){
-                //expect(data).to.be.an('string');
-                //done();
-            //})
-            //.go();
-    //});
+QUnit.test('GET a 200 like event on valid URLs', assert => {
+    QUnit.expect(4);
+    const done1 = assert.async();
+    const done2 = assert.async();
+    const req = aja();
 
-    //it('should trigger an error on network failure', function(done){
-        //aja()
-            //.url('http://notallowed.example')
-            //.on('error', function(data){
-                //expect(data).to.contain.keys(['target', 'srcElement']);
-                //expect(data.type).to.equal('error');
-                //done();
-            //})
-            //.go();
-    //});
+    req
+        .url('/test/samples/data.json')
+        .on('200', function(received){
+            assert.equal(typeof received, 'object', 'We have received data');
+            assert.deepEqual(received, jsonData, 'The sent data matches');
+            done1();
+        })
+        .on('20x', function(received){
+            assert.equal(typeof received, 'object', 'We have received data');
+            assert.deepEqual(received, jsonData, 'The sent data matches');
+            done2();
+        })
+        .go();
+});
 
-    //it('should trigger an error on network failure, even if there is a timeout', function(done){
-        //aja()
-            //.url('http://notallowed.example')
-            //.timeout(1000)
-            //.on('error', function(data){
-                //expect(data).to.contain.keys(['target', 'srcElement']);
-                //expect(data.type).to.equal('error');
-                //done();
-            //})
-            //.go();
-    //});
+QUnit.module('errors');
 
-    //it('should trigger timeout event after timeout threshold is reached', function(done){
-        //aja()
-            //.url('/beinglate')
-            //.timeout(300)
-            //.on('success', function(err) {
-                //expect.fail('Thou shalt not execute the success callback.');
-            //})
-            //.on('error', function(err) {
-                //expect.fail('Thou shalt not execute the error callback.');
-            //})
-            //.on('timeout', function(err){
-                //expect(err).to.deep.equal({
-                    //type: 'timeout',
-                    //expiredAfter: 300
-                //});
-                //done();
-            //})
-            //.go();
-    //});
+QUnit.test('GET a 404 event on not found URLs', assert => {
+    QUnit.expect(4);
+    const done1 = assert.async();
+    const done2 = assert.async();
+    const url   = '/zamples/zaza.json';
+    const msg   = `Cannot GET ${url}`;
+    const req = aja();
 
-    //it('should trigger the success callback on retry after a timeout', function(done){
-        //aja()
-            //.url('/beinglate-retry')
-            //.timeout(250)
-            //.on('success', function(err) {
-                //expect.fail('Thou shalt not execute the success callback.');
-            //})
-            //.on('error', function(err) {
-                //expect.fail('Thou shalt not execute the error callback.');
-            //})
-            //.on('timeout', function(err){
-                //aja()
-                    //.url('/beinglate-retry')
-                    //.timeout(1000)
-                    //.on('success', function(err){
-                        //done();
-                    //})
-                    //.on('error', function(err) {
-                        //console.log('beinglate-second error?', err);
-                        //expect.fail('Thou shalt not execute the error callback on retry.');
-                    //})
-                    //.on('timeout', function(err){
-                        //console.log('beinglate-second timeout?', JSON.stringify(err));
-                        //expect.fail('Thou shalt not execute the timeout callback on retry.');
-                    //})
+    req
+        .url(url)
+        .on('404', function(received){
+            assert.equal(typeof received, 'string', 'We have received data');
+            assert.equal(received.trim(), msg, 'The received message matches');
+            done1();
+        })
+        .on('4xx', function(received){
+            assert.equal(typeof received, 'string', 'We have received data');
+            assert.equal(received.trim(), msg, 'The received message matches');
+            done2();
+        })
+        .go();
+});
 
-                    //.go();
-            //})
-            //.go();
-    //});
+QUnit.test('network failure', assert => {
+    QUnit.expect(2);
+    const done1 = assert.async();
+    const req = aja();
 
-    //it('should not trigger timeout event if the call succeeds', function(done){
-        //aja()
-            //.url('/beinglate-no-to')
-            //.timeout(1000)
-            //.on('success', function(err) {
-                //done();
-            //})
-            //.on('error', function(err) {
-                //expect.fail('Thou shalt not execute the success callback.');
-            //})
-            //.on('timeout', function(err){
-                //expect.fail('Thou shalt not execute the timeout callback.');
-            //})
-            //.go();
-    //});
+    req
+        .url('http://notallowed.example')
+        .timeout(1000)
+        .on('error', received => {
+            assert.equal(typeof received, 'object', 'We have received data');
+            assert.equal(received.type, 'error', 'We have received an error event');
+            done1();
+        })
+        .go();
+});
 
-    //it('should bust cache', function(done){
-        //aja()
-            //.url('/time')
-            //.on('success', function(data){
-                //expect(data).to.be.an('object');
-                //expect(data.ts).to.be.a('number');
-                //expect(data.ts).to.be.above(0);
-                //var ts = data.ts;
-                //aja()
-                    //.url('/time')
-                    //.cache(false)
-                    //.on('success', function(data){
-                        //expect(data).to.be.an('object');
-                        //expect(data.ts).to.be.a('number');
-                        //expect(data.ts).to.be.above(0);
-                        //expect(data.ts).to.be.not.equal(ts);
-                        //done();
-                    //})
-                    //.go();
-            //})
-            //.go();
+QUnit.test('network failure, even if there is a timeout', assert => {
+    QUnit.expect(2);
+    const done1 = assert.async();
+    const req = aja();
 
-    //});
+    req
+        .url('http://notallowed.example')
+        .timeout(500)
+        .on('error', received => {
+            setTimeout( () => {
+                assert.equal(typeof received, 'object', 'We have received data');
+                assert.equal(received.type, 'error', 'We have received an error event');
+                done1();
+            }, 1000);
+        })
+        .on('timeout', () => assert.ok(false, 'Timeout called') )
+        .go();
+});
 
-    //it('should not trigger error when the response is empty', function(done){
-        //aja()
-            //.url('/empty')
-            //.method('post')
-            //.type('json')
-            //.data({ kill: 'bill'})
-            //.on('204', function(data){
-                //expect(data).to.be.empty;
-                //done();
-            //})
-            //.on('error', function() {
-                //expect.fail('Should NOT trigger an error.');
-            //})
-            //.go();
-    //});
+QUnit.test('timeout', assert => {
+    QUnit.expect(1);
+    const done1 = assert.async();
+    const req = aja();
 
-    //it('should handle jsonp', function(done){
-        //aja()
-            //.url('/test/samples/data.json')
-            //.type('jsonp')
-            //.on('success', function(data){
-                //expect(data).to.be.an('object');
-                //expect(data).to.contain.keys(['kill']);
-                //expect(data.kill).to.equal('bill');
-                //done();
-            //})
-            //.go();
-    //});
+    req
+        .url('/beinglate')
+        .timeout(300)
+        .on('success', () => assert.ok(false, 'Thou shalt not execute the success callback.'))
+        .on('error', err => assert.ok(false, 'Thou shalt not execute the error callback: ' + err))
+        .on('timeout', err => {
+            setTimeout( () => {
+                assert.deepEqual(err, { type: 'timeout', expiredAfter: 300}, 'The timeout data is correct');
+                done1();
+            }, 10);
+        })
+        .go();
+});
 
-    //it('should load a remote script', function(done){
-        //expect(window).to.not.contain.key('awesomeLib');
-        //aja()
-            //.url('/test/samples/lib.js')
-            //.type('script')
-            //.on('success', function(){
-                //expect(window).to.contain.key('awesomeLib');
-                //expect(window.awesomeLib).to.be.an('object');
-                //expect(window.awesomeLib).to.contain.keys(['doSomethingCrazy']);
-                //done();
-            //})
-            //.go();
-    //});
-//});
+QUnit.test('empty response', assert => {
+    QUnit.expect(1);
+    const done = assert.async();
+    const req = aja();
+    req.url('/empty')
+       .method('post')
+       .type('json')
+       .data({ kill: 'bill'})
+       .on('204', function(data){
+           assert.equal(data, null, 'The response is empty');
+           done();
+       })
+       .on('error', function() {
+           assert.ok(false, 'Should NOT trigger an error.');
+       })
+       .go();
+});
+
+QUnit.module('jsonp');
+
+QUnit.test('load json', assert => {
+    QUnit.expect(2);
+    const done1 = assert.async();
+    const req = aja();
+
+    req
+        .url('/test/samples/data.json')
+        .type('jsonp')
+        .on('error', err => assert.ok(false, 'jsonp should succeed : ' + err))
+        .on('success', received => {
+            assert.equal(typeof received, 'object', 'We have received some data');
+            assert.deepEqual(received, jsonData, 'We have received the right data');
+            done1();
+        })
+        .go();
+});
+
+QUnit.module('script');
+
+QUnit.test('load a remote script', assert => {
+    QUnit.expect(3);
+    const done1 = assert.async();
+    const req = aja();
+
+    assert.equal(typeof window.awesomeLib, 'undefined', 'window does not contain the library');
+
+    req
+        .url('/test/samples/lib.js')
+        .type('script')
+        .on('error', err => assert.ok(false, 'script loading should succeed : ' + err))
+        .on('success', () => {
+            assert.equal(typeof window.awesomeLib, 'object', 'The library is loaded');
+            assert.equal(typeof window.awesomeLib.doSomethingCrazy, 'function', 'The library is loaded and expose the functions');
+            done1();
+        })
+        .go();
+});
