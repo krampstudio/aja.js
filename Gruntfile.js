@@ -1,8 +1,10 @@
 var bodyParser = require('body-parser');
+var _ = require('lodash');
 
 module.exports = function(grunt) {
     'use strict';
 
+    var coverage = {};
     var testMiddlewares = require('./test/server/middlewares.js');
 
     require('load-grunt-tasks')(grunt);
@@ -13,21 +15,11 @@ module.exports = function(grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
-        eslint : {
-            dist : ['src/*.js', '!src/*.bundle.js']
+        eslint: {
+            dist: ['src/*.js', '!src/*.bundle.js']
         },
 
-        browserify : {
-            options: {
-                transform: [
-                    ['babelify', {
-                        'presets' : ['es2015']
-                    }]
-                ],
-                browserifyOptions: {
-                    debug: true
-                }
-            },
+        browserify: {
             bundle: {
                 files: {
                     'src/aja.bundle.js': ['src/aja.js']
@@ -35,24 +27,35 @@ module.exports = function(grunt) {
                 options: {
                     transform: [
                         ['babelify', {
-                            'presets' : ['es2015'],
-                            'plugins' : ['add-module-exports']
+                            'presets': ['es2015'],
+                            'plugins': ['add-module-exports']
                         }]
                     ],
                     browserifyOptions: {
-                        standalone : 'aja',
+                        standalone: 'aja',
                         debug: true
                     }
                 }
             },
             test: {
-                files : [{
+                files: [{
                     expand: true,
                     cwd: 'test/',
                     dest: 'test/',
                     src: '**/test.js',
                     ext: '.bundle.js'
-                }]
+                }],
+                options: {
+                    transform: [
+                        ['babelify', {
+                            'presets': ['es2015'],
+                            'plugins': [ ['__coverage__', { only: 'src/' }] ]
+                        }]
+                    ],
+                    browserifyOptions: {
+                        debug: true
+                    }
+                }
             }
         },
 
@@ -62,9 +65,11 @@ module.exports = function(grunt) {
                 port: '<%=pkg.config.port%>',
                 base: '.',
                 middleware: function(connect, options, middlewares) {
-                    return [bodyParser.json(), bodyParser.urlencoded({ extended: true })]
-                                .concat(testMiddlewares)
-                                .concat(middlewares);
+                    return [bodyParser.json(), bodyParser.urlencoded({
+                        extended: true
+                    })]
+                    .concat(testMiddlewares)
+                    .concat(middlewares);
                 }
             },
             devtest: {
@@ -72,33 +77,48 @@ module.exports = function(grunt) {
                     livereload: true
                 }
             },
-            test: { }
+            test: {}
         },
 
         open: {
-            test : {
-                path  : 'http://<%=pkg.config.host%>:<%=pkg.config.port%>/test',
-                app : '<%=pkg.config.browser%>'
+            test: {
+                path: 'http://<%=pkg.config.host%>:<%=pkg.config.port%>/test',
+                app: '<%=pkg.config.browser%>'
             }
         },
 
         watch: {
             devtest: {
-                files : ['test/**/test.js', 'src/**/*.js', '!src/**/*.bundle.js'],
-                tasks : ['browserify:test'],
+                files: ['test/**/test.js', 'src/**/*.js', '!src/**/*.bundle.js'],
+                tasks: ['browserify:test'],
                 options: {
-                    livereload : true
+                    livereload: true
                 }
             }
         },
 
-        qunit : {
+        qunit: {
             test: {
                 options: {
-                    urls : grunt.file.expand('test/**/test.html').map(function(url){
+                    inject : './test/phantomjs/bridge.js',
+                    urls: grunt.file.expand('test/**/test.html').map(function(url) {
                         return 'http://<%=pkg.config.host%>:<%=pkg.config.port%>/' + url;
                     })
                 }
+            }
+        },
+
+        clean : {
+            coverage : ['.coverage/**']
+        },
+
+
+        makeReport: {
+            src: '.coverage/data.json',
+            options: {
+                type: 'html',
+                dir : '.coverage/reports',
+                print: 'detail'
             }
         },
 
@@ -115,15 +135,25 @@ module.exports = function(grunt) {
         }
     });
 
+    //merge qunit coverage data
+    grunt.event.on('qunit.coverage', function(__coverage__) {
+        if (__coverage__) {
+            _.merge(coverage, __coverage__);
+        }
+    });
+
+    grunt.registerTask('write-coverage', function(){
+        grunt.file.write('.coverage/data.json', JSON.stringify(coverage));
+    });
+
     //run tests while developping
     grunt.registerTask('devtest', ['browserify:test', 'connect:devtest', 'open:test', 'watch:devtest']);
 
     //run just the tests
-    grunt.registerTask('test', ['eslint:dist', 'browserify:bundle', 'browserify:test', 'connect:test', 'qunit:test']);
-
-    //run the tests with code coverage
-    //grunt.registerTask('testcov', ['connect:testcov', 'instrument', 'mocha:browsercov', 'makeReport']);
+    grunt.registerTask('test', ['clean:coverage', 'eslint:dist', 'browserify:bundle', 'browserify:test', 'connect:test', 'qunit:test', 'write-coverage', 'makeReport']);
 
     //build the package
     grunt.registerTask('build', ['browserify:bundle']);
+
+
 };
