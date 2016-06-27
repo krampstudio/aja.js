@@ -16,7 +16,11 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         eslint: {
-            dist: ['src/*.js', '!src/*.bundle.js']
+            dist: [
+                'src/**/*.js', '!src/*.bundle.js', '!src/*.min.js',
+                'test/**/*.js', '!test/**/*.bundle.js',
+                'Gruntfile.js'
+            ]
         },
 
         browserify: {
