@@ -17,6 +17,7 @@
     "test": "grunt test"
   },
   "devDependencies": {
+    "babel-core": "^6.10.4",
     "babel-plugin-__coverage__": "^0.111111.1",
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-preset-es2015": "^6.5.0",
