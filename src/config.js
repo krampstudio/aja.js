@@ -9,7 +9,7 @@
 /**
  * supported request types.
  */
-export const types = ['html', 'json', 'jsonp', 'script'];
+export const types = ['html', 'json', 'txt', 'jsonp', 'script', 'css'];
 
 /**
  * supported http methods
