@@ -8,7 +8,6 @@
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
-
     "ecmaFeatures": {
       "classes": false,
       "superInFunctions": false
@@ -36,3 +35,4 @@
     "sourceType": "module"
   }
 }
+
