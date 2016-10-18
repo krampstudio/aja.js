@@ -1,4 +1,4 @@
-aja.js  [![Build Status](https://travis-ci.org/krampstudio/aja.js.png)](https://travis-ci.org/krampstudio/aja.js) [![NPM version](https://badge.fury.io/js/aja.png)](http://badge.fury.io/js/aja) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+aja.js  [![Build Status](https://travis-ci.org/krampstudio/aja.js.png)](https://travis-ci.org/krampstudio/aja.js) [![NPM version](https://badge.fury.io/js/aja.png)](http://badge.fury.io/js/aja) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/) [![CDNJS](https://img.shields.io/cdnjs/v/aja.svg)](https://cdnjs.com/libraries/aja)
 ======
 > Ajax without XML : Asynchronous Javascript and JavaScript/JSON(P)
 
