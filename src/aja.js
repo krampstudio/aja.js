@@ -385,6 +385,43 @@
                 if(typeof ajaGo[type] === 'function'){
                     return ajaGo[type].call(this, url);
                 }
+            },
+
+            /**
+             * Triggers the call and returns a Promise (thenable)
+             * Automatically resolves on success, rejects on error.
+             * This is the end of the chain.
+             *
+             * @example aja()
+             *           .url('data.json')
+             *           .promise();
+             *
+             * @returns {Promise}
+             */
+            promise : function(){
+
+                var self    = this;
+
+                if(typeof Promise === "undefined") {
+                    throw new ReferenceError('Promise not supported.');
+                }
+
+                return new Promise(function(resolve, reject){
+
+                    // Add success and error handlers within the promise.
+
+                    Aja.on.call(self, 'success', function(data){
+                        console.log('success!');
+                        resolve(data);
+                    });
+
+                    Aja.on.call(self, 'error', function(data){
+                        console.log('error!');
+                        reject(data);
+                    });
+
+                    Aja.go.call(self);
+                });
             }
         };
 
