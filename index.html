@@ -129,8 +129,9 @@ aja()
   .on('200', function(response){
       //well done
   })
-   .on('40*', function(response){
+   .on('40x', function(response){
       //something is definitely wrong
+      // 'x' means any number (404, 400, etc. will match)
   })
   .on('500', function(response){
       //oh crap
