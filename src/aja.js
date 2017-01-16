@@ -650,7 +650,7 @@
                 }
                 return this;
             }
-            return data[name] === 'undefined' ? null : data[name];
+            return typeof data[name] === 'undefined' ? null : data[name];
         };
 
         /**

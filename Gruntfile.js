@@ -1,3 +1,14 @@
+var fs = require('fs');
+var JSDOC_TEMPLATE, JSDOC_CONFIG;
+if(fs.existsSync('node_modules/grunt-jsdoc/node_modules/ink-docstrap/template'))
+    JSDOC_TEMPLATE = 'node_modules/grunt-jsdoc/node_modules/ink-docstrap/template';
+else if(fs.existsSync('node_modules/ink-docstrap/template'))
+    JSDOC_TEMPLATE = 'node_modules/ink-docstrap/template';
+if(fs.existsSync('node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json'))
+    JSDOC_CONFIG = 'node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json';
+else if(fs.existsSync('node_modules/ink-docstrap/template/jsdoc.conf.json'))
+    JSDOC_CONFIG = 'node_modules/ink-docstrap/template/jsdoc.conf.json';
+
 module.exports = function(grunt) {
     'use strict';
 
@@ -104,7 +115,7 @@ module.exports = function(grunt) {
                     'src/aja.min.js': ['src/aja.js']
                 },
                 options: {
-                    banner: "/**\n * <%= pkg.name %> <%= pkg.homepage %>\n *  \n * @version <=%pkg.version%>\n * @author <%= pkg.author.name %> <<%= pkg.author.email %>> © <%= grunt.template.today('yyyy') %>\n * @license MIT\n**/",
+                    banner: '/**\n * <%= pkg.name %> <%= pkg.homepage %>\n *  \n * @version <=%pkg.version%>\n * @author <%= pkg.author.name %> <<%= pkg.author.email %>> © <%= grunt.template.today(\'yyyy\') %>\n * @license MIT\n**/',
                     sourceMap: true,
                     beautify: {
                         'max_line_len': 500
@@ -124,8 +135,8 @@ module.exports = function(grunt) {
                 options: {
                     destination: 'doc',
                     private: false,
-                    template: "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template",
-                    configure: "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json"
+                    template: JSDOC_TEMPLATE,
+                    configure: JSDOC_CONFIG
                 }
             }
         }
