@@ -423,7 +423,6 @@
                             res = JSON.parse(res);
                         } catch(e){
                             self.trigger('error', e);
-                            console.log('AJA Check 1')
                             return null;
                         }
                     }
