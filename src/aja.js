@@ -12,7 +12,7 @@
      * supported request types.
      * TODO support new types : 'style', 'file'?
      */
-    var types = ['html', 'json', 'jsonp', 'script'];
+    var types = ['html', 'json', 'jsonp', 'script', 'text'];
 
     /**
      * supported http methods
@@ -399,6 +399,18 @@
         var ajaGo = {
 
             /**
+             * XHR call to url to retrieve TEXT
+             * @param {String} url - the url
+             */
+            text : function(url){
+                var self = this;
+
+                ajaGo._xhr.call(this, url, function processRes(res){
+                    return res;
+                });
+            },
+
+            /**
              * XHR call to url to retrieve JSON
              * @param {String} url - the url
              */
@@ -411,6 +423,7 @@
                             res = JSON.parse(res);
                         } catch(e){
                             self.trigger('error', e);
+                            console.log('AJA Check 1')
                             return null;
                         }
                     }
@@ -650,6 +663,7 @@
                 }
                 return this;
             }
+
             return data[name] === 'undefined' ? null : data[name];
         };
 
