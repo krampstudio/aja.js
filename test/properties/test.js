@@ -87,7 +87,6 @@ describe('aja()', function(){
                 expect(function(){ aja().type(false); }).to.throw(TypeError);
                 expect(function(){ aja().type('toto'); }).to.throw(TypeError);
                 expect(function(){ aja().type(12); }).to.throw(TypeError);
-                expect(function(){ aja().type('text'); }).to.throw(TypeError);
 
                 expect(function(){ aja().type('json'); }).to.not.throw();
                 expect(function(){ aja().type('html'); }).to.not.throw();
