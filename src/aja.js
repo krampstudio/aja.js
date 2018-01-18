@@ -403,8 +403,6 @@
              * @param {String} url - the url
              */
             text : function(url){
-                var self = this;
-
                 ajaGo._xhr.call(this, url, function processRes(res){
                     return res;
                 });
